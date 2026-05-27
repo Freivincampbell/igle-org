@@ -1,0 +1,48 @@
+<section class="mx-auto w-full max-w-4xl px-6 py-10">
+  <%= render "church_admin/shared/nav", church: @church %>
+
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Editar roles de usuario</h1>
+    <p class="mt-2 text-sm text-slate-500"><%= @church_membership.user.email %></p>
+  </div>
+
+  <%= form_with model: [ @church, :admin, @church_membership ], url: church_admin_membership_path(@church, @church_membership), class: "mt-8 rounded-lg border border-slate-200 bg-white p-6" do |form| %>
+    <% if @church_membership.errors.any? %>
+      <div class="mb-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <p class="font-medium">No se pudieron guardar los roles.</p>
+        <ul class="mt-2 list-disc pl-5">
+          <% @church_membership.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="grid gap-3 sm:grid-cols-2">
+      <% @roles.each do |role| %>
+        <label class="flex min-h-12 items-center gap-3 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700">
+          <%= check_box_tag(
+                "church_membership[role_public_ids][]",
+                role.public_id,
+                @church_membership.roles.exists?(role.id),
+                class: "h-4 w-4 rounded border-slate-300 text-slate-950 focus:ring-slate-500"
+              ) %>
+          <span>
+            <span class="block font-medium text-slate-900"><%= role.name %></span>
+            <span class="block text-xs text-slate-500"><%= role.pastoral? ? "Pastoral" : "General" %></span>
+          </span>
+        </label>
+      <% end %>
+
+      <% if @roles.none? %>
+        <p class="text-sm text-slate-500">No hay roles activos para asignar.</p>
+      <% end %>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-3">
+      <%= link_to "Cancelar", church_admin_memberships_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <%= form.submit "Guardar roles", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    </div>
+  <% end %>
+</section>

@@ -2461,6 +2461,11 @@ Estado actual:
 - Conectar Pundit con permisos dinámicos.
 - Crear plantillas opcionales de roles, sin obligarlas.
 
+Estado actual:
+
+- Implementado: catálogo global de permisos, roles por iglesia, matriz por módulo/acción, activación/desactivación de roles, asignación de roles a usuarios y conexión inicial con Pundit/PermissionChecker.
+- Pendiente: alcances avanzados `own` y `assigned_ministry`, plantillas opcionales de roles y caché de permisos efectivos si llega a ser necesario.
+
 ### Etapa 6 - Miembros
 
 - Crear `Member`.
@@ -2738,12 +2743,12 @@ Elementos necesarios:
 ### Usuarios Y Roles
 
 - [x] Propietario/administrador inicial de iglesia.
-- [ ] Catálogo de módulos/vistas.
-- [ ] Roles personalizados por iglesia.
-- [ ] Matriz de permisos por rol.
-- [ ] Permisos por acción.
+- [x] Catálogo de módulos/vistas.
+- [x] Roles personalizados por iglesia.
+- [x] Matriz de permisos por rol.
+- [x] Permisos por acción.
 - [ ] Alcances de permiso.
-- [ ] Asignación de roles a usuarios.
+- [x] Asignación de roles a usuarios.
 - [ ] Plantillas opcionales de roles.
 
 ### Miembros

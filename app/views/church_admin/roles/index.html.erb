@@ -1,0 +1,55 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <%= render "church_admin/shared/nav", church: @church %>
+
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Roles</h1>
+    </div>
+
+    <% if policy(Role).new? %>
+      <%= link_to "Nuevo rol", new_church_admin_role_path(@church), class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <% end %>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3">Nombre</th>
+          <th class="px-4 py-3">Permisos</th>
+          <th class="px-4 py-3">Estado</th>
+          <th class="px-4 py-3 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @roles.any? %>
+          <% @roles.each do |role| %>
+            <tr>
+              <td class="px-4 py-4">
+                <div class="font-medium text-slate-950"><%= role.name %></div>
+                <div class="mt-1 text-xs text-slate-500"><%= role.pastoral? ? "Pastoral" : "General" %></div>
+              </td>
+              <td class="px-4 py-4 text-slate-600"><%= role.permissions.count %></td>
+              <td class="px-4 py-4 text-slate-600"><%= role.status %></td>
+              <td class="px-4 py-4 text-right">
+                <div class="flex justify-end gap-3">
+                  <% if policy(role).show? %>
+                    <%= link_to "Ver", church_admin_role_path(@church, role), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% end %>
+                  <% if policy(role).edit? %>
+                    <%= link_to "Editar", edit_church_admin_role_path(@church, role), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="4" class="px-4 py-8 text-center text-slate-500">No hay roles creados.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

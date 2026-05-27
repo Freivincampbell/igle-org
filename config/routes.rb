@@ -16,7 +16,21 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :churches, param: :public_id, only: %i[index show]
+  resources :churches, param: :public_id, only: %i[index show] do
+    namespace :admin, module: :church_admin, as: :admin do
+      root "roles#index"
+
+      resources :roles, param: :public_id, only: %i[index show new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+          patch :permissions, action: :update_permissions
+        end
+      end
+
+      resources :memberships, controller: :church_memberships, param: :public_id, only: %i[index edit update]
+    end
+  end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
