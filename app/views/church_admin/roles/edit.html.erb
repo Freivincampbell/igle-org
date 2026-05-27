@@ -1,0 +1,25 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <%= render "church_admin/shared/nav", church: @church %>
+
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Editar rol</h1>
+    </div>
+
+    <%= link_to "Ver rol", church_admin_role_path(@church, @role), class: "inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+  </div>
+
+  <%= render "form", role: @role %>
+
+  <% if policy(@role).manage? %>
+    <div class="mt-10 rounded-lg border border-slate-200 bg-white p-6">
+      <div>
+        <h2 class="text-xl font-semibold text-slate-950">Matriz de permisos</h2>
+        <p class="mt-1 text-sm text-slate-500">Selecciona las acciones permitidas para este rol.</p>
+      </div>
+
+      <%= render "permission_matrix", role: @role, permissions: @permissions, selected_permission_public_ids: @selected_permission_public_ids %>
+    </div>
+  <% end %>
+</section>

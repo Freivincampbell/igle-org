@@ -197,6 +197,201 @@ Detener y borrar volumenes de desarrollo:
 docker compose down -v
 ```
 
+## Seeds Y Manual Testing
+
+Los seeds preparan los datos base que necesita la plataforma para probarla manualmente:
+
+- Catalogo global de permisos.
+- Super administrador inicial, si existen las variables `SEED_SUPER_ADMIN_*`.
+
+### 1. Preparar Variables Locales
+
+Crea tu archivo local si aun no existe:
+
+```sh
+cp .env.example .env
+```
+
+Edita `.env` y define una clave local para el super administrador:
+
+```sh
+SEED_SUPER_ADMIN_EMAIL=admin@igle-org.local
+SEED_SUPER_ADMIN_FIRST_NAME=Super
+SEED_SUPER_ADMIN_LAST_NAME=Admin
+SEED_SUPER_ADMIN_PASSWORD=
+```
+
+Rellena `SEED_SUPER_ADMIN_PASSWORD` solo en tu `.env` local. El archivo `.env` esta ignorado por Git.
+
+### 2. Levantar La App
+
+```sh
+docker compose up -d --build
+```
+
+Confirma que los servicios esten arriba:
+
+```sh
+docker compose ps
+curl http://localhost:3000/up
+```
+
+### 3. Preparar Base De Datos
+
+Este comando crea la base, corre migraciones y carga el schema cuando haga falta:
+
+```sh
+docker compose exec -T web bin/rails db:prepare
+```
+
+### 4. Correr Seeds
+
+```sh
+docker compose exec -T web bin/rails db:seed
+```
+
+Resultado esperado:
+
+```txt
+Seeded super admin: admin@igle-org.local
+```
+
+Si ves este mensaje:
+
+```txt
+Skipped super admin seed. Set SEED_SUPER_ADMIN_EMAIL and SEED_SUPER_ADMIN_PASSWORD to create it.
+```
+
+revisa que `.env` tenga `SEED_SUPER_ADMIN_EMAIL` y `SEED_SUPER_ADMIN_PASSWORD`, y luego reinicia el servicio web para que Docker cargue las variables:
+
+```sh
+docker compose restart web
+docker compose exec -T web bin/rails db:seed
+```
+
+### 5. Reset Completo De Desarrollo
+
+Usa esto solo si quieres borrar toda la data local y empezar de cero:
+
+```sh
+docker compose down -v
+docker compose up -d --build
+docker compose exec -T web bin/rails db:seed
+```
+
+### 6. Probar Como Super Administrador
+
+Abre:
+
+- http://localhost:3000/users/sign_in
+
+Inicia sesion con:
+
+- Email: valor de `SEED_SUPER_ADMIN_EMAIL`.
+- Clave: valor de `SEED_SUPER_ADMIN_PASSWORD`.
+
+Luego abre:
+
+- http://localhost:3000/platform
+
+Flujo manual recomendado:
+
+1. Crear una iglesia desde `Nueva iglesia`.
+2. Confirmar que la URL use UUID, por ejemplo `/platform/churches/9d5f2f44-1b0c-4b8f-9d6b-8f1f0d7e3c21`, nunca `/platform/churches/1`.
+3. Editar datos basicos de la iglesia.
+4. Desactivar la iglesia y volver a activarla.
+5. Entrar a `Asignar admin`.
+6. Crear el administrador owner inicial de esa iglesia.
+7. Confirmar que el owner aparezca en el detalle de la iglesia.
+
+### 7. Probar Como Administrador Owner De Iglesia
+
+Despues de asignar el owner:
+
+1. Cierra la sesion actual o usa una ventana privada del navegador.
+2. Entra a http://localhost:3000/users/sign_in.
+3. Inicia sesion con el email y la clave inicial del owner.
+4. Abre http://localhost:3000/churches.
+5. Confirma que el usuario solo vea las iglesias donde tiene membresia activa.
+
+### 8. Probar Roles Y Permisos
+
+Desde el detalle de una iglesia, entra a:
+
+- `/churches/:church_uuid/admin/roles`
+
+Flujo manual recomendado:
+
+1. Crear un rol desde `Nuevo rol`.
+2. Entrar a `Editar`.
+3. Marcar permisos en la matriz por modulo y accion.
+4. Usar los atajos `Sin acceso`, `Lectura`, `Escritura` o `Total` para probar que los checkboxes cambien correctamente.
+5. Guardar permisos.
+6. Confirmar en el detalle del rol que aparezcan los permisos asignados.
+7. Desactivar el rol y volver a activarlo.
+
+Para probar permisos pastorales:
+
+1. Crear o editar un rol y marcar `Rol pastoral`.
+2. Guardar el rol.
+3. Entrar a `Editar`.
+4. Asignar permisos del modulo `Notas pastorales`.
+
+Los permisos de `Notas pastorales` no se guardan en roles no pastorales.
+
+### 9. Probar Asignacion De Roles A Usuarios
+
+Desde el detalle de una iglesia, entra a:
+
+- `/churches/:church_uuid/admin/memberships`
+
+Flujo manual recomendado:
+
+1. Seleccionar `Editar roles` en un usuario de iglesia.
+2. Marcar uno o varios roles activos.
+3. Guardar.
+4. Confirmar que los roles aparezcan en la lista de usuarios.
+
+Mientras no exista la pantalla completa de creacion de usuarios por iglesia, puedes crear un usuario de prueba desde consola:
+
+```sh
+docker compose exec -T web bin/rails runner '
+church = Church.find_by!(public_id: "<church_uuid>")
+temporary_access = SecureRandom.base58(20)
+user = User.find_or_initialize_by(email: "tester@example.local")
+user.assign_attributes(
+  first_name: "Tester",
+  last_name: "Manual",
+  status: "active",
+  platform_role: "user",
+  password: temporary_access,
+  password_confirmation: temporary_access
+)
+user.save!
+ChurchMembership.find_or_create_by!(church:, user:) { |membership| membership.status = "active" }
+puts "Usuario listo: #{user.email}"
+puts "Clave temporal: #{temporary_access}"
+'
+```
+
+Luego asigna roles a ese usuario desde `/churches/:church_uuid/admin/memberships`.
+
+### 10. Smoke Tests Rapidos
+
+```sh
+curl -s -o /dev/null -w 'root:%{http_code}\n' http://localhost:3000
+curl -s -o /dev/null -w 'up:%{http_code}\n' http://localhost:3000/up
+curl -s -o /dev/null -w 'login:%{http_code}\n' http://localhost:3000/users/sign_in
+curl -s -o /dev/null -w 'platform:%{http_code}\n' http://localhost:3000/platform
+```
+
+Resultado esperado sin sesion:
+
+- `root:200`.
+- `up:200`.
+- `login:200`.
+- `platform:302`, porque redirige al login.
+
 ## Correr El Proyecto Local Sin Docker
 
 Preparar base de datos:
@@ -231,8 +426,9 @@ docker compose exec -T web bin/rails db:prepare
 docker compose exec -T web bin/rails about
 docker compose exec -T web bundle exec rspec
 docker compose exec -T web bin/rails test
+docker compose exec -T web bin/rubocop
 docker compose exec -T web bin/brakeman --quiet
-docker compose exec -T web bin/bundler-audit check
+docker compose exec -T web bin/bundler-audit check --update
 ```
 
 Local sin Docker:
@@ -242,6 +438,7 @@ bin/rails db:prepare
 bin/rails about
 bundle exec rspec
 bin/rails test
+bin/rubocop
 bin/brakeman --quiet
 bin/bundler-audit check --update
 ```
@@ -259,10 +456,9 @@ Resultado esperado:
 - `up:200`.
 - RSpec sin fallos.
 - Rails tests sin fallos.
+- RuboCop sin offenses.
 - Brakeman sin warnings de seguridad.
 - Bundler Audit sin vulnerabilidades.
-
-Nota: RuboCop queda pendiente de investigacion porque en este entorno se queda colgado al ejecutarse. Por ahora no se considera una validacion obligatoria.
 
 ## Base De Datos
 
@@ -337,7 +533,7 @@ Archivos que no deben subirse:
 
 ## Siguiente Paso
 
-Con la fundacion multi-tenant y el panel de plataforma creados, el siguiente paso es construir la pantalla de roles y permisos por iglesia.
+Con la fundacion multi-tenant, el panel de plataforma y la administracion de roles/permisos creada, el siguiente paso es construir la base de miembros oficiales.
 
 El panel de plataforma ya permite al super administrador:
 
@@ -346,3 +542,11 @@ El panel de plataforma ya permite al super administrador:
 - Editar datos basicos.
 - Activar o desactivar iglesias.
 - Asignar el administrador owner inicial de cada iglesia.
+
+La administracion interna de iglesia ya permite al owner o usuario autorizado:
+
+- Crear roles personalizados por iglesia.
+- Editar datos del rol.
+- Activar o desactivar roles.
+- Asignar permisos por modulo y accion.
+- Asignar roles a usuarios de la iglesia.

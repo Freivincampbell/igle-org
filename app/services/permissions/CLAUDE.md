@@ -6,6 +6,8 @@ Guía específica para trabajar en la capa de permisos dinámicos. Para contexto
 
 - `PermissionChecker` — única autoridad para responder "¿este usuario puede hacer esta acción sobre este recurso en esta iglesia?".
 - `PermissionMatrixBuilder` — arma la matriz que ve el admin al editar un rol.
+- `RoleMatrixAssignment` — actualiza la matriz `role_permissions` usando `public_id` de permisos.
+- `MembershipRoleAssignment` — asigna roles a una membresía de iglesia usando `public_id` de roles.
 - (futuro) `PermissionEffectiveCache` — caché por sesión de permisos efectivos del usuario.
 
 Cualquier policy, controlador o servicio que necesite autorización **debe** pasar por este módulo. No replicar lógica de permisos fuera de aquí.

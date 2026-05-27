@@ -5,6 +5,15 @@ es:
         record_invalid: "La validacion fallo: %{errors}"
   authorization:
     not_authorized: "No tienes permisos para realizar esta accion."
+  church_admin:
+    memberships:
+      roles_updated: "Roles de usuario actualizados correctamente."
+    roles:
+      activated: "Rol activado correctamente."
+      created: "Rol creado correctamente."
+      deactivated: "Rol desactivado correctamente."
+      permissions_updated: "Permisos del rol actualizados correctamente."
+      updated: "Rol actualizado correctamente."
   devise:
     failure:
       already_authenticated: "Ya iniciaste sesion."
@@ -51,3 +60,25 @@ es:
     owner_assignments:
       confirmation_label: "Confirmacion"
       initial_access_label: "Clave inicial"
+  permissions:
+    actions:
+      activate: "Activar"
+      create: "Crear"
+      deactivate: "Desactivar"
+      export: "Exportar"
+      manage: "Administrar"
+      read: "Leer"
+      update: "Editar"
+    modules:
+      board: "Junta administrativa"
+      church_memberships: "Usuarios de iglesia"
+      churches: "Iglesia"
+      events: "Eventos"
+      members: "Miembros"
+      ministries: "Ministerios"
+      pastoral_notes: "Notas pastorales"
+      permissions: "Permisos"
+      reports: "Reportes"
+      roles: "Roles"
+      settings: "Configuracion"
+      users: "Usuarios"

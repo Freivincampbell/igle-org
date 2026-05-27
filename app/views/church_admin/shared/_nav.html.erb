@@ -1,0 +1,5 @@
+<nav class="mb-8 flex flex-wrap items-center gap-3 border-b border-slate-200 pb-4 text-sm">
+  <%= link_to "Resumen", church_path(church), class: "font-medium text-slate-600 hover:text-slate-950" %>
+  <%= link_to "Roles", church_admin_roles_path(church), class: "font-medium text-slate-600 hover:text-slate-950" %>
+  <%= link_to "Usuarios", church_admin_memberships_path(church), class: "font-medium text-slate-600 hover:text-slate-950" %>
+</nav>

@@ -11,6 +11,7 @@ class Role < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :church_id, case_sensitive: false }
   validates :status, presence: true
+  validate :pastoral_permissions_require_pastoral_role
 
   normalizes :name, with: ->(name) { name.to_s.strip }
 
@@ -19,5 +20,14 @@ class Role < ApplicationRecord
     normalized_action = action_key.to_s
 
     permissions.where(module_key: normalized_module, action_key: [ normalized_action, "manage" ]).exists?
+  end
+
+  private
+
+  def pastoral_permissions_require_pastoral_role
+    return if pastoral?
+    return unless permissions.where(module_key: "pastoral_notes").exists?
+
+    errors.add(:pastoral, "debe estar activo para permisos pastorales")
   end
 end

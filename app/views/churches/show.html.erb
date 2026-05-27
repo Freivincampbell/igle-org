@@ -8,7 +8,15 @@
         <p class="mt-2 text-sm text-slate-500"><%= @church.public_id %></p>
       </div>
 
-      <span class="inline-flex w-fit rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700"><%= @church.status %></span>
+      <div class="flex flex-wrap gap-3">
+        <% if policy(Role).index? %>
+          <%= link_to "Roles", church_admin_roles_path(@church), class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+        <% end %>
+        <% if policy(ChurchMembership).index? %>
+          <%= link_to "Usuarios", church_admin_memberships_path(@church), class: "inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+        <% end %>
+        <span class="inline-flex w-fit rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700"><%= @church.status %></span>
+      </div>
     </div>
 
     <dl class="mt-8 grid gap-4 sm:grid-cols-2">

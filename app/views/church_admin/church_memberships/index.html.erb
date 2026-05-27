@@ -1,0 +1,54 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <%= render "church_admin/shared/nav", church: @church %>
+
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Usuarios de iglesia</h1>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3">Usuario</th>
+          <th class="px-4 py-3">Roles</th>
+          <th class="px-4 py-3">Estado</th>
+          <th class="px-4 py-3 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @church_memberships.any? %>
+          <% @church_memberships.each do |membership| %>
+            <tr>
+              <td class="px-4 py-4">
+                <div class="font-medium text-slate-950"><%= membership.user.email %></div>
+                <div class="mt-1 text-xs text-slate-500"><%= membership.owner? ? "Owner" : "Miembro" %></div>
+              </td>
+              <td class="px-4 py-4 text-slate-600">
+                <% if membership.roles.any? %>
+                  <div class="flex flex-wrap gap-2">
+                    <% membership.roles.order(:name).each do |role| %>
+                      <span class="rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700"><%= role.name %></span>
+                    <% end %>
+                  </div>
+                <% else %>
+                  Sin roles
+                <% end %>
+              </td>
+              <td class="px-4 py-4 text-slate-600"><%= membership.status %></td>
+              <td class="px-4 py-4 text-right">
+                <% if policy(membership).edit? %>
+                  <%= link_to "Editar roles", edit_church_admin_membership_path(@church, membership), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="4" class="px-4 py-8 text-center text-slate-500">No hay usuarios registrados.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>
