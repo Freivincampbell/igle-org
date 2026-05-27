@@ -33,6 +33,8 @@ Crear una plataforma que ayude a una iglesia a organizar miembros, usuarios, min
 - Cada iglesia tendra un administrador inicial con acceso completo administrativo.
 - Un usuario global puede pertenecer a una o varias iglesias.
 - Los datos principales se aislaran por `church_id`.
+- Las URLs de iglesias usan `public_id` tipo UUID, no el `id` interno de base de datos.
+- Ejemplo: `/churches/9d5f2f44-1b0c-4b8f-9d6b-8f1f0d7e3c21`.
 
 ## Funcionalidades Del MVP
 
@@ -265,6 +267,16 @@ Nota: RuboCop queda pendiente de investigacion porque en este entorno se queda c
 
 La base de datos principal es PostgreSQL.
 
+La fundacion multi-tenant usa:
+
+- `users`: usuarios globales con Devise y rol de plataforma (`user` o `super_admin`).
+- `churches`: iglesias/tenants con `public_id` UUID para rutas publicas.
+- `church_memberships`: relacion entre usuario global e iglesia, con `owner` y `status`.
+- `roles`: roles internos configurables por iglesia, con marca `pastoral` cuando aplica.
+- `permissions`: catalogo global de modulo + accion.
+- `role_permissions`: permisos asignados a cada rol.
+- `membership_roles`: roles asignados a usuarios dentro de una iglesia.
+
 En desarrollo con Docker:
 
 - Host interno: `db`.
@@ -322,4 +334,4 @@ Archivos que no deben subirse:
 
 ## Siguiente Paso
 
-Con el setup base funcionando, el siguiente paso es crear el modelo multi-iglesia y la estructura inicial de usuarios, iglesias, membresias, roles y permisos.
+Con la fundacion multi-tenant creada, el siguiente paso es construir el flujo de plataforma para que el super administrador pueda crear iglesias, asignar el administrador inicial y preparar la pantalla de roles/permisos por iglesia.

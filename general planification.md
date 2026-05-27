@@ -262,12 +262,15 @@ Tenant principal:
 Regla central:
 
 - Toda información operativa debe pertenecer a una iglesia mediante `church_id`, salvo entidades globales de plataforma.
+- Las rutas públicas o internas que identifiquen una iglesia no deben exponer el `id` numérico.
+- Cada iglesia debe tener un `public_id` tipo UUID y las URLs deben usar ese valor.
+- Ejemplo de ruta segura: `/churches/9d5f2f44-1b0c-4b8f-9d6b-8f1f0d7e3c21`.
 
 Entidades globales:
 
 - `users`
 - `platform_roles`, si se decide separar roles de plataforma.
-- `permission_modules`
+- `permissions`
 - `plans`
 - `subscriptions`
 - Configuración global del sistema.
@@ -299,7 +302,7 @@ Reglas de aislamiento:
 Consideración importante:
 
 - Como una misma persona puede pertenecer a más de una iglesia, `users` debe ser global.
-- La pertenencia a iglesias debe manejarse con una tabla intermedia como `church_users`.
+- La pertenencia a iglesias debe manejarse con una tabla intermedia como `church_memberships`.
 - El perfil de miembro debe pertenecer a una iglesia y puede estar conectado a un usuario global.
 
 ## 10. Estructura General Del Proyecto Rails
@@ -330,14 +333,14 @@ Estructura sugerida por dominio:
 app/models/
   user.rb
   church.rb
-  church_user.rb
+  church_membership.rb
   church_setting.rb
   member.rb
   family.rb
   family_member.rb
   role.rb
-  role_assignment.rb
-  permission_module.rb
+  membership_role.rb
+  permission.rb
   role_permission.rb
   ministry.rb
   ministry_membership.rb
@@ -780,8 +783,8 @@ Valores sugeridos para `platform_role`:
 
 Relaciones:
 
-- `has_many :church_users`
-- `has_many :churches, through: :church_users`
+- `has_many :church_memberships`
+- `has_many :churches, through: :church_memberships`
 - `has_many :members`
 
 Notas:
@@ -831,8 +834,8 @@ Valores sugeridos para `status`:
 
 Relaciones:
 
-- `has_many :church_users`
-- `has_many :users, through: :church_users`
+- `has_many :church_memberships`
+- `has_many :users, through: :church_memberships`
 - `has_many :members`
 - `has_many :ministries`
 - `has_many :boards`
@@ -848,7 +851,7 @@ Notas:
 - `service_directory_enabled` controla si existe directorio de servicios.
 - `member_work_contact_enabled` controla si miembros pueden contactar a otros por temas laborales.
 
-### church_users
+### church_memberships
 
 Responsabilidad:
 
@@ -886,6 +889,7 @@ Notas:
 - Esta tabla permite que un mismo usuario pertenezca a más de una iglesia.
 - Los roles internos deben asignarse sobre esta relación o sobre el miembro relacionado.
 - `owner` permite dar acceso bootstrap al administrador principal sin depender de roles predefinidos.
+- Este es el nombre implementado en la base actual del proyecto.
 
 ### roles
 
@@ -933,25 +937,24 @@ Importante:
 - El módulo de notas pastorales solo puede asignarse a roles marcados como pastorales.
 - El primer administrador/propietario de iglesia necesita un acceso bootstrap para poder crear roles y permisos iniciales.
 
-### permission_modules
+### permissions
 
 Responsabilidad:
 
-- Definir los módulos, vistas o áreas funcionales disponibles para permisos.
+- Definir el catálogo global de módulo/vista + acción disponible para permisos.
 
 Campos sugeridos:
 
 - `id`
+- `module_key`
+- `action_key`
 - `name`
-- `key`
 - `description`
-- `category`
 - `position`
-- `active`
 - `created_at`
 - `updated_at`
 
-Ejemplos de `key`:
+Ejemplos de `module_key`:
 
 - `dashboard`
 - `members`
@@ -967,47 +970,44 @@ Ejemplos de `key`:
 - `profile_change_requests`
 - `pastoral_notes`
 
+Ejemplos de `action_key`:
+
+- `read`
+- `create`
+- `update`
+- `activate`
+- `deactivate`
+- `export`
+- `manage`
+
 Notas:
 
 - Esta tabla puede ser global de plataforma.
-- Define qué filas o grupos aparecen en la pantalla de permisos.
-- Una iglesia no crea estos módulos; la plataforma los ofrece según funcionalidades disponibles.
+- Define qué filas y checkboxes aparecen en la pantalla de permisos.
+- Una iglesia no crea estos permisos base; la plataforma los ofrece según funcionalidades disponibles.
 - Si en el futuro un plan no incluye un módulo, se puede ocultar o bloquear para esa iglesia.
 
 ### role_permissions
 
 Responsabilidad:
 
-- Guardar los permisos de un rol sobre un módulo o vista.
+- Guardar qué permisos concretos tiene un rol.
 
 Campos sugeridos:
 
 - `id`
-- `church_id`
 - `role_id`
-- `permission_module_id`
-- `access_level`
-- `can_read`
-- `can_list`
-- `can_show`
-- `can_create`
-- `can_update`
-- `can_activate`
-- `can_deactivate`
-- `can_export`
-- `can_manage`
-- `scope`
+- `permission_id`
 - `created_at`
 - `updated_at`
 
-Valores sugeridos para `access_level`:
+Modelo implementado:
 
-- `no_access`
-- `read_only`
-- `read_write`
-- `full_access`
+- Cada fila representa un permiso asignado.
+- `permission_id` apunta a una combinación `module_key` + `action_key`.
+- Los atajos de interfaz como `read_only`, `read_write` y `full_access` se calculan marcando varias filas de permisos.
 
-Valores sugeridos para `scope`:
+Campos futuros si se necesita alcance granular:
 
 - `own`
 - `assigned_ministry`
@@ -1015,8 +1015,6 @@ Valores sugeridos para `scope`:
 
 Notas:
 
-- `access_level` ayuda a la interfaz.
-- Los campos `can_*` guardan permisos granulares.
 - La interfaz debe mostrar un checkbox por cada acción disponible del módulo.
 - `read_only` activa lectura/listado/ver detalle.
 - `read_write` activa lectura/listado/ver detalle, crear y editar.
@@ -1028,7 +1026,7 @@ Notas:
 - El alcance `own` es importante para miembros que solo deben administrar su perfil.
 - Un usuario con varios roles debe recibir la unión de permisos más amplia, salvo que se decida implementar denegaciones explícitas.
 
-### role_assignments
+### membership_roles
 
 Responsabilidad:
 
@@ -1037,8 +1035,7 @@ Responsabilidad:
 Campos sugeridos:
 
 - `id`
-- `church_id`
-- `church_user_id`
+- `church_membership_id`
 - `role_id`
 - `assignable_type`
 - `assignable_id`
@@ -1052,8 +1049,7 @@ Uso:
 
 Índices:
 
-- `church_id`
-- `church_user_id`
+- `church_membership_id`
 - `role_id`
 - `assignable_type` + `assignable_id`
 
@@ -1249,7 +1245,7 @@ Valores sugeridos para `role`:
 
 Notas:
 
-- El líder de ministerio también debe tener un rol/permisos en `role_assignments`.
+- El líder de ministerio también debe tener un rol/permisos en `membership_roles`.
 
 ### boards
 
@@ -1708,12 +1704,12 @@ Valores sugeridos para `status`:
 ## 13. Relaciones Principales
 
 ```text
-User has_many ChurchUsers
-User has_many Churches through ChurchUsers
+User has_many ChurchMemberships
+User has_many Churches through ChurchMemberships
 User has_many Members
 
-Church has_many ChurchUsers
-Church has_many Users through ChurchUsers
+Church has_many ChurchMemberships
+Church has_many Users through ChurchMemberships
 Church has_many Members
 Church has_many Roles
 Church has_many RolePermissions
@@ -1723,25 +1719,22 @@ Church has_many Events
 Church has_many Families
 Church has_many Subscriptions
 
-ChurchUser belongs_to Church
-ChurchUser belongs_to User
-ChurchUser has_many RoleAssignments
+ChurchMembership belongs_to Church
+ChurchMembership belongs_to User
+ChurchMembership has_many MembershipRoles
 
 Role belongs_to Church
-Role has_many RoleAssignments
+Role has_many MembershipRoles
 Role has_many RolePermissions
-Role has_many PermissionModules through RolePermissions
+Role has_many Permissions through RolePermissions
 
-PermissionModule has_many RolePermissions
+Permission has_many RolePermissions
 
-RoleAssignment belongs_to Church
-RoleAssignment belongs_to ChurchUser
-RoleAssignment belongs_to Role
-RoleAssignment belongs_to Assignable optional polymorphic
+MembershipRole belongs_to ChurchMembership
+MembershipRole belongs_to Role
 
-RolePermission belongs_to Church
 RolePermission belongs_to Role
-RolePermission belongs_to PermissionModule
+RolePermission belongs_to Permission
 
 Member belongs_to Church
 Member belongs_to User optional
@@ -1804,7 +1797,7 @@ Recomendación:
 - El super administrador crea la iglesia.
 - El super administrador asigna un propietario o administrador inicial.
 - Ese propietario tiene acceso completo administrativo inicial a la iglesia para crear roles, configurar permisos y asignarlos.
-- Este acceso inicial puede manejarse con un campo como `church_users.owner`.
+- Este acceso inicial puede manejarse con un campo como `church_memberships.owner`.
 - Después de crear roles, la iglesia puede operar principalmente con roles y permisos configurables.
 
 Nota:
@@ -2416,7 +2409,7 @@ No prioritario por ahora:
 ### Etapa 3 - Multi-Tenancy
 
 - Crear `Church`.
-- Crear `ChurchUser`.
+- Crear `ChurchMembership`.
 - Resolver iglesia actual.
 - Aislar consultas por iglesia.
 - Crear políticas base.
@@ -2703,7 +2696,7 @@ Elementos necesarios:
 ### Multi-Iglesia
 
 - [ ] Crear `churches`.
-- [ ] Crear `church_users`.
+- [ ] Crear `church_memberships`.
 - [ ] Resolver iglesia actual.
 - [ ] Aislar consultas por `church_id`.
 - [ ] Probar que iglesias no comparten datos.
@@ -2809,7 +2802,7 @@ Elementos necesarios:
 2. Configurar Devise.
 3. Crear super administrador.
 4. Crear `Church`.
-5. Crear `ChurchUser`.
+5. Crear `ChurchMembership`.
 6. Implementar aislamiento multi-tenant.
 7. Crear panel de plataforma.
 8. Crear configuración de iglesia.

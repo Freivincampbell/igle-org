@@ -27,7 +27,7 @@ Nombre comercial provisional: `igle-org`. Idioma principal: español.
 2. **Sin borrado físico.** Los registros se desactivan (`active`, `status`) en lugar de hacer `destroy`. La única excepción son tablas de unión que se rehacen.
 3. **Permisos dinámicos, no por nombre de rol.** El nombre del rol nunca otorga permisos. Toda autorización pasa por el servicio `Permissions::PermissionChecker`, validando módulo + acción + alcance + iglesia actual.
 4. **Notas pastorales.** Solo accesibles a usuarios con un rol marcado `pastoral: true` y con permiso explícito sobre el módulo `pastoral_notes`. Un administrador sin rol pastoral no puede verlas, aunque sea owner.
-5. **Owner bootstrap.** El primer administrador de una iglesia tiene acceso administrativo inicial via `church_users.owner = true`. Este acceso no incluye notas pastorales.
+5. **Owner bootstrap.** El primer administrador de una iglesia tiene acceso administrativo inicial via `church_memberships.owner = true`. Este acceso no incluye notas pastorales.
 6. **Auditoría.** Cambios importantes se registran con `paper_trail` (creación de iglesias, asignación de roles, cambios en matriz de permisos, cambios en miembros, aprobación/rechazo de cambios de perfil, cambios en junta, notas pastorales, exportaciones sensibles).
 7. **Idioma.** UI, validaciones y mensajes en español. Locales en `config/locales/es.yml`.
 8. **Frontend.** Tailwind CSS y Hotwire. No introducir SPAs ni librerías JS pesadas sin discutirlo.
@@ -35,11 +35,12 @@ Nombre comercial provisional: `igle-org`. Idioma principal: español.
 ## Arquitectura de tenancy
 
 - `users` es **global**. Una persona puede pertenecer a varias iglesias.
-- `church_users` es la tabla pivote (incluye `status`, `owner`, `invited_at`).
+- `church_memberships` es la tabla pivote (incluye `status`, `owner`, `joined_at`; invitaciones quedan para etapa posterior).
 - `members` pertenece a una iglesia y opcionalmente está conectado a un `user` global.
-- `roles`, `role_permissions`, `role_assignments`, `ministries`, `boards`, `events`, etc. son **por iglesia** (`church_id`).
-- `permission_modules` y `plans` son globales de plataforma.
+- `roles`, `role_permissions`, `membership_roles`, `ministries`, `boards`, `events`, etc. son **por iglesia** (`church_id`).
+- `permissions` y `plans` son globales de plataforma.
 - Los super administradores se identifican por `users.platform_role = "super_admin"`.
+- Las rutas de iglesia usan `churches.public_id` tipo UUID, no el `id` interno.
 
 Antes de cada query a una tabla operativa, validar que el scope incluye `church_id` de la iglesia actual. Resolver iglesia actual mediante `Tenants::CurrentChurchResolver` (a implementar en Etapa 3).
 
@@ -60,10 +61,11 @@ Políticas Pundit en `app/policies/` siempre delegan en `Permissions::Permission
 
 ## Permisos
 
-Cada iglesia define sus propios roles. La matriz de permisos relaciona `role × permission_module × acciones × alcance`.
+Cada iglesia define sus propios roles. La matriz de permisos relaciona `role × permission/module_key × acciones × alcance`.
 
-- Acciones: `read`, `list`, `show`, `create`, `update`, `activate`, `deactivate`, `export`, `manage`.
-- Atajos: `no_access`, `read_only` (read/list/show), `read_write` (read_only + create/update), `full_access` (read_write + activate/deactivate).
+- Acciones base: `read`, `create`, `update`, `activate`, `deactivate`, `export`, `manage`.
+- `read` cubre listado y detalle hasta que exista una necesidad real de separar `list` y `show`.
+- Atajos: `no_access`, `read_only` (read), `read_write` (read_only + create/update), `full_access` (read_write + activate/deactivate).
 - Alcances: `own`, `assigned_ministry`, `church`.
 - `pastoral_notes` solo puede activarse en roles con `pastoral: true`.
 - Un usuario con varios roles recibe la **unión** de permisos.
@@ -71,7 +73,7 @@ Cada iglesia define sus propios roles. La matriz de permisos relaciona `role × 
 
 ## Modelos clave (resumen)
 
-`User`, `Church`, `ChurchUser`, `Role`, `PermissionModule`, `RolePermission`, `RoleAssignment`, `Member`, `Family`, `FamilyMember`, `Address`, `Ministry`, `MinistryMembership`, `Board`, `BoardMember`, `ChurchServiceTime`, `Event`, `EventRsvp`, `EventAttendance`, `Occupation`, `MemberOccupation`, `Skill`, `MemberSkill`, `ProfileChangeRequest`, `PastoralNote`, `ContactMethod`, `Plan`, `Subscription`.
+`User`, `Church`, `ChurchMembership`, `Role`, `Permission`, `RolePermission`, `MembershipRole`, `Member`, `Family`, `FamilyMember`, `Address`, `Ministry`, `MinistryMembership`, `Board`, `BoardMember`, `ChurchServiceTime`, `Event`, `EventRsvp`, `EventAttendance`, `Occupation`, `MemberOccupation`, `Skill`, `MemberSkill`, `ProfileChangeRequest`, `PastoralNote`, `ContactMethod`, `Plan`, `Subscription`.
 
 Detalle completo de campos, enums y relaciones en `general planification.md` sección 12.
 

@@ -1,4 +1,14 @@
 es:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: "La validacion fallo: %{errors}"
   authorization:
     not_authorized: "No tienes permisos para realizar esta accion."
+  errors:
+    messages:
+      blank: "no puede estar en blanco"
+      inclusion: "no esta incluido en la lista"
+      invalid: "no es valido"
+      taken: "ya esta en uso"
   hello: "Hola mundo"
