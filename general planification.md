@@ -160,7 +160,7 @@ Stack sugerido:
 
 Versiones y entorno definidos para iniciar desarrollo:
 
-- Ruby: versión estable compatible con Rails elegido.
+- Ruby: 3.4.9.
 - Rails: Rails 8.x, usando la última versión estable disponible al momento de crear la app.
 - PostgreSQL: versión 15 o superior.
 - Node/Yarn/Bun: según el setup elegido.

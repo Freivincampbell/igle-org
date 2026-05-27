@@ -1,0 +1,4 @@
+es:
+  authorization:
+    not_authorized: "No tienes permisos para realizar esta accion."
+  hello: "Hola mundo"
