@@ -25,21 +25,23 @@ Nombre comercial provisional: `igle-org`. Idioma principal: español.
 
 1. **Aislamiento multi-tenant.** Toda tabla operativa debe tener `church_id`. Toda consulta debe filtrar por `church_id`. Nunca se permite leer ni escribir datos cruzados entre iglesias.
 2. **Sin borrado físico.** Los registros se desactivan (`active`, `status`) en lugar de hacer `destroy`. La única excepción son tablas de unión que se rehacen.
-3. **Permisos dinámicos, no por nombre de rol.** El nombre del rol nunca otorga permisos. Toda autorización pasa por el servicio `Permissions::PermissionChecker`, validando módulo + acción + alcance + iglesia actual.
-4. **Notas pastorales.** Solo accesibles a usuarios con un rol marcado `pastoral: true` y con permiso explícito sobre el módulo `pastoral_notes`. Un administrador sin rol pastoral no puede verlas, aunque sea owner.
-5. **Owner bootstrap.** El primer administrador de una iglesia tiene acceso administrativo inicial via `church_users.owner = true`. Este acceso no incluye notas pastorales.
-6. **Auditoría.** Cambios importantes se registran con `paper_trail` (creación de iglesias, asignación de roles, cambios en matriz de permisos, cambios en miembros, aprobación/rechazo de cambios de perfil, cambios en junta, notas pastorales, exportaciones sensibles).
-7. **Idioma.** UI, validaciones y mensajes en español. Locales en `config/locales/es.yml`.
-8. **Frontend.** Tailwind CSS y Hotwire. No introducir SPAs ni librerías JS pesadas sin discutirlo.
+3. **Identificadores públicos.** Toda tabla de dominio debe tener `public_id: uuid` único. URLs, APIs, formularios, logs visibles y referencias externas usan `public_id`, nunca el `id` interno.
+4. **Permisos dinámicos, no por nombre de rol.** El nombre del rol nunca otorga permisos. Toda autorización pasa por el servicio `Permissions::PermissionChecker`, validando módulo + acción + alcance + iglesia actual.
+5. **Notas pastorales.** Solo accesibles a usuarios con un rol marcado `pastoral: true` y con permiso explícito sobre el módulo `pastoral_notes`. Un administrador sin rol pastoral no puede verlas, aunque sea owner.
+6. **Owner bootstrap.** El primer administrador de una iglesia tiene acceso administrativo inicial via `church_memberships.owner = true`. Este acceso no incluye notas pastorales.
+7. **Auditoría.** Cambios importantes se registran con `paper_trail` (creación de iglesias, asignación de roles, cambios en matriz de permisos, cambios en miembros, aprobación/rechazo de cambios de perfil, cambios en junta, notas pastorales, exportaciones sensibles).
+8. **Idioma.** UI, validaciones y mensajes en español. Locales en `config/locales/es.yml`.
+9. **Frontend.** Tailwind CSS y Hotwire. No introducir SPAs ni librerías JS pesadas sin discutirlo.
 
 ## Arquitectura de tenancy
 
 - `users` es **global**. Una persona puede pertenecer a varias iglesias.
-- `church_users` es la tabla pivote (incluye `status`, `owner`, `invited_at`).
+- `church_memberships` es la tabla pivote (incluye `status`, `owner`, `joined_at`; invitaciones quedan para etapa posterior).
 - `members` pertenece a una iglesia y opcionalmente está conectado a un `user` global.
-- `roles`, `role_permissions`, `role_assignments`, `ministries`, `boards`, `events`, etc. son **por iglesia** (`church_id`).
-- `permission_modules` y `plans` son globales de plataforma.
+- `roles`, `role_permissions`, `membership_roles`, `ministries`, `boards`, `events`, etc. son **por iglesia** (`church_id`).
+- `permissions` y `plans` son globales de plataforma.
 - Los super administradores se identifican por `users.platform_role = "super_admin"`.
+- Las rutas de cualquier recurso de dominio usan `public_id` tipo UUID, no el `id` interno.
 
 Antes de cada query a una tabla operativa, validar que el scope incluye `church_id` de la iglesia actual. Resolver iglesia actual mediante `Tenants::CurrentChurchResolver` (a implementar en Etapa 3).
 
@@ -60,10 +62,11 @@ Políticas Pundit en `app/policies/` siempre delegan en `Permissions::Permission
 
 ## Permisos
 
-Cada iglesia define sus propios roles. La matriz de permisos relaciona `role × permission_module × acciones × alcance`.
+Cada iglesia define sus propios roles. La matriz de permisos relaciona `role × permission/module_key × acciones × alcance`.
 
-- Acciones: `read`, `list`, `show`, `create`, `update`, `activate`, `deactivate`, `export`, `manage`.
-- Atajos: `no_access`, `read_only` (read/list/show), `read_write` (read_only + create/update), `full_access` (read_write + activate/deactivate).
+- Acciones base: `read`, `create`, `update`, `activate`, `deactivate`, `export`, `manage`.
+- `read` cubre listado y detalle hasta que exista una necesidad real de separar `list` y `show`.
+- Atajos: `no_access`, `read_only` (read), `read_write` (read_only + create/update), `full_access` (read_write + activate/deactivate).
 - Alcances: `own`, `assigned_ministry`, `church`.
 - `pastoral_notes` solo puede activarse en roles con `pastoral: true`.
 - Un usuario con varios roles recibe la **unión** de permisos.
@@ -71,13 +74,13 @@ Cada iglesia define sus propios roles. La matriz de permisos relaciona `role × 
 
 ## Modelos clave (resumen)
 
-`User`, `Church`, `ChurchUser`, `Role`, `PermissionModule`, `RolePermission`, `RoleAssignment`, `Member`, `Family`, `FamilyMember`, `Address`, `Ministry`, `MinistryMembership`, `Board`, `BoardMember`, `ChurchServiceTime`, `Event`, `EventRsvp`, `EventAttendance`, `Occupation`, `MemberOccupation`, `Skill`, `MemberSkill`, `ProfileChangeRequest`, `PastoralNote`, `ContactMethod`, `Plan`, `Subscription`.
+`User`, `Church`, `ChurchMembership`, `Role`, `Permission`, `RolePermission`, `MembershipRole`, `Member`, `Family`, `FamilyMember`, `Address`, `Ministry`, `MinistryMembership`, `Board`, `BoardMember`, `ChurchServiceTime`, `Event`, `EventRsvp`, `EventAttendance`, `Occupation`, `MemberOccupation`, `Skill`, `MemberSkill`, `ProfileChangeRequest`, `PastoralNote`, `ContactMethod`, `Plan`, `Subscription`.
 
 Detalle completo de campos, enums y relaciones en `general planification.md` sección 12.
 
 ## Convenciones
 
-- Modelos: nombres en singular, snake_case en archivos. Toda tabla operativa con `church_id` indexado.
+- Modelos: nombres en singular, snake_case en archivos. Toda tabla operativa con `church_id` indexado y toda tabla de dominio con `public_id` UUID único.
 - Validaciones en español usando i18n.
 - Formularios con `simple_form`.
 - Paginación con `pagy`.
@@ -120,7 +123,8 @@ bundle exec bundle-audit check --update
 - Si la tarea toca **multi-tenant**: validar que toda query filtra por `church_id`.
 - Si la tarea toca **permisos**: pasar por `Permissions::PermissionChecker`, nunca hardcodear nombre de rol.
 - Si la tarea toca **notas pastorales**: revisar la regla de rol pastoral + permiso explícito.
-- Si la tarea introduce un **nuevo modelo operativo**: asegurar `church_id`, scope `active`, índice compuesto, factory y specs de aislamiento.
+- Si la tarea introduce un **nuevo modelo operativo**: asegurar `public_id`, `church_id`, scope `active`, índice compuesto, factory y specs de aislamiento.
+- Si la tarea introduce un **nuevo modelo global de dominio**: asegurar `public_id`, factory y spec de identificador público.
 - Si la tarea introduce una **nueva acción auditable**: integrarla con `paper_trail`.
 - Si la tarea cambia la **matriz de permisos** o catálogo de módulos: actualizar seeds y documentación.
 

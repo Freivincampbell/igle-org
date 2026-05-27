@@ -1,0 +1,19 @@
+class RolePermission < ApplicationRecord
+  include PublicIdentifiable
+
+  belongs_to :role
+  belongs_to :permission
+
+  validates :permission_id, uniqueness: { scope: :role_id }
+  validate :pastoral_permission_requires_pastoral_role
+
+  private
+
+  def pastoral_permission_requires_pastoral_role
+    return if role.blank? || permission.blank?
+    return unless permission.module_key == "pastoral_notes"
+    return if role.pastoral?
+
+    errors.add(:permission, "requires a pastoral role")
+  end
+end

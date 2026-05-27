@@ -50,7 +50,16 @@ it "no muestra miembros de otra iglesia" do
 end
 ```
 
-### 2. Permisos por matriz, no por rol
+### 2. Identificadores públicos
+
+Todo modelo de dominio debe tener specs que confirmen:
+
+- Tiene `public_id` UUID.
+- `to_param` devuelve `public_id`.
+- `find_by_public_id!` rechaza valores que no son UUID.
+- Ningún request spec nuevo debe construir URLs con `record.id`.
+
+### 3. Permisos por matriz, no por rol
 
 Las specs de policies deben cubrir como mínimo:
 
@@ -61,7 +70,7 @@ Las specs de policies deben cubrir como mínimo:
 - Alcances `own`, `assigned_ministry`, `church`: cada uno con un test que confirme qué records sí ve y cuáles no.
 - Si el módulo es `pastoral_notes`: test específico de que un admin **sin** rol pastoral no accede aunque tenga permisos full.
 
-### 3. Soft-delete
+### 4. Soft-delete
 
 Cuando un modelo soporta `active`/`status`:
 
@@ -69,7 +78,7 @@ Cuando un modelo soporta `active`/`status`:
 - Test de la acción `deactivate!` (cambia el flag, **no** llama `destroy`).
 - Verificar que la UI lista solo activos por defecto.
 
-### 4. Auditoría
+### 5. Auditoría
 
 Para acciones marcadas como auditables en `general planification.md` sección 21:
 
@@ -115,7 +124,7 @@ Helpers esperados (crear cuando aparezcan):
 
 - `AuthenticationHelpers#sign_in_as(user:, church:, role_permissions: [])` — loguea y prepara contexto de iglesia + permisos.
 - `MultitenantHelpers#with_church(church)` — wrap para ejecutar bloque dentro del contexto de una iglesia.
-- `PermissionHelpers#grant(user:, church:, module:, actions:, scope: :church)` — crea Role + RolePermission + RoleAssignment listos para el test.
+- `PermissionHelpers#grant(user:, church:, module:, actions:, scope: :church)` — crea Role + RolePermission + MembershipRole listos para el test.
 
 Mantener estos helpers **finos**: si crece la lógica, mover a servicios reales y testear los servicios directamente.
 
@@ -136,7 +145,7 @@ bundle exec brakeman --no-pager         # sin warnings nuevos
 
 Si la PR toca:
 
-- **Modelo nuevo:** spec del modelo + factory + spec de aislamiento.
+- **Modelo nuevo:** spec del modelo + factory + spec de `public_id` + spec de aislamiento si es operativo.
 - **Policy nueva:** spec con los 4 niveles (sin permiso / read_only / read_write / full_access) + los 3 alcances cuando aplique.
 - **Servicio nuevo:** spec del happy path + edge cases.
 - **Endpoint nuevo:** request spec + (si es flujo de usuario) system spec.

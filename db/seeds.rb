@@ -1,9 +1,53 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+permission_labels = {
+  "churches" => "Iglesias",
+  "church_memberships" => "Usuarios de iglesia",
+  "users" => "Usuarios",
+  "roles" => "Roles",
+  "permissions" => "Permisos",
+  "members" => "Miembros",
+  "ministries" => "Ministerios",
+  "board" => "Junta administrativa",
+  "events" => "Eventos",
+  "reports" => "Reportes",
+  "settings" => "Configuracion",
+  "pastoral_notes" => "Notas pastorales"
+}
+
+action_labels = {
+  "read" => "Leer",
+  "create" => "Crear",
+  "update" => "Editar",
+  "activate" => "Activar",
+  "deactivate" => "Desactivar",
+  "export" => "Exportar",
+  "manage" => "Administrar"
+}
+
+Permission::MODULE_KEYS.each_with_index do |module_key, module_index|
+  Permission::ACTION_KEYS.each_with_index do |action_key, action_index|
+    Permission.find_or_create_by!(module_key:, action_key:) do |permission|
+      permission.name = "#{permission_labels.fetch(module_key)} - #{action_labels.fetch(action_key)}"
+      permission.position = (module_index * 100) + action_index
+    end
+  end
+end
+
+super_admin_email = ENV["SEED_SUPER_ADMIN_EMAIL"].presence
+super_admin_password = ENV["SEED_SUPER_ADMIN_PASSWORD"].presence
+
+if super_admin_email.present? && super_admin_password.present?
+  super_admin = User.find_or_initialize_by(email: super_admin_email)
+  super_admin.assign_attributes(
+    first_name: ENV.fetch("SEED_SUPER_ADMIN_FIRST_NAME", "Super"),
+    last_name: ENV.fetch("SEED_SUPER_ADMIN_LAST_NAME", "Admin"),
+    platform_role: "super_admin",
+    status: "active",
+    password: super_admin_password,
+    password_confirmation: super_admin_password
+  )
+  super_admin.save!
+
+  puts "Seeded super admin: #{super_admin.email}"
+else
+  puts "Skipped super admin seed. Set SEED_SUPER_ADMIN_EMAIL and SEED_SUPER_ADMIN_PASSWORD to create it."
+end
