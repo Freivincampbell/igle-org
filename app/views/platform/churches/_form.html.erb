@@ -1,0 +1,74 @@
+<%= form_with model: [ :platform, church ], class: "rounded-lg border border-slate-200 bg-white p-6" do |form| %>
+  <% if church.errors.any? %>
+    <div class="mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+      <p class="font-medium">Revisa los campos marcados.</p>
+      <ul class="mt-2 list-disc pl-5">
+        <% church.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div class="sm:col-span-2">
+      <%= form.label :name, "Nombre", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :name, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div>
+      <%= form.label :email, "Email", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.email_field :email, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div>
+      <%= form.label :phone, "Telefono", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.telephone_field :phone, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div>
+      <%= form.label :website, "Sitio web", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.url_field :website, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div>
+      <%= form.label :status, "Estado", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.select :status, Church.statuses.keys.map { |status| [ status, status ] }, {}, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div>
+      <%= form.label :locale, "Idioma", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :locale, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div>
+      <%= form.label :time_zone, "Zona horaria", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :time_zone, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div class="sm:col-span-2">
+      <%= form.label :address_line_1, "Direccion", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :address_line_1, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div>
+      <%= form.label :city, "Ciudad", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :city, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div>
+      <%= form.label :country, "Pais", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :country, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+
+    <div class="sm:col-span-2">
+      <%= form.label :service_times, "Horarios", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_area :service_times, rows: 4, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+    </div>
+  </div>
+
+  <div class="mt-6 flex justify-end gap-3">
+    <%= link_to "Cancelar", church.persisted? ? platform_church_path(church) : platform_churches_path, class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+    <%= form.submit "Guardar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+  </div>
+<% end %>

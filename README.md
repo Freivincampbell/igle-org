@@ -337,4 +337,12 @@ Archivos que no deben subirse:
 
 ## Siguiente Paso
 
-Con la fundacion multi-tenant creada, el siguiente paso es construir el flujo de plataforma para que el super administrador pueda crear iglesias, asignar el administrador inicial y preparar la pantalla de roles/permisos por iglesia.
+Con la fundacion multi-tenant y el panel de plataforma creados, el siguiente paso es construir la pantalla de roles y permisos por iglesia.
+
+El panel de plataforma ya permite al super administrador:
+
+- Listar iglesias.
+- Crear iglesias.
+- Editar datos basicos.
+- Activar o desactivar iglesias.
+- Asignar el administrador owner inicial de cada iglesia.
