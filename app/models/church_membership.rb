@@ -1,5 +1,6 @@
 class ChurchMembership < ApplicationRecord
   include ChurchScoped
+  include PublicIdentifiable
 
   belongs_to :user
   has_many :membership_roles, dependent: :destroy

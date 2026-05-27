@@ -262,9 +262,11 @@ Tenant principal:
 Regla central:
 
 - Toda información operativa debe pertenecer a una iglesia mediante `church_id`, salvo entidades globales de plataforma.
-- Las rutas públicas o internas que identifiquen una iglesia no deben exponer el `id` numérico.
-- Cada iglesia debe tener un `public_id` tipo UUID y las URLs deben usar ese valor.
+- Toda tabla de dominio debe tener un `public_id` tipo UUID único.
+- Las rutas públicas o internas que identifiquen cualquier recurso de dominio no deben exponer el `id` numérico.
+- URLs, APIs, formularios, logs visibles y referencias externas deben usar `public_id`.
 - Ejemplo de ruta segura: `/churches/9d5f2f44-1b0c-4b8f-9d6b-8f1f0d7e3c21`.
+- Las tablas internas de Rails, como `active_storage_*`, no se tratan como recursos del dominio y no deben exponerse directamente.
 
 Entidades globales:
 
@@ -753,6 +755,13 @@ Como los miembros pueden editar su perfil, pero los cambios deben aprobarse:
 
 Este modelo es la base recomendada para evitar cambios grandes durante desarrollo.
 
+Regla de identificadores:
+
+- Todo modelo de dominio debe incluir `public_id` UUID único además del `id` interno.
+- El `id` interno queda solo para relaciones de base de datos.
+- URLs, APIs, formularios, logs visibles y referencias externas deben usar `public_id`.
+- Si una lista de campos futura omite `public_id`, se asume igualmente obligatorio para mantener esta regla.
+
 ### users
 
 Responsabilidad:
@@ -762,6 +771,7 @@ Responsabilidad:
 Campos sugeridos:
 
 - `id`
+- `public_id`
 - `email`
 - `encrypted_password`
 - `reset_password_token`
@@ -801,6 +811,7 @@ Responsabilidad:
 Campos sugeridos:
 
 - `id`
+- `public_id`
 - `name`
 - `legal_name`
 - `slug`
@@ -860,6 +871,7 @@ Responsabilidad:
 Campos sugeridos:
 
 - `id`
+- `public_id`
 - `church_id`
 - `user_id`
 - `status`
@@ -900,6 +912,7 @@ Responsabilidad:
 Campos sugeridos:
 
 - `id`
+- `public_id`
 - `church_id`
 - `name`
 - `key`
@@ -946,6 +959,7 @@ Responsabilidad:
 Campos sugeridos:
 
 - `id`
+- `public_id`
 - `module_key`
 - `action_key`
 - `name`
@@ -996,6 +1010,7 @@ Responsabilidad:
 Campos sugeridos:
 
 - `id`
+- `public_id`
 - `role_id`
 - `permission_id`
 - `created_at`
@@ -1035,6 +1050,7 @@ Responsabilidad:
 Campos sugeridos:
 
 - `id`
+- `public_id`
 - `church_membership_id`
 - `role_id`
 - `assignable_type`
@@ -1067,6 +1083,7 @@ Responsabilidad:
 Campos sugeridos:
 
 - `id`
+- `public_id`
 - `church_id`
 - `user_id`
 - `first_name`
@@ -2697,6 +2714,7 @@ Elementos necesarios:
 
 - [ ] Crear `churches`.
 - [ ] Crear `church_memberships`.
+- [ ] Agregar `public_id` UUID a todo modelo de dominio.
 - [ ] Resolver iglesia actual.
 - [ ] Aislar consultas por `church_id`.
 - [ ] Probar que iglesias no comparten datos.

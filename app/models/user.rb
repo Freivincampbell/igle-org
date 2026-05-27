@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include PublicIdentifiable
+
   devise :database_authenticatable, :recoverable, :rememberable, :validatable
 
   has_many :church_memberships, dependent: :destroy

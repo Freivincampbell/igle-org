@@ -33,7 +33,8 @@ Crear una plataforma que ayude a una iglesia a organizar miembros, usuarios, min
 - Cada iglesia tendra un administrador inicial con acceso completo administrativo.
 - Un usuario global puede pertenecer a una o varias iglesias.
 - Los datos principales se aislaran por `church_id`.
-- Las URLs de iglesias usan `public_id` tipo UUID, no el `id` interno de base de datos.
+- Todas las tablas de dominio usan `public_id` tipo UUID para URLs, APIs y referencias externas.
+- El `id` interno de base de datos no debe exponerse fuera del backend.
 - Ejemplo: `/churches/9d5f2f44-1b0c-4b8f-9d6b-8f1f0d7e3c21`.
 
 ## Funcionalidades Del MVP
@@ -270,12 +271,14 @@ La base de datos principal es PostgreSQL.
 La fundacion multi-tenant usa:
 
 - `users`: usuarios globales con Devise y rol de plataforma (`user` o `super_admin`).
-- `churches`: iglesias/tenants con `public_id` UUID para rutas publicas.
+- `churches`: iglesias/tenants.
 - `church_memberships`: relacion entre usuario global e iglesia, con `owner` y `status`.
 - `roles`: roles internos configurables por iglesia, con marca `pastoral` cuando aplica.
 - `permissions`: catalogo global de modulo + accion.
 - `role_permissions`: permisos asignados a cada rol.
 - `membership_roles`: roles asignados a usuarios dentro de una iglesia.
+
+Todas estas tablas tienen `public_id` UUID único. Las tablas internas de Rails, como `active_storage_*`, no se tratan como recursos del dominio y no deben exponerse directamente.
 
 En desarrollo con Docker:
 

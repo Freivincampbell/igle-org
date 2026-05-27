@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
     public_id = params[:public_id].presence || params[:church_public_id].presence || session[:current_church_public_id].presence
     return if public_id.blank?
 
-    return unless public_id.to_s.match?(Church::UUID_FORMAT)
+    return unless public_id.to_s.match?(PublicIdentifiable::UUID_FORMAT)
 
     Church.find_by(public_id:)
   end

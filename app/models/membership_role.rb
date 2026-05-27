@@ -1,4 +1,6 @@
 class MembershipRole < ApplicationRecord
+  include PublicIdentifiable
+
   belongs_to :church_membership
   belongs_to :role
 

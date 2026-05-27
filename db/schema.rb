@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_092000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_093000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -48,12 +48,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_092000) do
     t.datetime "created_at", null: false
     t.datetime "joined_at"
     t.boolean "owner", default: false, null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.string "status", default: "active", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["church_id", "owner"], name: "index_church_memberships_on_church_id_and_owner"
     t.index ["church_id", "user_id"], name: "index_church_memberships_on_church_id_and_user_id", unique: true
     t.index ["church_id"], name: "index_church_memberships_on_church_id"
+    t.index ["public_id"], name: "index_church_memberships_on_public_id", unique: true
     t.index ["status"], name: "index_church_memberships_on_status"
     t.index ["user_id"], name: "index_church_memberships_on_user_id"
   end
@@ -84,10 +86,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_092000) do
   create_table "membership_roles", force: :cascade do |t|
     t.bigint "church_membership_id", null: false
     t.datetime "created_at", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "role_id", null: false
     t.datetime "updated_at", null: false
     t.index ["church_membership_id", "role_id"], name: "index_membership_roles_on_church_membership_id_and_role_id", unique: true
     t.index ["church_membership_id"], name: "index_membership_roles_on_church_membership_id"
+    t.index ["public_id"], name: "index_membership_roles_on_public_id", unique: true
     t.index ["role_id"], name: "index_membership_roles_on_role_id"
   end
 
@@ -98,17 +102,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_092000) do
     t.string "module_key", null: false
     t.string "name", null: false
     t.integer "position", default: 0, null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "updated_at", null: false
     t.index ["module_key", "action_key"], name: "index_permissions_on_module_key_and_action_key", unique: true
     t.index ["position"], name: "index_permissions_on_position"
+    t.index ["public_id"], name: "index_permissions_on_public_id", unique: true
   end
 
   create_table "role_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "permission_id", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "role_id", null: false
     t.datetime "updated_at", null: false
     t.index ["permission_id"], name: "index_role_permissions_on_permission_id"
+    t.index ["public_id"], name: "index_role_permissions_on_public_id", unique: true
     t.index ["role_id", "permission_id"], name: "index_role_permissions_on_role_id_and_permission_id", unique: true
     t.index ["role_id"], name: "index_role_permissions_on_role_id"
   end
@@ -119,11 +127,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_092000) do
     t.text "description"
     t.string "name", null: false
     t.boolean "pastoral", default: false, null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.string "status", default: "active", null: false
     t.datetime "updated_at", null: false
     t.index ["church_id", "name"], name: "index_roles_on_church_id_and_name", unique: true
     t.index ["church_id", "pastoral"], name: "index_roles_on_church_id_and_pastoral"
     t.index ["church_id"], name: "index_roles_on_church_id"
+    t.index ["public_id"], name: "index_roles_on_public_id", unique: true
     t.index ["status"], name: "index_roles_on_status"
   end
 
@@ -134,6 +144,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_092000) do
     t.string "first_name"
     t.string "last_name"
     t.string "platform_role", default: "user", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
@@ -141,6 +152,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_092000) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["platform_role"], name: "index_users_on_platform_role"
+    t.index ["public_id"], name: "index_users_on_public_id", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["status"], name: "index_users_on_status"
   end
@@ -151,8 +163,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_092000) do
     t.bigint "item_id", null: false
     t.string "item_type", null: false
     t.text "object"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.string "whodunnit"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index ["public_id"], name: "index_versions_on_public_id", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

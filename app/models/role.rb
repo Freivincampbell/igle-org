@@ -1,5 +1,6 @@
 class Role < ApplicationRecord
   include ChurchScoped
+  include PublicIdentifiable
 
   has_many :role_permissions, dependent: :destroy
   has_many :permissions, through: :role_permissions

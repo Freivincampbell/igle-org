@@ -1,4 +1,6 @@
 class Permission < ApplicationRecord
+  include PublicIdentifiable
+
   ACTION_KEYS = %w[read create update activate deactivate export manage].freeze
   MODULE_KEYS = %w[
     churches

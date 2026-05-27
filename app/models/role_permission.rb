@@ -1,4 +1,6 @@
 class RolePermission < ApplicationRecord
+  include PublicIdentifiable
+
   belongs_to :role
   belongs_to :permission
 
