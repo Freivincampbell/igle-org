@@ -1,0 +1,48 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <div class="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase text-slate-500">Plataforma</p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Iglesias</h1>
+    </div>
+
+    <%= link_to "Nueva iglesia", new_platform_church_path, class: "inline-flex w-fit items-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200">
+      <thead class="bg-slate-50">
+        <tr>
+          <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Nombre</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Contacto</th>
+          <th class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Estado</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold uppercase text-slate-500">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <% @churches.each do |church| %>
+          <tr>
+            <td class="px-4 py-4">
+              <%= link_to church.name, platform_church_path(church), class: "font-medium text-slate-950 hover:text-slate-700" %>
+              <p class="mt-1 text-xs text-slate-500"><%= church.public_id %></p>
+            </td>
+            <td class="px-4 py-4 text-sm text-slate-600">
+              <%= church.email.presence || "Sin email" %>
+            </td>
+            <td class="px-4 py-4">
+              <span class="inline-flex rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700"><%= church.status %></span>
+            </td>
+            <td class="px-4 py-4 text-right">
+              <%= link_to "Ver", platform_church_path(church), class: "text-sm font-medium text-slate-700 hover:text-slate-950" %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if @churches.empty? %>
+          <tr>
+            <td colspan="4" class="px-4 py-8 text-center text-sm text-slate-500">No hay iglesias registradas.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

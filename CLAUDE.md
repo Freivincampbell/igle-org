@@ -56,6 +56,8 @@ Controladores agrupados por área:
 - `MemberPortal::` — portal de miembro (perfil, eventos, directorio).
 - `Public::` — página pública de iglesia.
 
+`Platform::` siempre hereda de `Platform::BaseController`, exige `current_user.super_admin?` y usa `public_id` en rutas de recursos.
+
 Lógica compleja vive en `app/services/` (no en modelos ni controladores). Ver estructura sugerida en la sección 10 de `general planification.md`.
 
 Políticas Pundit en `app/policies/` siempre delegan en `Permissions::PermissionChecker`. No replicar lógica de permisos en las policies.

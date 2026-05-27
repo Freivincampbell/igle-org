@@ -2430,17 +2430,24 @@ No prioritario por ahora:
 - Resolver iglesia actual.
 - Aislar consultas por iglesia.
 - Crear políticas base.
-- Crear panel de super administrador.
+- Crear base del panel de super administrador.
 
 ### Etapa 4 - Creación Y Configuración De Iglesias
 
 - Super admin crea iglesia.
 - Super admin asigna administrador principal.
+- Super admin edita datos básicos de iglesia.
+- Super admin activa o desactiva iglesia.
 - Crear configuración inicial.
 - Crear acceso de propietario/administrador inicial.
 - Crear tarifa/suscripción manual.
 - Subir logo.
 - Configurar colores y contactos.
+
+Estado actual:
+
+- Implementado: crear, listar, editar, activar/desactivar iglesias y asignar propietario inicial.
+- Pendiente: configuración visual avanzada, logo y suscripción manual.
 
 ### Etapa 5 - Roles Y Permisos
 
@@ -2699,25 +2706,25 @@ Elementos necesarios:
 
 ### Plataforma
 
-- [ ] Crear app Rails.
-- [ ] Configurar PostgreSQL.
-- [ ] Configurar Tailwind.
-- [ ] Configurar Docker.
-- [ ] Configurar autenticación.
-- [ ] Crear super administrador.
-- [ ] Crear panel de plataforma.
-- [ ] Crear iglesias.
+- [x] Crear app Rails.
+- [x] Configurar PostgreSQL.
+- [x] Configurar Tailwind.
+- [x] Configurar Docker.
+- [x] Configurar autenticación.
+- [x] Crear super administrador.
+- [x] Crear panel de plataforma.
+- [x] Crear iglesias.
 - [ ] Configurar tarifa única.
 - [ ] Crear suscripciones manuales.
 
 ### Multi-Iglesia
 
-- [ ] Crear `churches`.
-- [ ] Crear `church_memberships`.
-- [ ] Agregar `public_id` UUID a todo modelo de dominio.
-- [ ] Resolver iglesia actual.
-- [ ] Aislar consultas por `church_id`.
-- [ ] Probar que iglesias no comparten datos.
+- [x] Crear `churches`.
+- [x] Crear `church_memberships`.
+- [x] Agregar `public_id` UUID a todo modelo de dominio.
+- [x] Resolver iglesia actual.
+- [x] Aislar consultas por `church_id`.
+- [x] Probar que iglesias no comparten datos.
 
 ### Iglesia
 
@@ -2730,7 +2737,7 @@ Elementos necesarios:
 
 ### Usuarios Y Roles
 
-- [ ] Propietario/administrador inicial de iglesia.
+- [x] Propietario/administrador inicial de iglesia.
 - [ ] Catálogo de módulos/vistas.
 - [ ] Roles personalizados por iglesia.
 - [ ] Matriz de permisos por rol.
@@ -2823,10 +2830,10 @@ Elementos necesarios:
 5. Crear `ChurchMembership`.
 6. Implementar aislamiento multi-tenant.
 7. Crear panel de plataforma.
-8. Crear configuración de iglesia.
-9. Crear catálogo de módulos/vistas.
-10. Crear roles y matriz de permisos.
-11. Crear asignación de roles a usuarios.
+8. Crear catálogo de módulos/vistas.
+9. Crear roles y matriz de permisos.
+10. Crear asignación de roles a usuarios.
+11. Crear configuración avanzada de iglesia.
 12. Crear miembros.
 13. Crear ministerios.
 14. Crear eventos.

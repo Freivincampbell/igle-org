@@ -5,10 +5,49 @@ es:
         record_invalid: "La validacion fallo: %{errors}"
   authorization:
     not_authorized: "No tienes permisos para realizar esta accion."
+  devise:
+    failure:
+      already_authenticated: "Ya iniciaste sesion."
+      inactive: "Tu cuenta esta inactiva."
+      invalid: "%{authentication_keys} o contrasena no validos."
+      locked: "Tu cuenta esta bloqueada."
+      not_found_in_database: "%{authentication_keys} o contrasena no validos."
+      timeout: "Tu sesion expiro. Inicia sesion nuevamente para continuar."
+      unauthenticated: "Debes iniciar sesion para continuar."
+      unconfirmed: "Debes confirmar tu correo antes de continuar."
+    passwords:
+      no_token: "No puedes acceder a esta pagina sin venir desde un correo de recuperacion de contrasena."
+      send_instructions: "Recibiras instrucciones para recuperar tu contrasena en unos minutos."
+      send_paranoid_instructions: "Si tu correo existe, recibiras instrucciones para recuperar tu contrasena en unos minutos."
+      updated: "Tu contrasena fue actualizada correctamente."
+      updated_not_active: "Tu contrasena fue actualizada correctamente."
+    sessions:
+      already_signed_out: "Cerraste sesion correctamente."
+      signed_in: "Iniciaste sesion correctamente."
+      signed_out: "Cerraste sesion correctamente."
   errors:
     messages:
+      already_confirmed: "ya fue confirmado, intenta iniciar sesion"
       blank: "no puede estar en blanco"
+      confirmation_period_expired: "debe confirmarse dentro de %{period}, solicita uno nuevo"
+      expired: "expiro, solicita uno nuevo"
       inclusion: "no esta incluido en la lista"
       invalid: "no es valido"
+      not_found: "no encontrado"
+      not_locked: "no estaba bloqueado"
+      not_saved:
+        one: "1 error impidio guardar este %{resource}:"
+        other: "%{count} errores impidieron guardar este %{resource}:"
       taken: "ya esta en uso"
   hello: "Hola mundo"
+  platform:
+    church_memberships:
+      owner_assigned: "Administrador owner asignado correctamente."
+    churches:
+      activated: "Iglesia activada correctamente."
+      created: "Iglesia creada correctamente."
+      deactivated: "Iglesia desactivada correctamente."
+      updated: "Iglesia actualizada correctamente."
+    owner_assignments:
+      confirmation_label: "Confirmacion"
+      initial_access_label: "Clave inicial"

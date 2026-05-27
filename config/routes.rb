@@ -3,6 +3,19 @@ Rails.application.routes.draw do
 
   root "home#index"
 
+  namespace :platform do
+    root "churches#index"
+
+    resources :churches, param: :public_id, only: %i[index show new create edit update] do
+      member do
+        patch :activate
+        patch :deactivate
+      end
+
+      resources :church_memberships, path: "admins", only: %i[new create]
+    end
+  end
+
   resources :churches, param: :public_id, only: %i[index show]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

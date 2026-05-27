@@ -1,0 +1,70 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <div class="border-b border-slate-200 pb-6">
+    <%= link_to "Volver a iglesias", platform_churches_path, class: "text-sm font-medium text-slate-600 hover:text-slate-950" %>
+
+    <div class="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <h1 class="text-3xl font-semibold text-slate-950"><%= @church.name %></h1>
+        <p class="mt-2 text-sm text-slate-500"><%= @church.public_id %></p>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <%= link_to "Editar", edit_platform_church_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+        <%= link_to "Asignar admin", new_platform_church_church_membership_path(@church), class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+        <% if @church.active? %>
+          <%= button_to "Desactivar", deactivate_platform_church_path(@church), method: :patch, class: "rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100" %>
+        <% else %>
+          <%= button_to "Activar", activate_platform_church_path(@church), method: :patch, class: "rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_20rem]">
+    <section class="rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-base font-semibold text-slate-950">Datos de iglesia</h2>
+      <dl class="mt-5 grid gap-5 sm:grid-cols-2">
+        <div>
+          <dt class="text-xs font-semibold uppercase text-slate-500">Email</dt>
+          <dd class="mt-1 text-sm text-slate-900"><%= @church.email.presence || "No definido" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase text-slate-500">Telefono</dt>
+          <dd class="mt-1 text-sm text-slate-900"><%= @church.phone.presence || "No definido" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase text-slate-500">Sitio web</dt>
+          <dd class="mt-1 text-sm text-slate-900"><%= @church.website.presence || "No definido" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase text-slate-500">Estado</dt>
+          <dd class="mt-1 text-sm text-slate-900"><%= @church.status %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase text-slate-500">Locale</dt>
+          <dd class="mt-1 text-sm text-slate-900"><%= @church.locale %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-semibold uppercase text-slate-500">Zona horaria</dt>
+          <dd class="mt-1 text-sm text-slate-900"><%= @church.time_zone %></dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-base font-semibold text-slate-950">Administradores owner</h2>
+      <div class="mt-4 space-y-3">
+        <% @owner_memberships.each do |membership| %>
+          <div class="rounded-md border border-slate-200 p-3">
+            <p class="text-sm font-medium text-slate-950"><%= membership.user.email %></p>
+            <p class="mt-1 text-xs text-slate-500"><%= membership.status %></p>
+          </div>
+        <% end %>
+
+        <% if @owner_memberships.empty? %>
+          <p class="text-sm text-slate-500">Esta iglesia todavia no tiene administrador owner.</p>
+        <% end %>
+      </div>
+    </section>
+  </div>
+</section>
