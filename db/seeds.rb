@@ -3,6 +3,7 @@ permission_labels = {
   "roles" => "Roles",
   "members" => "Miembros",
   "ministries" => "Ministerios",
+  "families" => "Familias",
   "church_settings" => "Configuracion de iglesia"
 }
 

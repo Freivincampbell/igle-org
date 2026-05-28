@@ -57,6 +57,14 @@ Rails.application.routes.draw do
           patch :deactivate
         end
       end
+
+      resources :families, param: :public_id, only: %i[index show new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+          patch :members, action: :update_members
+        end
+      end
     end
   end
 

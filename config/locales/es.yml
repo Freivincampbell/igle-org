@@ -32,6 +32,12 @@ es:
       default: "%d/%m/%Y %H:%M"
       time: "%H:%M"
   church_admin:
+    families:
+      activated: "Familia activada correctamente."
+      created: "Familia creada correctamente."
+      deactivated: "Familia desactivada correctamente."
+      members_updated: "Miembros de la familia actualizados correctamente."
+      updated: "Familia actualizada correctamente."
     members:
       activated: "Miembro activado correctamente."
       created: "Miembro creado correctamente."
@@ -97,6 +103,17 @@ es:
         other: "%{count} errores impidieron guardar este %{resource}:"
       taken: "ya esta en uso"
   hello: "Hola mundo"
+  families:
+    relationships:
+      child: "Hijo/a"
+      guardian: "Encargado"
+      other: "Otro"
+      parent: "Padre/Madre"
+      sibling: "Hermano/a"
+      spouse: "Esposo/a"
+    statuses:
+      active: "Activa"
+      inactive: "Inactiva"
   members:
     genders:
       female: "Femenino"

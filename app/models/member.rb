@@ -5,6 +5,8 @@ class Member < ApplicationRecord
   belongs_to :user, optional: true
   has_many :ministry_memberships, dependent: :destroy
   has_many :ministries, through: :ministry_memberships
+  has_many :family_members, dependent: :destroy
+  has_many :families, through: :family_members
 
   enum :gender, { male: "male", female: "female", not_specified: "not_specified" }, validate: true
   enum :marital_status, {

@@ -9,6 +9,8 @@ class Church < ApplicationRecord
   has_many :members, dependent: :destroy
   has_many :ministries, dependent: :destroy
   has_many :church_service_times, dependent: :destroy
+  has_many :families, dependent: :destroy
+  has_many :family_members, dependent: :destroy
 
   enum :status, { active: "active", inactive: "inactive" }, validate: true
 

@@ -44,4 +44,12 @@ module ApplicationHelper
   def church_service_time_status_label(status)
     t("ministries.statuses.#{status}", default: status.to_s.humanize)
   end
+
+  def family_relationship_label(relationship)
+    t("families.relationships.#{relationship}", default: relationship.to_s.humanize)
+  end
+
+  def family_status_label(status)
+    t("families.statuses.#{status}", default: status.to_s.humanize)
+  end
 end
