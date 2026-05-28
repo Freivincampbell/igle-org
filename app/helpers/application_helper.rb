@@ -68,4 +68,12 @@ module ApplicationHelper
   def event_recurrence_label(recurrence)
     t("events.recurrence_frequencies.#{recurrence}", default: recurrence.to_s.humanize)
   end
+
+  def board_position_label(position)
+    t("boards.positions.#{position}", default: position.to_s.humanize)
+  end
+
+  def board_status_label(status)
+    t("boards.statuses.#{status}", default: status.to_s.humanize)
+  end
 end

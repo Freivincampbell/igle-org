@@ -74,6 +74,14 @@ Rails.application.routes.draw do
           patch :attendance, action: :update_attendance
         end
       end
+
+      resources :boards, param: :public_id, only: %i[index show new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+          patch :positions, action: :update_positions
+        end
+      end
     end
   end
 

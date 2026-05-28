@@ -1,0 +1,51 @@
+<section class="mx-auto w-full max-w-4xl px-6 py-10">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950"><%= @board.name %></h1>
+      <p class="text-sm text-slate-500">Periodo <%= l(@board.starts_on) %><% if @board.ends_on %> — <%= l(@board.ends_on) %><% end %> · <%= board_status_label(@board.status) %></p>
+    </div>
+    <div class="flex gap-2">
+      <% if policy(@board).edit? %>
+        <%= link_to "Editar", edit_church_admin_board_path(@church, @board), class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <% end %>
+      <% if @board.active? && policy(@board).deactivate? %>
+        <%= button_to "Desactivar", deactivate_church_admin_board_path(@church, @board), method: :patch, form_class: "inline-flex", class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <% elsif @board.inactive? && policy(@board).activate? %>
+        <%= button_to "Activar", activate_church_admin_board_path(@church, @board), method: :patch, form_class: "inline-flex", class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @board.notes.present? %>
+    <div class="mt-6 rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-sm font-semibold uppercase text-slate-500">Notas</h2>
+      <p class="mt-2 whitespace-pre-line text-sm text-slate-700"><%= @board.notes %></p>
+    </div>
+  <% end %>
+
+  <div class="mt-6 rounded-lg border border-slate-200 bg-white">
+    <div class="border-b border-slate-200 px-6 py-4">
+      <h2 class="text-lg font-semibold text-slate-950">Cargos</h2>
+      <p class="text-sm text-slate-500">Cada cargo se asigna a un miembro activo de la iglesia.</p>
+    </div>
+    <%= form_with url: positions_church_admin_board_path(@church, @board), method: :patch, class: "p-6 space-y-4" do %>
+      <% BoardMember::POSITIONS.each do |position| %>
+        <% current = @current_positions[position] %>
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-3 items-center border-b border-slate-100 pb-3">
+          <label class="text-sm font-medium text-slate-800"><%= board_position_label(position) %></label>
+          <div class="md:col-span-2">
+            <%= select_tag "board[positions][#{position}]",
+                  options_for_select([ [ "Sin asignar", "" ] ] + @active_member_options, current&.member&.public_id),
+                  class: "w-full rounded-md border border-slate-300 px-2 py-1 text-sm" %>
+          </div>
+        </div>
+      <% end %>
+      <% if policy(@board).update? %>
+        <div class="flex justify-end">
+          <%= submit_tag "Guardar cargos", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</section>
