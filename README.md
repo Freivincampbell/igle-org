@@ -338,10 +338,10 @@ Significado de permisos:
 Notas:
 
 - El usuario `owner` de iglesia tiene acceso administrativo completo por bootstrap inicial, aunque no tenga roles asignados. Para probar restricciones de permisos usa un usuario no-owner con roles.
-- La matriz solo muestra modulos con pantallas administrativas implementadas. El modulo tecnico `users` no aparece porque todavia no existe una pantalla completa para crear usuarios desde la iglesia.
+- La matriz solo muestra modulos con pantallas administrativas implementadas. La creacion de usuarios de iglesia se maneja desde el modulo `Usuarios de iglesia` (`church_memberships`).
 - Los permisos de `Notas pastorales` se habilitaran en la matriz cuando exista el modulo pastoral.
 
-### 9. Probar Asignacion De Roles A Usuarios
+### 9. Probar Usuarios De Iglesia
 
 Desde el detalle de una iglesia, entra a:
 
@@ -349,34 +349,21 @@ Desde el detalle de una iglesia, entra a:
 
 Flujo manual recomendado:
 
-1. Seleccionar `Editar roles` en un usuario de iglesia.
-2. Marcar uno o varios roles activos.
-3. Guardar.
-4. Confirmar que los roles aparezcan en la lista de usuarios.
+1. Crear un usuario no-owner desde `Nuevo usuario`.
+2. Completar nombre, apellido, email y clave inicial.
+3. Marcar uno o varios roles activos si aplica.
+4. Guardar.
+5. Confirmar que el usuario aparezca como `Miembro`, no como `Owner`.
+6. Seleccionar `Editar` para cambiar nombre, apellido, email, clave opcional y roles.
+7. Confirmar que los roles aparezcan en la lista de usuarios.
+8. Desactivar el acceso de un usuario no-owner y volver a activarlo.
+9. Confirmar que el sistema no permita desactivar el ultimo owner activo de la iglesia.
 
-Mientras no exista la pantalla completa de creacion de usuarios por iglesia, puedes crear un usuario de prueba desde consola:
+Notas:
 
-```sh
-docker compose exec -T web bin/rails runner '
-church = Church.find_by!(public_id: "<church_uuid>")
-temporary_access = SecureRandom.base58(20)
-user = User.find_or_initialize_by(email: "tester@example.local")
-user.assign_attributes(
-  first_name: "Tester",
-  last_name: "Manual",
-  status: "active",
-  platform_role: "user",
-  password: temporary_access,
-  password_confirmation: temporary_access
-)
-user.save!
-ChurchMembership.find_or_create_by!(church:, user:) { |membership| membership.status = "active" }
-puts "Usuario listo: #{user.email}"
-puts "Clave temporal: #{temporary_access}"
-'
-```
-
-Luego asigna roles a ese usuario desde `/churches/:church_uuid/admin/memberships`.
+- El permiso `Leer` en `Usuarios de iglesia` solo permite ver la lista.
+- El permiso `Crear/editar` permite crear usuarios no-owner y editar datos/roles.
+- El permiso `Administrar` permite activar o desactivar accesos.
 
 ### 10. Probar Miembros Oficiales
 
@@ -598,6 +585,9 @@ La administracion interna de iglesia ya permite al owner o usuario autorizado:
 - Editar datos del rol.
 - Activar o desactivar roles.
 - Asignar permisos por modulo y accion.
+- Crear usuarios no-owner por iglesia.
+- Editar datos, clave y roles de usuarios de iglesia.
+- Activar o desactivar accesos de usuarios de iglesia.
 - Asignar roles a usuarios de la iglesia.
 - Crear miembros oficiales.
 - Editar perfil administrativo de miembros.
