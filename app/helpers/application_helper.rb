@@ -60,4 +60,8 @@ module ApplicationHelper
   def event_recurrence_label(recurrence)
     t("events.recurrence_frequencies.#{recurrence}", default: recurrence.to_s.humanize)
   end
+
+  def profile_change_request_status_label(status)
+    t("profile_change_requests.statuses.#{status}", default: status.to_s.humanize)
+  end
 end

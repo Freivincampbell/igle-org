@@ -24,6 +24,7 @@ class Permission < ApplicationRecord
     ministries
     events
     church_settings
+    profile_change_requests
   ].freeze
 
   has_many :role_permissions, dependent: :destroy
