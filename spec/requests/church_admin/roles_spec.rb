@@ -68,29 +68,50 @@ RSpec.describe "Church admin roles" do
   end
 
   describe "PATCH /churches/:church_public_id/admin/roles/:public_id/permissions" do
+    it "shows only the active three-permission matrix for implemented modules" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      role = create(:role, church:)
+      permission_for("roles", "read")
+      permission_for("roles", "create")
+      permission_for("roles", "manage")
+      permission_for("events", "read")
+
+      sign_in membership.user
+
+      get edit_church_admin_role_path(church, role)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Solo lectura")
+      expect(response.body).to include("Crear/editar")
+      expect(response.body).to include("Administrar")
+      expect(response.body).to include("Roles")
+      expect(response.body).not_to include("Eventos")
+    end
+
     it "updates the role permission matrix" do
       church = create(:church)
       membership = create(:church_membership, :owner, church:)
       role = create(:role, church:)
       read_permission = permission_for("roles", "read")
-      update_permission = permission_for("roles", "update")
+      create_permission = permission_for("roles", "create")
 
       sign_in membership.user
 
       patch permissions_church_admin_role_path(church, role), params: {
         role: {
-          permission_public_ids: [ read_permission.public_id, update_permission.public_id ]
+          permission_public_ids: [ read_permission.public_id, create_permission.public_id ]
         }
       }
 
       expect(response).to redirect_to(church_admin_role_path(church, role))
-      expect(role.permissions.reload).to contain_exactly(read_permission, update_permission)
+      expect(role.permissions.reload).to contain_exactly(read_permission, create_permission)
     end
 
-    it "rejects pastoral notes permissions for non-pastoral roles" do
+    it "rejects permissions outside the active church admin matrix" do
       church = create(:church)
       membership = create(:church_membership, :owner, church:)
-      role = create(:role, church:, pastoral: false)
+      role = create(:role, church:, pastoral: true)
       permission = permission_for("pastoral_notes", "read")
 
       sign_in membership.user

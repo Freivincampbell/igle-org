@@ -33,24 +33,26 @@ Métodos públicos esperados:
 4. **Owner bootstrap.** Si `church_membership.owner == true`, las acciones admin estándar (todas excepto `pastoral_notes.*`) devuelven `true` aunque no haya roles configurados. Esto es excepción explícita, documentar siempre.
 5. **Super admin.** `user.platform_role == "super_admin"` solo aplica a módulos de plataforma. **No** otorga acceso a notas pastorales ni a datos operativos cotidianos sin ir por la iglesia.
 6. **Alcance.** Si el permiso tiene scope `assigned_ministry`, validar que `record` pertenece a un ministerio en `assigned_ministry_ids`. Si scope es `own`, validar `record.user_id == user.id` o `record.member.user_id == user.id` según corresponda.
-7. **Acciones derivadas.** `read_only` implica `read`. `read_write` añade `create/update`. `full_access` añade `activate/deactivate`. `export` y `manage` son siempre checkboxes independientes — no caen en los atajos.
+7. **Acciones derivadas.** La matriz visible usa solo `read`, `create` y `manage`. `read` permite solo ver. `create` permite leer, crear y editar. `manage` permite leer, crear, editar, activar, desactivar y cualquier acción administrativa del módulo.
 
 ## Cómo agregar un módulo nuevo
 
-1. Agregar registro a `permissions` en seeds (`db/seeds.rb` o seed dedicado), con `module_key`, `action_key`, `name` y `position`.
-2. Si el módulo es sensible (como `pastoral_notes`), marcarlo en `PermissionChecker` para que valide la condición especial.
-3. Actualizar la matriz visible en `ChurchAdmin::RolePermissionsController`.
-4. Especificar todas las acciones soportadas — no todas las tablas necesitan `activate/deactivate/export`.
-5. Agregar specs: cada módulo nuevo debe tener al menos un test de "rol sin permiso no puede" y "rol con permiso sí puede".
+1. Agregar el módulo a `Permission::ASSIGNABLE_MODULE_KEYS` solo cuando exista una pantalla real para administrarlo por iglesia.
+2. Agregar registro a `permissions` en seeds (`db/seeds.rb` o seed dedicado), con `module_key`, `action_key`, `name` y `position`.
+3. Si el módulo es sensible (como `pastoral_notes`), marcarlo en `PermissionChecker` para que valide la condición especial.
+4. Actualizar la matriz visible en `ChurchAdmin::RolesController`.
+5. Usar las tres acciones estándar: `read`, `create`, `manage`.
+6. Agregar specs: cada módulo nuevo debe tener al menos un test de "rol sin permiso no puede" y "rol con permiso sí puede".
 
 ## Cómo agregar una acción nueva
 
 1. Agregar el `action_key` a `Permission::ACTION_KEYS`.
 2. Agregar los registros necesarios en seeds para cada `module_key` que soporte esa acción.
 3. Actualizar `RolePermission` si la acción necesita una validación especial.
-3. Actualizar UI de la matriz para mostrar el checkbox.
-4. Documentar aquí (en este CLAUDE.md) qué significa esa acción y si entra en `read_only / read_write / full_access` o queda aparte.
-5. Specs: la acción nueva debe tener cobertura completa en `permission_checker_spec.rb`.
+4. Evitar acciones nuevas salvo que `read/create/manage` no puedan expresar el caso real.
+5. Actualizar UI de la matriz para mostrar el checkbox.
+6. Documentar aquí qué significa esa acción y si implica otras acciones.
+7. Specs: la acción nueva debe tener cobertura completa en `permission_checker_spec.rb`.
 
 ## Performance
 
@@ -68,7 +70,7 @@ Métodos públicos esperados:
   - Rol con `pastoral: true` + permiso pastoral_notes → true.
   - Alcance `own` → solo records propios.
   - Alcance `assigned_ministry` → solo records de ministerios asignados.
-  - Unión de permisos: dos roles, uno read_only y otro full_access → full_access gana.
+  - Unión de permisos: dos roles, uno `read` y otro `manage` → `manage` gana.
   - Aislamiento: el mismo usuario en dos iglesias, los permisos no se mezclan.
 
 ## Qué evitar

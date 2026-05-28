@@ -82,7 +82,7 @@ module ChurchAdmin
     end
 
     def set_permissions
-      @permissions = Permission.ordered.to_a
+      @permissions = Permission.assignable.ordered.to_a
       @selected_permission_public_ids = @role.permissions.pluck(:public_id)
     end
 

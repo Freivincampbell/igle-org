@@ -17,9 +17,9 @@ class Role < ApplicationRecord
 
   def allows?(module_key, action_key)
     normalized_module = module_key.to_s
-    normalized_action = action_key.to_s
+    normalized_actions = Permissions::PermissionChecker.permission_action_keys_for(action_key)
 
-    permissions.where(module_key: normalized_module, action_key: [ normalized_action, "manage" ]).exists?
+    permissions.where(module_key: normalized_module, action_key: normalized_actions).exists?
   end
 
   private

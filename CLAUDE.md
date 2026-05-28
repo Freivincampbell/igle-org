@@ -68,11 +68,14 @@ Políticas Pundit en `app/policies/` siempre delegan en `Permissions::Permission
 
 Cada iglesia define sus propios roles. La matriz de permisos relaciona `role × permission/module_key × acciones × alcance`.
 
-- Acciones base: `read`, `create`, `update`, `activate`, `deactivate`, `export`, `manage`.
+- Acciones base visibles: `read`, `create`, `manage`.
 - `read` cubre listado y detalle hasta que exista una necesidad real de separar `list` y `show`.
-- Atajos: `no_access`, `read_only` (read), `read_write` (read_only + create/update), `full_access` (read_write + activate/deactivate).
+- `create` significa crear y editar; en backend también permite lectura operativa del módulo.
+- `manage` significa administrar; incluye lectura, crear, editar, activar y desactivar.
+- Atajos: `no_access`, `read_only` (read), `create_edit` (read + create), `administer` (read + create + manage).
 - Alcances: `own`, `assigned_ministry`, `church`.
-- `pastoral_notes` solo puede activarse en roles con `pastoral: true`.
+- `pastoral_notes` solo puede activarse en roles con `pastoral: true` cuando ese módulo se habilite en la matriz.
+- `owner` de iglesia tiene acceso bootstrap completo a módulos administrativos implementados, excepto notas pastorales. No se prueba restricción de permisos usando un usuario owner.
 - Un usuario con varios roles recibe la **unión** de permisos.
 - El backend siempre revalida (no confiar en que la vista oculte botones).
 

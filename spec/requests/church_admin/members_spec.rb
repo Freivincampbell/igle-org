@@ -60,6 +60,26 @@ RSpec.describe "Church admin members" do
       expect(response.body).to include(visible_member.first_name)
       expect(response.body).not_to include(hidden_member.first_name)
     end
+
+    it "hides create and edit actions for read-only users" do
+      church = create(:church)
+      membership = create(:church_membership, church:)
+      role = create(:role, church:)
+      member = create(:member, church:)
+      permission = create(:permission, module_key: "members", action_key: "read", name: "Miembros - Leer")
+
+      create(:membership_role, church_membership: membership, role:)
+      create(:role_permission, role:, permission:)
+
+      sign_in membership.user
+
+      get church_admin_members_path(church)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(member.full_name)
+      expect(response.body).not_to include("Nuevo miembro")
+      expect(response.body).not_to include("Editar")
+    end
   end
 
   describe "POST /churches/:church_public_id/admin/members" do

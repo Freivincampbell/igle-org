@@ -11,9 +11,9 @@
 
         <div class="flex flex-wrap gap-2">
           <button type="button" data-action="permission-matrix#apply" data-permission-actions="" class="rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50">Sin acceso</button>
-          <button type="button" data-action="permission-matrix#apply" data-permission-actions="read" class="rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50">Lectura</button>
-          <button type="button" data-action="permission-matrix#apply" data-permission-actions="read,create,update" class="rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50">Escritura</button>
-          <button type="button" data-action="permission-matrix#apply" data-permission-actions="<%= Permission::ACTION_KEYS.join(",") %>" class="rounded-md bg-slate-950 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800">Total</button>
+          <button type="button" data-action="permission-matrix#apply" data-permission-actions="read" class="rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50">Solo lectura</button>
+          <button type="button" data-action="permission-matrix#apply" data-permission-actions="read,create" class="rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50">Crear/editar</button>
+          <button type="button" data-action="permission-matrix#apply" data-permission-actions="<%= Permission::ACTION_KEYS.join(",") %>" class="rounded-md bg-slate-950 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800">Administrar</button>
         </div>
       </div>
 

@@ -31,9 +31,9 @@ Estas decisiones quedan definidas desde el inicio:
 - Cada iglesia podrá crear todos los roles que necesite.
 - Cada iglesia debe configurar los permisos de cada rol desde una pantalla tipo matriz.
 - Los permisos deben asignarse por módulo o vista de la plataforma.
-- Los permisos deben permitir lectura, escritura, activación/desactivación y otras acciones necesarias.
+- Los permisos deben permitir lectura, crear/editar y administración.
 - La matriz de permisos debe tener checkboxes por cada acción.
-- Los atajos de permisos deben funcionar así: lectura solo permite leer; escritura permite leer, crear y editar; total permite leer, crear, editar, activar y desactivar.
+- Los atajos de permisos deben funcionar así: lectura solo permite leer; crear/editar permite leer, crear y editar; administrar permite leer, crear, editar, activar y desactivar.
 - Una persona podrá tener varios roles al mismo tiempo.
 - La junta directiva será una entidad separada, no solo un rol.
 - Solo se manejarán miembros oficiales, no visitantes, en la primera versión.
@@ -512,15 +512,14 @@ Permisos base sugeridos:
 - Crear.
 - Editar.
 - Activar.
-- Desactivar.
-- Exportar.
-- Administrar permisos, solo para roles autorizados.
+- Administrar, que incluye activar y desactivar.
 
 La interfaz puede incluir accesos rápidos como:
 
 - Sin acceso para todo el módulo.
 - Solo lectura para todo el módulo.
-- Acceso completo para todo el módulo.
+- Crear/editar para todo el módulo.
+- Administrar para todo el módulo.
 
 Ejemplos de módulos o vistas:
 
@@ -970,29 +969,28 @@ Campos sugeridos:
 
 Ejemplos de `module_key`:
 
-- `dashboard`
+- `church_memberships`
 - `members`
-- `users`
-- `roles_permissions`
+- `roles`
 - `ministries`
-- `boards`
-- `events`
-- `event_attendance`
-- `service_directory`
-- `reports`
+- `boards`, cuando exista la pantalla.
+- `events`, cuando exista la pantalla.
+- `reports`, cuando exista la pantalla.
 - `church_settings`
-- `profile_change_requests`
-- `pastoral_notes`
+- `profile_change_requests`, cuando exista la pantalla.
+- `pastoral_notes`, cuando exista la pantalla pastoral.
 
 Ejemplos de `action_key`:
 
 - `read`
 - `create`
-- `update`
-- `activate`
-- `deactivate`
-- `export`
 - `manage`
+
+Significado implementado:
+
+- `read`: permite ver listados y detalles en modo lectura.
+- `create`: permite leer, crear y editar registros.
+- `manage`: permite leer, crear, editar, activar, desactivar y administrar el módulo.
 
 Notas:
 
@@ -1020,7 +1018,7 @@ Modelo implementado:
 
 - Cada fila representa un permiso asignado.
 - `permission_id` apunta a una combinación `module_key` + `action_key`.
-- Los atajos de interfaz como `read_only`, `read_write` y `full_access` se calculan marcando varias filas de permisos.
+- Los atajos de interfaz se calculan marcando varias filas de permisos: `Solo lectura`, `Crear/editar` y `Administrar`.
 
 Campos futuros si se necesita alcance granular:
 
@@ -1031,12 +1029,12 @@ Campos futuros si se necesita alcance granular:
 Notas:
 
 - La interfaz debe mostrar un checkbox por cada acción disponible del módulo.
-- `read_only` activa lectura/listado/ver detalle.
-- `read_write` activa lectura/listado/ver detalle, crear y editar.
-- `full_access` activa lectura/listado/ver detalle, crear, editar, activar y desactivar.
-- Permisos especiales como exportar o administrar pueden seguir siendo checkboxes separados cuando aplique.
+- `read` activa lectura/listado/ver detalle.
+- `create` activa lectura/listado/ver detalle, crear y editar.
+- `manage` activa lectura/listado/ver detalle, crear, editar, activar y desactivar.
+- La matriz solo debe mostrar módulos con pantallas administrativas implementadas por iglesia.
 - `no_access` debe desactivar todos los permisos de ese módulo.
-- El módulo `pastoral_notes` solo puede tener permisos activos para roles marcados como pastorales.
+- El módulo `pastoral_notes` solo debe activarse en la matriz cuando exista la pantalla pastoral; además requiere roles marcados como pastorales.
 - El alcance `assigned_ministry` es importante para líderes de ministerio.
 - El alcance `own` es importante para miembros que solo deben administrar su perfil.
 - Un usuario con varios roles debe recibir la unión de permisos más amplia, salvo que se decida implementar denegaciones explícitas.
@@ -1839,26 +1837,21 @@ Flujo esperado:
 Permisos por acción:
 
 - Sin acceso.
-- Leer/listar.
-- Ver detalle.
-- Crear.
-- Editar.
-- Activar.
-- Desactivar.
-- Exportar.
+- Leer.
+- Crear/editar.
 - Administrar.
 
 Atajos de interfaz:
 
 - Sin acceso.
 - Solo lectura: activa leer/listar/ver detalle.
-- Lectura y escritura: activa leer/listar/ver detalle, crear y editar.
-- Acceso completo: activa leer/listar/ver detalle, crear, editar, activar y desactivar.
+- Crear/editar: activa leer/listar/ver detalle, crear y editar.
+- Administrar: activa leer/listar/ver detalle, crear, editar, activar y desactivar.
 
 Notas:
 
 - Aunque existan atajos, la pantalla debe mostrar checkboxes individuales por acción.
-- Exportar y administrar deben manejarse como checkboxes separados cuando el módulo los soporte.
+- Exportar debe requerir administrar hasta que exista una necesidad real de separarlo.
 
 Alcances posibles:
 
@@ -1894,7 +1887,7 @@ Ejemplos:
 
 - Un rol `Pastor general` puede tener lectura de miembros y acceso a notas pastorales.
 - Un rol `Líder de jóvenes` puede tener permisos de eventos y miembros solo del ministerio de jóvenes.
-- Un rol `Secretario` puede tener permisos de lectura y exportación de miembros.
+- Un rol `Secretario` puede tener permisos de lectura de miembros y reportes autorizados.
 - Un rol `Miembro` puede tener acceso solo a su perfil, eventos y directorio autorizado.
 
 ### Módulos Iniciales Para La Matriz
@@ -1926,9 +1919,9 @@ Módulos/vistas sugeridas para permisos:
 Algunas áreas deben tener reglas adicionales:
 
 - Notas pastorales: solo roles pastorales con permiso explícito.
-- Roles y permisos: solo propietario o roles con permiso `roles_permissions.can_manage`.
+- Roles y permisos: solo propietario o roles con permiso `roles.manage`.
 - Configuración de iglesia: solo propietario o roles autorizados.
-- Exportaciones: permiso separado, porque puede exponer datos sensibles.
+- Exportaciones: requieren administrar hasta que se defina una acción separada.
 - Activar/desactivar registros: permiso separado de editar.
 - Líderes de ministerio: usar alcance `assigned_ministry` para limitar datos.
 
@@ -2080,21 +2073,16 @@ Pantallas:
 
 La matriz debe mostrar:
 
-- Módulos o vistas de la plataforma.
+- Módulos o vistas administrativas implementadas por iglesia.
 - Permisos por acción.
-- Accesos rápidos: sin acceso, solo lectura, lectura/escritura, acceso completo.
+- Accesos rápidos: sin acceso, solo lectura, crear/editar, administrar.
 - Estado actual de permisos.
 
 Ejemplo de acciones por módulo:
 
-- Leer/listar.
-- Ver detalle.
-- Crear.
-- Editar.
-- Activar.
-- Desactivar.
-- Exportar.
-- Administrar.
+- Leer: listar y ver detalle.
+- Crear/editar: crear y editar registros; también permite lectura operativa.
+- Administrar: leer, crear, editar, activar y desactivar registros.
 
 ### Ministerios
 
@@ -2455,7 +2443,7 @@ Estado actual:
 - Crear roles por iglesia.
 - Crear matriz de permisos por rol.
 - Crear asignación de roles a usuarios.
-- Crear permisos por acción: leer, crear, editar, activar, desactivar, exportar y administrar.
+- Crear permisos por acción: leer, crear/editar y administrar.
 - Crear alcances de permisos: propio, ministerios asignados y toda la iglesia.
 - Implementar servicio `PermissionChecker`.
 - Conectar Pundit con permisos dinámicos.
@@ -2463,7 +2451,7 @@ Estado actual:
 
 Estado actual:
 
-- Implementado: catálogo global de permisos, roles por iglesia, matriz por módulo/acción, activación/desactivación de roles, asignación de roles a usuarios y conexión inicial con Pundit/PermissionChecker.
+- Implementado: catálogo global de permisos, roles por iglesia, matriz por módulo/acción simplificada (`read`, `create`, `manage`), activación/desactivación de roles vía permiso `manage`, asignación de roles a usuarios y conexión inicial con Pundit/PermissionChecker.
 - Pendiente: alcances avanzados `own` y `assigned_ministry`, plantillas opcionales de roles y caché de permisos efectivos si llega a ser necesario.
 
 ### Etapa 6 - Miembros
@@ -2590,9 +2578,9 @@ Pruebas de permisos:
 
 - Un rol sin permisos no puede acceder a módulos privados.
 - Un rol con solo lectura no puede crear, editar, activar ni desactivar.
-- Un rol con lectura y escritura puede crear y editar, pero no necesariamente desactivar.
-- Un rol con permiso de activar/desactivar puede cambiar estado de registros.
-- Un rol con permiso de exportar puede descargar reportes autorizados.
+- Un rol con crear/editar puede ver, crear y editar, pero no activar ni desactivar.
+- Un rol con administrar puede ver, crear, editar, activar y desactivar.
+- Las exportaciones sensibles deben requerir `manage` hasta que se defina un permiso granular futuro.
 - Un usuario con varios roles recibe permisos combinados dentro de la misma iglesia.
 - Un rol con alcance `assigned_ministry` solo administra ministerios asignados.
 - Solo roles pastorales con permiso de notas pastorales pueden ver notas pastorales.

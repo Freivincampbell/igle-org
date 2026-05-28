@@ -64,11 +64,11 @@ Todo modelo de dominio debe tener specs que confirmen:
 Las specs de policies deben cubrir como mínimo:
 
 - Sin permiso → todas las acciones `false`.
-- `read_only` → `index?`, `show?` true; `create?`, `update?`, `activate?`, `deactivate?` false.
-- `read_write` → añade `create?`, `update?` true.
-- `full_access` → añade `activate?`, `deactivate?` true.
+- `read` → `index?`, `show?` true; `create?`, `update?`, `activate?`, `deactivate?` false.
+- `create` → añade `create?`, `update?` true.
+- `manage` → añade `activate?`, `deactivate?` true.
 - Alcances `own`, `assigned_ministry`, `church`: cada uno con un test que confirme qué records sí ve y cuáles no.
-- Si el módulo es `pastoral_notes`: test específico de que un admin **sin** rol pastoral no accede aunque tenga permisos full.
+- Si el módulo es `pastoral_notes`: test específico de que un admin **sin** rol pastoral no accede aunque tenga permiso `manage`.
 
 ### 4. Soft-delete
 
@@ -146,7 +146,7 @@ bundle exec brakeman --no-pager         # sin warnings nuevos
 Si la PR toca:
 
 - **Modelo nuevo:** spec del modelo + factory + spec de `public_id` + spec de aislamiento si es operativo.
-- **Policy nueva:** spec con los 4 niveles (sin permiso / read_only / read_write / full_access) + los 3 alcances cuando aplique.
+- **Policy nueva:** spec con los niveles sin permiso / `read` / `create` / `manage` + los 3 alcances cuando aplique.
 - **Servicio nuevo:** spec del happy path + edge cases.
 - **Endpoint nuevo:** request spec + (si es flujo de usuario) system spec.
 - **Migración de soft-delete:** spec del scope `active`.
