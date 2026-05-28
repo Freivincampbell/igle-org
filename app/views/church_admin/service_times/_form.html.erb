@@ -1,0 +1,47 @@
+<% if service_time.errors.any? %>
+  <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+    <ul class="list-inside list-disc space-y-1">
+      <% service_time.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: service_time, url: url, method: method, class: "space-y-6" do |form| %>
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div class="md:col-span-2">
+      <%= form.label :name, "Nombre", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :name, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :day_of_week, "Dia de la semana", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.select :day_of_week, ChurchServiceTime::DAYS_OF_WEEK.map { |d| [ day_of_week_label(d), d ] }, { include_blank: "Seleccionar" }, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :status, "Estado", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.select :status, [ [ "Activo", "active" ], [ "Inactivo", "inactive" ] ], {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :starts_at, "Hora inicio", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.time_field :starts_at, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :ends_at, "Hora fin (opcional)", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.time_field :ends_at, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div class="md:col-span-2">
+      <%= form.label :location, "Ubicacion", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :location, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div class="md:col-span-2">
+      <%= form.label :notes, "Notas", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_area :notes, rows: 3, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3">
+    <%= link_to "Cancelar", church_admin_service_times_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+    <%= form.submit "Guardar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+  </div>
+<% end %>

@@ -1,0 +1,160 @@
+<section class="mx-auto w-full max-w-4xl px-6 py-10">
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Configuracion de iglesia</h1>
+    <p class="mt-2 text-sm text-slate-600">Define la informacion publica, marca y opciones visibles de tu iglesia.</p>
+  </div>
+
+  <% if @church.errors.any? %>
+    <div class="mt-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <ul class="list-inside list-disc space-y-1">
+        <% @church.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with model: @church, url: church_admin_settings_path(@church), method: :patch, html: { multipart: true }, class: "mt-8 space-y-8" do |form| %>
+    <section class="rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-lg font-semibold text-slate-950">Identidad</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <%= form.label :name, "Nombre", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :name, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :legal_name, "Nombre legal", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :legal_name, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :slug, "Slug publico", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :slug, placeholder: "mi-iglesia", class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div class="md:col-span-2">
+          <%= form.label :description, "Descripcion", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_area :description, rows: 3, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div class="md:col-span-2">
+          <%= form.label :logo, "Logo (PNG, JPG o WEBP, max 5MB)", class: "block text-sm font-medium text-slate-700" %>
+          <% if @church.logo.attached? %>
+            <div class="mt-2">
+              <%= image_tag @church.logo.variant(resize_to_limit: [ 200, 200 ]).processed, class: "h-20 w-20 rounded-md object-cover" %>
+            </div>
+          <% end %>
+          <%= form.file_field :logo, accept: "image/png,image/jpeg,image/webp", class: "mt-2 block w-full text-sm" %>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-lg font-semibold text-slate-950">Contacto</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <%= form.label :email, "Email", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.email_field :email, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :phone, "Telefono", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :phone, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :whatsapp, "WhatsApp", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :whatsapp, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :website, "Sitio web", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.url_field :website, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :facebook_url, "Facebook", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.url_field :facebook_url, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :instagram_url, "Instagram", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.url_field :instagram_url, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :youtube_url, "YouTube", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.url_field :youtube_url, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-lg font-semibold text-slate-950">Direccion</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="md:col-span-2">
+          <%= form.label :address_line_1, "Direccion", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :address_line_1, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div class="md:col-span-2">
+          <%= form.label :address_line_2, "Direccion (linea 2)", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :address_line_2, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :city, "Ciudad", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :city, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :state, "Provincia / Estado", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :state, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :postal_code, "Codigo postal", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :postal_code, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :country, "Pais", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :country, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-lg font-semibold text-slate-950">Marca</h2>
+      <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <%= form.label :primary_color, "Color primario (hex)", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :primary_color, placeholder: "#0F172A", class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :secondary_color, "Color secundario (hex)", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.text_field :secondary_color, placeholder: "#1E293B", class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-lg font-semibold text-slate-950">Opciones</h2>
+      <div class="mt-4 space-y-3">
+        <label class="flex items-start gap-3">
+          <%= form.check_box :public_page_enabled, class: "mt-1" %>
+          <span>
+            <span class="block text-sm font-medium text-slate-900">Habilitar pagina publica</span>
+            <span class="block text-xs text-slate-500">Permite mostrar la informacion basica de la iglesia en una URL publica.</span>
+          </span>
+        </label>
+        <label class="flex items-start gap-3">
+          <%= form.check_box :service_directory_enabled, class: "mt-1" %>
+          <span>
+            <span class="block text-sm font-medium text-slate-900">Habilitar directorio de servicios</span>
+            <span class="block text-xs text-slate-500">Permite que los miembros aparezcan en un directorio interno de servicios y ocupaciones.</span>
+          </span>
+        </label>
+        <label class="flex items-start gap-3">
+          <%= form.check_box :member_work_contact_enabled, class: "mt-1" %>
+          <span>
+            <span class="block text-sm font-medium text-slate-900">Permitir contacto laboral entre miembros</span>
+            <span class="block text-xs text-slate-500">Cuando esta activo, los miembros pueden contactarse para temas laborales o servicios.</span>
+          </span>
+        </label>
+      </div>
+    </section>
+
+    <div class="flex justify-end gap-3">
+      <%= link_to "Cancelar", church_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <%= form.submit "Guardar configuracion", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    </div>
+  <% end %>
+</section>

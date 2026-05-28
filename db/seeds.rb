@@ -2,7 +2,8 @@ permission_labels = {
   "church_memberships" => "Usuarios de iglesia",
   "roles" => "Roles",
   "members" => "Miembros",
-  "ministries" => "Ministerios"
+  "ministries" => "Ministerios",
+  "church_settings" => "Configuracion de iglesia"
 }
 
 action_labels = {

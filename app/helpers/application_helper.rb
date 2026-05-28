@@ -26,4 +26,22 @@ module ApplicationHelper
   def ministry_role_label(role)
     t("ministries.roles.#{role}", default: role.to_s.humanize)
   end
+
+  def church_setting_visible?(church)
+    return false if church.blank?
+
+    ChurchSettingPolicy.new(current_user, church).show?
+  rescue Pundit::NotAuthorizedError
+    false
+  end
+
+  def day_of_week_label(day_of_week)
+    return "" if day_of_week.blank?
+
+    I18n.t("date.day_names")[day_of_week.to_i]
+  end
+
+  def church_service_time_status_label(status)
+    t("ministries.statuses.#{status}", default: status.to_s.humanize)
+  end
 end

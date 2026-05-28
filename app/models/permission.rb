@@ -7,10 +7,14 @@ class Permission < ApplicationRecord
     roles
     members
     ministries
-    board
+    families
+    boards
     events
+    occupations
+    skills
+    profile_change_requests
     reports
-    settings
+    church_settings
     pastoral_notes
   ].freeze
   ASSIGNABLE_MODULE_KEYS = %w[
@@ -18,6 +22,7 @@ class Permission < ApplicationRecord
     roles
     members
     ministries
+    church_settings
   ].freeze
 
   has_many :role_permissions, dependent: :destroy
