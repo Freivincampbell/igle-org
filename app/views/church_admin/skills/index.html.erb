@@ -1,0 +1,41 @@
+<section class="mx-auto w-full max-w-5xl px-6 py-10">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Catalogo de habilidades</h1>
+    </div>
+    <% if policy(Skill).new? %>
+      <%= link_to "Nueva habilidad", new_church_admin_skill_path(@church), class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <% end %>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr><th class="px-4 py-3">Nombre</th><th class="px-4 py-3">Estado</th><th class="px-4 py-3 text-right">Acciones</th></tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @skills.any? %>
+          <% @skills.each do |s| %>
+            <tr>
+              <td class="px-4 py-3 font-medium text-slate-950"><%= s.name %></td>
+              <td class="px-4 py-3 text-slate-600"><%= skill_status_label(s.status) %></td>
+              <td class="px-4 py-3 text-right">
+                <% if policy(s).edit? %>
+                  <%= link_to "Editar", edit_church_admin_skill_path(@church, s), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                <% end %>
+                <% if s.active? && policy(s).deactivate? %>
+                  <%= button_to "Desactivar", deactivate_church_admin_skill_path(@church, s), method: :patch, form_class: "inline-flex ml-3", class: "font-medium text-slate-600 hover:text-slate-950" %>
+                <% elsif s.inactive? && policy(s).activate? %>
+                  <%= button_to "Activar", activate_church_admin_skill_path(@church, s), method: :patch, form_class: "inline-flex ml-3", class: "font-medium text-slate-600 hover:text-slate-950" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="3" class="px-4 py-8 text-center text-slate-500">No hay habilidades registradas.</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

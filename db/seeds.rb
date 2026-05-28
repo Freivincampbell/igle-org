@@ -4,7 +4,10 @@ permission_labels = {
   "members" => "Miembros",
   "ministries" => "Ministerios",
   "events" => "Eventos",
-  "church_settings" => "Configuracion de iglesia"
+  "church_settings" => "Configuracion de iglesia",
+  "occupations" => "Ocupaciones",
+  "skills" => "Habilidades",
+  "service_directory" => "Directorio de servicios"
 }
 
 action_labels = {

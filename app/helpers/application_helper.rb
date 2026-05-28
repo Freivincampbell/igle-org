@@ -60,4 +60,26 @@ module ApplicationHelper
   def event_recurrence_label(recurrence)
     t("events.recurrence_frequencies.#{recurrence}", default: recurrence.to_s.humanize)
   end
+
+  def occupation_status_label(status)
+    t("occupations.statuses.#{status}", default: status.to_s.humanize)
+  end
+
+  def skill_status_label(status)
+    t("skills.statuses.#{status}", default: status.to_s.humanize)
+  end
+
+  def skill_level_label(level)
+    t("skills.levels.#{level}", default: level.to_s.humanize)
+  end
+
+  def employment_status_label(status)
+    t("member_occupations.employment_statuses.#{status}", default: status.to_s.humanize)
+  end
+
+  def work_type_label(work_type)
+    return "" if work_type.blank?
+
+    t("member_occupations.work_types.#{work_type}", default: work_type.to_s.humanize)
+  end
 end
