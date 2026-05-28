@@ -3,6 +3,8 @@ class Member < ApplicationRecord
   include PublicIdentifiable
 
   belongs_to :user, optional: true
+  has_many :ministry_memberships, dependent: :destroy
+  has_many :ministries, through: :ministry_memberships
 
   enum :gender, { male: "male", female: "female", not_specified: "not_specified" }, validate: true
   enum :marital_status, {

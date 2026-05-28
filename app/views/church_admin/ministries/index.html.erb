@@ -1,0 +1,55 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <%= render "church_admin/shared/nav", church: @church %>
+
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Ministerios</h1>
+    </div>
+
+    <% if policy(Ministry).new? %>
+      <%= link_to "Nuevo ministerio", new_church_admin_ministry_path(@church), class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <% end %>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3">Nombre</th>
+          <th class="px-4 py-3">Miembros</th>
+          <th class="px-4 py-3">Estado</th>
+          <th class="px-4 py-3 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @ministries.any? %>
+          <% @ministries.each do |ministry| %>
+            <tr>
+              <td class="px-4 py-4">
+                <div class="font-medium text-slate-950"><%= ministry.name %></div>
+                <div class="mt-1 text-xs text-slate-500"><%= ministry.public_id %></div>
+              </td>
+              <td class="px-4 py-4 text-slate-600"><%= ministry.ministry_memberships.active.count %></td>
+              <td class="px-4 py-4 text-slate-600"><%= ministry_status_label(ministry.status) %></td>
+              <td class="px-4 py-4 text-right">
+                <div class="flex justify-end gap-3">
+                  <% if policy(ministry).show? %>
+                    <%= link_to "Ver", church_admin_ministry_path(@church, ministry), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% end %>
+                  <% if policy(ministry).edit? %>
+                    <%= link_to "Editar", edit_church_admin_ministry_path(@church, ministry), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="4" class="px-4 py-8 text-center text-slate-500">No hay ministerios registrados.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

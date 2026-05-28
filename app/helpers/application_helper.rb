@@ -18,4 +18,12 @@ module ApplicationHelper
   def member_status_label(member_status)
     t("members.statuses.#{member_status}", default: member_status.to_s.humanize)
   end
+
+  def ministry_status_label(status)
+    t("ministries.statuses.#{status}", default: status.to_s.humanize)
+  end
+
+  def ministry_role_label(role)
+    t("ministries.roles.#{role}", default: role.to_s.humanize)
+  end
 end

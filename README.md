@@ -398,7 +398,29 @@ Notas:
 - El usuario vinculado tambien es opcional.
 - El sistema no borra miembros; usa estado activo/inactivo.
 
-### 11. Smoke Tests Rapidos
+### 11. Probar Ministerios
+
+Desde el detalle de una iglesia, entra a:
+
+- `/churches/:church_uuid/admin/ministries`
+
+Flujo manual recomendado:
+
+1. Crear un ministerio desde `Nuevo ministerio`.
+2. Confirmar que el detalle use UUID en la URL, nunca el `id` interno.
+3. Editar nombre, descripcion o estado.
+4. Asignar miembros activos al ministerio.
+5. Definir si cada persona queda como `Miembro`, `Lider` o `Co-lider`.
+6. Guardar y confirmar que la lista de miembros asignados se actualice.
+7. Desactivar el ministerio y volver a activarlo.
+
+Notas:
+
+- Solo se pueden asignar miembros activos de la misma iglesia.
+- Un miembro puede pertenecer a varios ministerios.
+- Quitar un miembro de la asignacion desactiva su relacion con el ministerio en vez de borrar el registro.
+
+### 12. Smoke Tests Rapidos
 
 ```sh
 curl -s -o /dev/null -w 'root:%{http_code}\n' http://localhost:3000
@@ -496,6 +518,8 @@ La fundacion multi-tenant usa:
 - `role_permissions`: permisos asignados a cada rol.
 - `membership_roles`: roles asignados a usuarios dentro de una iglesia.
 - `members`: perfiles oficiales de miembros por iglesia, con contacto, direccion y estado.
+- `ministries`: ministerios/departamentos internos de cada iglesia.
+- `ministry_memberships`: miembros asignados a ministerios con rol interno y estado.
 
 Todas estas tablas tienen `public_id` UUID único. Las tablas internas de Rails, como `active_storage_*`, no se tratan como recursos del dominio y no deben exponerse directamente.
 

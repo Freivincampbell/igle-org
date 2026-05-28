@@ -11,6 +11,12 @@ es:
       created: "Miembro creado correctamente."
       deactivated: "Miembro desactivado correctamente."
       updated: "Miembro actualizado correctamente."
+    ministries:
+      activated: "Ministerio activado correctamente."
+      created: "Ministerio creado correctamente."
+      deactivated: "Ministerio desactivado correctamente."
+      members_updated: "Miembros del ministerio actualizados correctamente."
+      updated: "Ministerio actualizado correctamente."
     memberships:
       roles_updated: "Roles de usuario actualizados correctamente."
     roles:
@@ -66,6 +72,14 @@ es:
       separated: "Separado"
       single: "Soltero"
       widowed: "Viudo"
+    statuses:
+      active: "Activo"
+      inactive: "Inactivo"
+  ministries:
+    roles:
+      co_leader: "Co-lider"
+      leader: "Lider"
+      member: "Miembro"
     statuses:
       active: "Activo"
       inactive: "Inactivo"

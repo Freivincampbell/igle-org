@@ -2501,6 +2501,11 @@ Estado actual:
 - Asignar miembros.
 - Limitar permisos de líderes a su ministerio.
 
+Estado actual:
+
+- Implementado: modelo `Ministry`, CRUD administrativo por iglesia, activación/desactivación, asignación de miembros activos al ministerio, rol interno dentro del ministerio (`Miembro`, `Lider`, `Co-lider`) y validación multi-tenant para evitar miembros de otra iglesia.
+- Pendiente: alcance avanzado `assigned_ministry` para que líderes administren solo su ministerio y eventos por ministerio.
+
 ### Etapa 10 - Junta Directiva
 
 - Crear juntas.
@@ -2769,9 +2774,9 @@ Elementos necesarios:
 
 ### Ministerios
 
-- [ ] CRUD de ministerios.
-- [ ] Asignar líderes.
-- [ ] Asignar miembros.
+- [x] CRUD de ministerios.
+- [x] Asignar líderes.
+- [x] Asignar miembros.
 - [ ] Eventos por ministerio.
 
 ### Junta Directiva
@@ -2802,8 +2807,8 @@ Elementos necesarios:
 
 ### Seguridad
 
-- [ ] Pundit.
-- [ ] Servicio de permisos dinámicos.
+- [x] Pundit.
+- [x] Servicio de permisos dinámicos.
 - [ ] Auditoría.
 - [ ] Protección de notas pastorales.
 - [ ] Protección de datos sensibles.
