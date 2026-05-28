@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_230000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_020001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -132,6 +132,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_230000) do
     t.index ["role_id"], name: "index_membership_roles_on_role_id"
   end
 
+  create_table "ministries", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "name"], name: "index_ministries_on_church_id_and_name", unique: true
+    t.index ["church_id", "status"], name: "index_ministries_on_church_id_and_status"
+    t.index ["church_id"], name: "index_ministries_on_church_id"
+    t.index ["public_id"], name: "index_ministries_on_public_id", unique: true
+  end
+
+  create_table "ministry_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "member_id", null: false
+    t.bigint "ministry_id", null: false
+    t.string "ministry_role", default: "member", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["member_id", "status"], name: "index_ministry_memberships_on_member_id_and_status"
+    t.index ["member_id"], name: "index_ministry_memberships_on_member_id"
+    t.index ["ministry_id", "member_id"], name: "index_ministry_memberships_on_ministry_id_and_member_id", unique: true
+    t.index ["ministry_id", "ministry_role"], name: "index_ministry_memberships_on_ministry_id_and_ministry_role"
+    t.index ["ministry_id"], name: "index_ministry_memberships_on_ministry_id"
+    t.index ["public_id"], name: "index_ministry_memberships_on_public_id", unique: true
+  end
+
   create_table "permissions", force: :cascade do |t|
     t.string "action_key", null: false
     t.datetime "created_at", null: false
@@ -214,6 +244,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_230000) do
   add_foreign_key "members", "users"
   add_foreign_key "membership_roles", "church_memberships"
   add_foreign_key "membership_roles", "roles"
+  add_foreign_key "ministries", "churches"
+  add_foreign_key "ministry_memberships", "members"
+  add_foreign_key "ministry_memberships", "ministries"
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"
   add_foreign_key "roles", "churches"

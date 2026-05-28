@@ -58,7 +58,7 @@ Controladores agrupados por área:
 
 `Platform::` siempre hereda de `Platform::BaseController`, exige `current_user.super_admin?` y usa `public_id` en rutas de recursos.
 
-`ChurchAdmin::` siempre hereda de `ChurchAdmin::BaseController`, resuelve la iglesia desde `church_public_id`, setea `Current.church`/`Current.church_membership` y usa `public_id` en roles, membresias, miembros y recursos internos.
+`ChurchAdmin::` siempre hereda de `ChurchAdmin::BaseController`, resuelve la iglesia desde `church_public_id`, setea `Current.church`/`Current.church_membership` y usa `public_id` en roles, membresias, miembros, ministerios y recursos internos.
 
 Lógica compleja vive en `app/services/` (no en modelos ni controladores). Ver estructura sugerida en la sección 10 de `general planification.md`.
 
@@ -78,7 +78,7 @@ Cada iglesia define sus propios roles. La matriz de permisos relaciona `role × 
 
 ## Modelos clave (resumen)
 
-`User`, `Church`, `ChurchMembership`, `Role`, `Permission`, `RolePermission`, `MembershipRole`, `Member`, `Family`, `FamilyMember`, `Address`, `Ministry`, `MinistryMembership`, `Board`, `BoardMember`, `ChurchServiceTime`, `Event`, `EventRsvp`, `EventAttendance`, `Occupation`, `MemberOccupation`, `Skill`, `MemberSkill`, `ProfileChangeRequest`, `PastoralNote`, `ContactMethod`, `Plan`, `Subscription`.
+`User`, `Church`, `ChurchMembership`, `Role`, `Permission`, `RolePermission`, `MembershipRole`, `Member`, `Ministry`, `MinistryMembership`, `Family`, `FamilyMember`, `Address`, `Board`, `BoardMember`, `ChurchServiceTime`, `Event`, `EventRsvp`, `EventAttendance`, `Occupation`, `MemberOccupation`, `Skill`, `MemberSkill`, `ProfileChangeRequest`, `PastoralNote`, `ContactMethod`, `Plan`, `Subscription`.
 
 Detalle completo de campos, enums y relaciones en `general planification.md` sección 12.
 

@@ -18,6 +18,9 @@
         <% if policy(Member).index? %>
           <%= link_to "Miembros", church_admin_members_path(@church), class: "inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
         <% end %>
+        <% if policy(Ministry).index? %>
+          <%= link_to "Ministerios", church_admin_ministries_path(@church), class: "inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+        <% end %>
         <span class="inline-flex w-fit rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700"><%= @church.status %></span>
       </div>
     </div>

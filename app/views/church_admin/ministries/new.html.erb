@@ -1,0 +1,10 @@
+<section class="mx-auto w-full max-w-3xl px-6 py-10">
+  <%= render "church_admin/shared/nav", church: @church %>
+
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Nuevo ministerio</h1>
+  </div>
+
+  <%= render "form", ministry: @ministry %>
+</section>
