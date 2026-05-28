@@ -11,6 +11,10 @@ es:
   authorization:
     not_authorized: "No tienes permisos para realizar esta accion."
   date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d/%b"
+      long: "%d de %B de %Y"
     abbr_day_names:
       - "Dom"
       - "Lun"
@@ -30,8 +34,15 @@ es:
   time:
     formats:
       default: "%d/%m/%Y %H:%M"
+      short: "%d/%b %H:%M"
       time: "%H:%M"
   church_admin:
+    events:
+      attendance_updated: "Asistencia actualizada correctamente."
+      cancelled: "Evento cancelado correctamente."
+      created: "Evento creado correctamente."
+      rescheduled: "Evento reprogramado correctamente."
+      updated: "Evento actualizado correctamente."
     members:
       activated: "Miembro activado correctamente."
       created: "Miembro creado correctamente."
@@ -97,6 +108,29 @@ es:
         other: "%{count} errores impidieron guardar este %{resource}:"
       taken: "ya esta en uso"
   hello: "Hola mundo"
+  events:
+    event_types:
+      baptism: "Bautismo"
+      class: "Clase"
+      ministry_meeting: "Reunion de ministerio"
+      other: "Otro"
+      retreat: "Retiro"
+      service: "Culto"
+      special: "Evento especial"
+      wedding: "Boda"
+    recurrence_frequencies:
+      daily: "Diario"
+      monthly: "Mensual"
+      none: "Sin recurrencia"
+      weekly: "Semanal"
+    statuses:
+      cancelled: "Cancelado"
+      completed: "Completado"
+      scheduled: "Programado"
+    visibilities:
+      members_only: "Solo miembros"
+      private: "Privado"
+      public: "Publico"
   members:
     genders:
       female: "Femenino"

@@ -1,0 +1,79 @@
+<% if event.errors.any? %>
+  <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+    <ul class="list-inside list-disc space-y-1">
+      <% event.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: event, url: url, method: method, class: "space-y-6" do |form| %>
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div class="md:col-span-2">
+      <%= form.label :title, "Titulo", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :title, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :event_type, "Tipo", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.select :event_type, Event::EVENT_TYPES.map { |t| [ event_type_label(t), t ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :visibility, "Visibilidad", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.select :visibility, Event::VISIBILITIES.map { |v| [ event_visibility_label(v), v ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :starts_at, "Inicio", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.datetime_local_field :starts_at, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :ends_at, "Fin", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.datetime_local_field :ends_at, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :location, "Lugar", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_field :location, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :capacity, "Capacidad", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.number_field :capacity, min: 0, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :ministry_id, "Ministerio (opcional)", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.select :ministry_id, @ministry_options, { include_blank: "-" }, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :responsible_member_id, "Responsable (opcional)", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.select :responsible_member_id, @member_options, { include_blank: "-" }, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :status, "Estado", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.select :status, [ [ "Programado", "scheduled" ], [ "Cancelado", "cancelled" ], [ "Completado", "completed" ] ], {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div class="md:col-span-2 flex items-center gap-2">
+      <%= form.check_box :recurring %>
+      <%= form.label :recurring, "Evento recurrente", class: "text-sm text-slate-700" %>
+    </div>
+    <div>
+      <%= form.label :recurrence_frequency, "Frecuencia", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.select :recurrence_frequency, Event::RECURRENCE_FREQUENCIES.map { |f| [ event_recurrence_label(f), f ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= form.label :recurrence_until, "Hasta (opcional)", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.date_field :recurrence_until, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div class="md:col-span-2 flex items-center gap-2">
+      <%= form.check_box :food_expected %>
+      <%= form.label :food_expected, "Se espera comida", class: "text-sm text-slate-700" %>
+    </div>
+    <div class="md:col-span-2">
+      <%= form.label :description, "Descripcion", class: "block text-sm font-medium text-slate-700" %>
+      <%= form.text_area :description, rows: 4, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3">
+    <%= link_to "Cancelar", church_admin_events_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+    <%= form.submit "Guardar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+  </div>
+<% end %>
