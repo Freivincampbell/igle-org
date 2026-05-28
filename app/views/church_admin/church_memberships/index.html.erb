@@ -1,9 +1,15 @@
 <section class="mx-auto w-full max-w-6xl px-6 py-10">
   <%= render "church_admin/shared/nav", church: @church %>
 
-  <div>
-    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
-    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Usuarios de iglesia</h1>
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Usuarios de iglesia</h1>
+    </div>
+
+    <% if policy(ChurchMembership).new? %>
+      <%= link_to "Nuevo usuario", new_church_admin_membership_path(@church), class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <% end %>
   </div>
 
   <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
@@ -37,9 +43,19 @@
               </td>
               <td class="px-4 py-4 text-slate-600"><%= membership.status %></td>
               <td class="px-4 py-4 text-right">
-                <% if policy(membership).edit? %>
-                  <%= link_to "Editar roles", edit_church_admin_membership_path(@church, membership), class: "font-medium text-slate-600 hover:text-slate-950" %>
-                <% end %>
+                <div class="flex flex-wrap justify-end gap-3">
+                  <% if policy(membership).edit? %>
+                    <%= link_to "Editar", edit_church_admin_membership_path(@church, membership), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% end %>
+
+                  <% if membership.inactive? && policy(membership).activate? %>
+                    <%= button_to "Activar", activate_church_admin_membership_path(@church, membership), method: :patch, form_class: "inline-flex", class: "font-medium text-emerald-700 hover:text-emerald-900" %>
+                  <% end %>
+
+                  <% if membership.active? && policy(membership).deactivate? %>
+                    <%= button_to "Desactivar", deactivate_church_admin_membership_path(@church, membership), method: :patch, form_class: "inline-flex", class: "font-medium text-red-700 hover:text-red-900" %>
+                  <% end %>
+                </div>
               </td>
             </tr>
           <% end %>

@@ -2054,10 +2054,12 @@ Debe permitir:
 Pantallas:
 
 - Lista de usuarios de iglesia.
-- Crear usuario para miembro.
+- Crear usuario no-owner para una iglesia.
+- Editar nombre, apellido, email y clave de acceso.
 - Asignar usuario a miembro.
 - Asignar roles.
 - Activar/desactivar acceso.
+- Impedir desactivar el último owner activo de una iglesia.
 
 ### Roles Y Permisos
 
@@ -2452,6 +2454,8 @@ Estado actual:
 Estado actual:
 
 - Implementado: catálogo global de permisos, roles por iglesia, matriz por módulo/acción simplificada (`read`, `create`, `manage`), activación/desactivación de roles vía permiso `manage`, asignación de roles a usuarios y conexión inicial con Pundit/PermissionChecker.
+- Implementado: pantalla para crear usuarios no-owner desde `Usuarios de iglesia`, creando `User`, `ChurchMembership` con `owner: false` y roles iniciales activos de la misma iglesia.
+- Implementado: edición de datos básicos, clave opcional, roles y activación/desactivación de acceso de usuarios de iglesia, con protección para no desactivar el último owner activo.
 - Pendiente: alcances avanzados `own` y `assigned_ministry`, plantillas opcionales de roles y caché de permisos efectivos si llega a ser necesario.
 
 ### Etapa 6 - Miembros
@@ -2746,6 +2750,8 @@ Elementos necesarios:
 - [x] Matriz de permisos por rol.
 - [x] Permisos por acción.
 - [ ] Alcances de permiso.
+- [x] Creación de usuarios no-owner por iglesia.
+- [x] Edición y activación/desactivación de usuarios de iglesia.
 - [x] Asignación de roles a usuarios.
 - [ ] Plantillas opcionales de roles.
 

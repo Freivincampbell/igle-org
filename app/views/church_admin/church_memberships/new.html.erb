@@ -1,0 +1,78 @@
+<section class="mx-auto w-full max-w-4xl px-6 py-10">
+  <%= render "church_admin/shared/nav", church: @church %>
+
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Nuevo usuario</h1>
+  </div>
+
+  <%= form_with model: @user_registration, url: church_admin_memberships_path(@church), class: "mt-8 rounded-lg border border-slate-200 bg-white p-6" do |form| %>
+    <% if @user_registration.errors.any? %>
+      <div class="mb-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <p class="font-medium">No se pudo crear el usuario.</p>
+        <ul class="mt-2 list-disc pl-5">
+          <% @user_registration.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="grid gap-5 sm:grid-cols-2">
+      <div>
+        <%= form.label :first_name, "Nombre", class: "block text-sm font-medium text-slate-700" %>
+        <%= form.text_field :first_name, autocomplete: "given-name", class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      </div>
+
+      <div>
+        <%= form.label :last_name, "Apellido", class: "block text-sm font-medium text-slate-700" %>
+        <%= form.text_field :last_name, autocomplete: "family-name", class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      </div>
+
+      <div class="sm:col-span-2">
+        <%= form.label :email, "Email", class: "block text-sm font-medium text-slate-700" %>
+        <%= form.email_field :email, autocomplete: "email", class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      </div>
+
+      <div>
+        <%= form.label :initial_access, "Clave inicial", class: "block text-sm font-medium text-slate-700" %>
+        <%= form.password_field :initial_access, autocomplete: "new-password", class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      </div>
+
+      <div>
+        <%= form.label :initial_access_confirmation, "Confirmacion", class: "block text-sm font-medium text-slate-700" %>
+        <%= form.password_field :initial_access_confirmation, autocomplete: "new-password", class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-base font-semibold text-slate-950">Roles iniciales</h2>
+
+      <div class="mt-4 grid gap-3 sm:grid-cols-2">
+        <% @roles.each do |role| %>
+          <label class="flex min-h-12 items-center gap-3 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700">
+            <%= check_box_tag(
+                  "church_admin_user_registration[role_public_ids][]",
+                  role.public_id,
+                  @user_registration.role_public_ids.include?(role.public_id),
+                  class: "h-4 w-4 rounded border-slate-300 text-slate-950 focus:ring-slate-500"
+                ) %>
+            <span>
+              <span class="block font-medium text-slate-900"><%= role.name %></span>
+              <span class="block text-xs text-slate-500"><%= role.pastoral? ? "Pastoral" : "General" %></span>
+            </span>
+          </label>
+        <% end %>
+
+        <% if @roles.none? %>
+          <p class="text-sm text-slate-500">No hay roles activos para asignar.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-3">
+      <%= link_to "Cancelar", church_admin_memberships_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <%= form.submit "Crear usuario", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    </div>
+  <% end %>
+</section>

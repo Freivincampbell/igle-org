@@ -28,7 +28,12 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :memberships, controller: :church_memberships, param: :public_id, only: %i[index edit update]
+      resources :memberships, controller: :church_memberships, param: :public_id, only: %i[index new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+        end
+      end
       resources :members, param: :public_id, only: %i[index show new create edit update] do
         member do
           patch :activate

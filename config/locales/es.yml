@@ -18,7 +18,11 @@ es:
       members_updated: "Miembros del ministerio actualizados correctamente."
       updated: "Ministerio actualizado correctamente."
     memberships:
-      roles_updated: "Roles de usuario actualizados correctamente."
+      activated: "Acceso de usuario activado correctamente."
+      created: "Usuario de iglesia creado correctamente."
+      deactivated: "Acceso de usuario desactivado correctamente."
+      last_owner: "No puedes desactivar el ultimo owner activo de la iglesia."
+      updated: "Usuario de iglesia actualizado correctamente."
     roles:
       activated: "Rol activado correctamente."
       created: "Rol creado correctamente."

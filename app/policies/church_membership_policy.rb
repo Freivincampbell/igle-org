@@ -8,7 +8,7 @@ class ChurchMembershipPolicy < ApplicationPolicy
   end
 
   def create?
-    super_admin? || (same_church? && permission?("church_memberships", "create"))
+    super_admin? || (current_church.present? && permission?("church_memberships", "create"))
   end
 
   def update?
