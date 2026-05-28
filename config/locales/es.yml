@@ -3,8 +3,34 @@ es:
     errors:
       messages:
         record_invalid: "La validacion fallo: %{errors}"
+        invalid_format: "no tiene un formato valido"
+        invalid_color: "debe ser un color hexadecimal valido"
+        invalid_content_type: "tiene un tipo de archivo no permitido"
+        too_large: "es demasiado grande"
+        must_be_after_starts_at: "debe ser posterior a la hora de inicio"
   authorization:
     not_authorized: "No tienes permisos para realizar esta accion."
+  date:
+    abbr_day_names:
+      - "Dom"
+      - "Lun"
+      - "Mar"
+      - "Mie"
+      - "Jue"
+      - "Vie"
+      - "Sab"
+    day_names:
+      - "Domingo"
+      - "Lunes"
+      - "Martes"
+      - "Miercoles"
+      - "Jueves"
+      - "Viernes"
+      - "Sabado"
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+      time: "%H:%M"
   church_admin:
     members:
       activated: "Miembro activado correctamente."
@@ -29,6 +55,13 @@ es:
       deactivated: "Rol desactivado correctamente."
       permissions_updated: "Permisos del rol actualizados correctamente."
       updated: "Rol actualizado correctamente."
+    service_times:
+      activated: "Horario activado correctamente."
+      created: "Horario creado correctamente."
+      deactivated: "Horario desactivado correctamente."
+      updated: "Horario actualizado correctamente."
+    settings:
+      updated: "Configuracion de iglesia actualizada correctamente."
   devise:
     failure:
       already_authenticated: "Ya iniciaste sesion."
@@ -104,12 +137,16 @@ es:
       manage: "Administrar"
       read: "Leer"
     modules:
-      board: "Junta administrativa"
+      boards: "Junta directiva"
       church_memberships: "Usuarios de iglesia"
+      church_settings: "Configuracion de iglesia"
       events: "Eventos"
+      families: "Familias"
       members: "Miembros"
       ministries: "Ministerios"
+      occupations: "Ocupaciones"
       pastoral_notes: "Notas pastorales"
+      profile_change_requests: "Solicitudes de cambio"
       reports: "Reportes"
       roles: "Roles"
-      settings: "Configuracion"
+      skills: "Habilidades"

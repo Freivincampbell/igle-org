@@ -48,6 +48,15 @@ Rails.application.routes.draw do
           patch :members, action: :update_members
         end
       end
+
+      resource :settings, only: %i[show update], controller: :settings
+
+      resources :service_times, param: :public_id, only: %i[index new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+        end
+      end
     end
   end
 

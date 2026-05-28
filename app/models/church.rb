@@ -8,9 +8,46 @@ class Church < ApplicationRecord
   has_many :roles, dependent: :destroy
   has_many :members, dependent: :destroy
   has_many :ministries, dependent: :destroy
+  has_many :church_service_times, dependent: :destroy
 
   enum :status, { active: "active", inactive: "inactive" }, validate: true
 
+  normalizes :slug, with: ->(value) { value.to_s.strip.downcase.presence }
+  normalizes :primary_color, :secondary_color, with: ->(value) { value.to_s.strip.presence }
+
   validates :name, presence: true
   validates :status, :locale, :time_zone, presence: true
+  validates :slug, uniqueness: { case_sensitive: false }, allow_nil: true,
+                   format: { with: /\A[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\z/, message: :invalid_format }
+  validates :primary_color, :secondary_color,
+            format: { with: /\A#?[0-9A-Fa-f]{6}\z/, message: :invalid_color },
+            allow_nil: true
+
+  validate :logo_content_type_allowed
+  validate :logo_size_within_limit
+
+  LOGO_ALLOWED_CONTENT_TYPES = %w[image/png image/jpeg image/jpg image/webp].freeze
+  LOGO_MAX_SIZE = 5.megabytes
+
+  private
+
+  def logo_content_type_allowed
+    return unless logo.attached?
+
+    content_type = logo.blob&.content_type
+    return if content_type.blank?
+    return if LOGO_ALLOWED_CONTENT_TYPES.include?(content_type)
+
+    errors.add(:logo, :invalid_content_type)
+  end
+
+  def logo_size_within_limit
+    return unless logo.attached?
+
+    size = logo.blob&.byte_size
+    return if size.blank?
+    return if size <= LOGO_MAX_SIZE
+
+    errors.add(:logo, :too_large)
+  end
 end

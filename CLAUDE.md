@@ -8,6 +8,10 @@ Aplicación web Rails 8 multi-tenant para administrar iglesias. Cada iglesia es 
 
 Nombre comercial provisional: `igle-org`. Idioma principal: español.
 
+## informacion total del proyecto:
+
+Ver `general planification.md` en la raiz del proyecto
+
 ## Stack
 
 - Ruby 3.4.9, Rails 8.1.3.

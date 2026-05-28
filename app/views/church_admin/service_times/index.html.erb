@@ -1,0 +1,59 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Horarios de cultos</h1>
+    </div>
+
+    <% if policy(ChurchServiceTime).new? %>
+      <%= link_to "Nuevo horario", new_church_admin_service_time_path(@church), class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <% end %>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3">Nombre</th>
+          <th class="px-4 py-3">Dia</th>
+          <th class="px-4 py-3">Hora</th>
+          <th class="px-4 py-3">Lugar</th>
+          <th class="px-4 py-3">Estado</th>
+          <th class="px-4 py-3 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @service_times.any? %>
+          <% @service_times.each do |service_time| %>
+            <tr>
+              <td class="px-4 py-4 font-medium text-slate-950"><%= service_time.name %></td>
+              <td class="px-4 py-4 text-slate-600"><%= day_of_week_label(service_time.day_of_week) %></td>
+              <td class="px-4 py-4 text-slate-600">
+                <%= l(service_time.starts_at, format: :time) if service_time.starts_at %>
+                <% if service_time.ends_at %> - <%= l(service_time.ends_at, format: :time) %><% end %>
+              </td>
+              <td class="px-4 py-4 text-slate-600"><%= service_time.location %></td>
+              <td class="px-4 py-4 text-slate-600"><%= church_service_time_status_label(service_time.status) %></td>
+              <td class="px-4 py-4 text-right">
+                <div class="flex justify-end gap-3">
+                  <% if policy(service_time).edit? %>
+                    <%= link_to "Editar", edit_church_admin_service_time_path(@church, service_time), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% end %>
+                  <% if service_time.active? && policy(service_time).deactivate? %>
+                    <%= button_to "Desactivar", deactivate_church_admin_service_time_path(@church, service_time), method: :patch, form_class: "inline-flex", class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% elsif service_time.inactive? && policy(service_time).activate? %>
+                    <%= button_to "Activar", activate_church_admin_service_time_path(@church, service_time), method: :patch, form_class: "inline-flex", class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="6" class="px-4 py-8 text-center text-slate-500">No hay horarios registrados.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>
