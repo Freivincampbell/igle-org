@@ -27,7 +27,7 @@ RSpec.describe MemberPolicy do
       membership = create(:church_membership, church:)
       role = create(:role, church:)
       member = create(:member, church:)
-      permission = create(:permission, module_key: "members", action_key: "update", name: "Miembros - Editar")
+      permission = create(:permission, module_key: "members", action_key: "create", name: "Miembros - Crear/editar")
 
       create(:membership_role, church_membership: membership, role:)
       create(:role_permission, role:, permission:)

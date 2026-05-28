@@ -1,13 +1,10 @@
 class Permission < ApplicationRecord
   include PublicIdentifiable
 
-  ACTION_KEYS = %w[read create update activate deactivate export manage].freeze
+  ACTION_KEYS = %w[read create manage].freeze
   MODULE_KEYS = %w[
-    churches
     church_memberships
-    users
     roles
-    permissions
     members
     ministries
     board
@@ -15,6 +12,12 @@ class Permission < ApplicationRecord
     reports
     settings
     pastoral_notes
+  ].freeze
+  ASSIGNABLE_MODULE_KEYS = %w[
+    church_memberships
+    roles
+    members
+    ministries
   ].freeze
 
   has_many :role_permissions, dependent: :destroy
@@ -25,5 +28,6 @@ class Permission < ApplicationRecord
   validates :name, presence: true
   validates :module_key, uniqueness: { scope: :action_key }
 
+  scope :assignable, -> { where(module_key: ASSIGNABLE_MODULE_KEYS, action_key: ACTION_KEYS) }
   scope :ordered, -> { order(:position, :module_key, :action_key) }
 end

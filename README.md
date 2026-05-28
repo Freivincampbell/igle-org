@@ -65,14 +65,13 @@ La matriz de permisos usara checkboxes por accion:
 - Editar.
 - Activar.
 - Desactivar.
-- Exportar.
 - Administrar.
 
 Tambien tendra atajos:
 
 - Solo lectura.
-- Lectura y escritura.
-- Acceso completo.
+- Crear/editar.
+- Administrar.
 
 Las notas pastorales seran visibles solo para roles pastorales autorizados.
 
@@ -325,19 +324,22 @@ Flujo manual recomendado:
 1. Crear un rol desde `Nuevo rol`.
 2. Entrar a `Editar`.
 3. Marcar permisos en la matriz por modulo y accion.
-4. Usar los atajos `Sin acceso`, `Lectura`, `Escritura` o `Total` para probar que los checkboxes cambien correctamente.
+4. Usar los atajos `Sin acceso`, `Solo lectura`, `Crear/editar` o `Administrar` para probar que los checkboxes cambien correctamente.
 5. Guardar permisos.
 6. Confirmar en el detalle del rol que aparezcan los permisos asignados.
 7. Desactivar el rol y volver a activarlo.
 
-Para probar permisos pastorales:
+Significado de permisos:
 
-1. Crear o editar un rol y marcar `Rol pastoral`.
-2. Guardar el rol.
-3. Entrar a `Editar`.
-4. Asignar permisos del modulo `Notas pastorales`.
+- `Leer`: permite ver listados y detalles en modo lectura.
+- `Crear/editar`: permite leer, crear y editar registros del modulo.
+- `Administrar`: incluye leer, crear, editar, activar y desactivar registros del modulo.
 
-Los permisos de `Notas pastorales` no se guardan en roles no pastorales.
+Notas:
+
+- El usuario `owner` de iglesia tiene acceso administrativo completo por bootstrap inicial, aunque no tenga roles asignados. Para probar restricciones de permisos usa un usuario no-owner con roles.
+- La matriz solo muestra modulos con pantallas administrativas implementadas. El modulo tecnico `users` no aparece porque todavia no existe una pantalla completa para crear usuarios desde la iglesia.
+- Los permisos de `Notas pastorales` se habilitaran en la matriz cuando exista el modulo pastoral.
 
 ### 9. Probar Asignacion De Roles A Usuarios
 

@@ -1,34 +1,22 @@
 permission_labels = {
-  "churches" => "Iglesias",
   "church_memberships" => "Usuarios de iglesia",
-  "users" => "Usuarios",
   "roles" => "Roles",
-  "permissions" => "Permisos",
   "members" => "Miembros",
-  "ministries" => "Ministerios",
-  "board" => "Junta administrativa",
-  "events" => "Eventos",
-  "reports" => "Reportes",
-  "settings" => "Configuracion",
-  "pastoral_notes" => "Notas pastorales"
+  "ministries" => "Ministerios"
 }
 
 action_labels = {
   "read" => "Leer",
-  "create" => "Crear",
-  "update" => "Editar",
-  "activate" => "Activar",
-  "deactivate" => "Desactivar",
-  "export" => "Exportar",
+  "create" => "Crear/editar",
   "manage" => "Administrar"
 }
 
-Permission::MODULE_KEYS.each_with_index do |module_key, module_index|
+Permission::ASSIGNABLE_MODULE_KEYS.each_with_index do |module_key, module_index|
   Permission::ACTION_KEYS.each_with_index do |action_key, action_index|
-    Permission.find_or_create_by!(module_key:, action_key:) do |permission|
-      permission.name = "#{permission_labels.fetch(module_key)} - #{action_labels.fetch(action_key)}"
-      permission.position = (module_index * 100) + action_index
-    end
+    permission = Permission.find_or_initialize_by(module_key:, action_key:)
+    permission.name = "#{permission_labels.fetch(module_key)} - #{action_labels.fetch(action_key)}"
+    permission.position = (module_index * 100) + action_index
+    permission.save!
   end
 end
 

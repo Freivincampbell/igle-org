@@ -5,18 +5,18 @@ RSpec.describe Permissions::RoleMatrixAssignment do
     it "replaces permissions using public identifiers" do
       role = create(:role)
       read_permission = create(:permission, module_key: "roles", action_key: "read", name: "Roles - Leer")
-      update_permission = create(:permission, module_key: "roles", action_key: "update", name: "Roles - Editar")
-      export_permission = create(:permission, module_key: "roles", action_key: "export", name: "Roles - Exportar")
+      create_permission = create(:permission, module_key: "roles", action_key: "create", name: "Roles - Crear/editar")
+      manage_permission = create(:permission, module_key: "roles", action_key: "manage", name: "Roles - Administrar")
 
-      create(:role_permission, role:, permission: export_permission)
+      create(:role_permission, role:, permission: manage_permission)
 
       assignment = described_class.new(
         role:,
-        permission_public_ids: [ read_permission.public_id, update_permission.public_id ]
+        permission_public_ids: [ read_permission.public_id, create_permission.public_id ]
       )
 
       expect(assignment.save).to be(true)
-      expect(role.permissions.reload).to contain_exactly(read_permission, update_permission)
+      expect(role.permissions.reload).to contain_exactly(read_permission, create_permission)
     end
 
     it "rejects unknown permission identifiers" do
@@ -27,8 +27,8 @@ RSpec.describe Permissions::RoleMatrixAssignment do
       expect(role.permissions.reload).to be_empty
     end
 
-    it "rejects pastoral note permissions for non-pastoral roles" do
-      role = create(:role, pastoral: false)
+    it "rejects permissions that are not assignable from the matrix" do
+      role = create(:role, pastoral: true)
       permission = create(:permission, module_key: "pastoral_notes", action_key: "read", name: "Notas pastorales - Leer")
 
       assignment = described_class.new(role:, permission_public_ids: [ permission.public_id ])

@@ -26,7 +26,7 @@ module Permissions
     private
 
     def selected_permissions
-      @selected_permissions ||= Permission.where(public_id: normalized_permission_public_ids).to_a
+      @selected_permissions ||= Permission.assignable.where(public_id: normalized_permission_public_ids).to_a
     end
 
     def normalized_permission_public_ids

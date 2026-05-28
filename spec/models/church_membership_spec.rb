@@ -18,12 +18,13 @@ RSpec.describe ChurchMembership do
       church = create(:church)
       membership = create(:church_membership, church:)
       role = create(:role, church:)
-      permission = create(:permission, module_key: "roles", action_key: "update", name: "Roles - Editar")
+      permission = create(:permission, module_key: "roles", action_key: "create", name: "Roles - Crear/editar")
 
       create(:membership_role, church_membership: membership, role:)
       create(:role_permission, role:, permission:)
 
       expect(membership).to have_permission("roles", "update")
+      expect(membership).to have_permission("roles", "create")
       expect(membership).not_to have_permission("roles", "export")
     end
 
@@ -37,6 +38,22 @@ RSpec.describe ChurchMembership do
       create(:role_permission, role:, permission:)
 
       expect(membership).to have_permission("roles", "deactivate")
+      expect(membership).to have_permission("roles", "read")
+    end
+
+    it "treats read permission as read-only access" do
+      church = create(:church)
+      membership = create(:church_membership, church:)
+      role = create(:role, church:)
+      permission = create(:permission, module_key: "roles", action_key: "read", name: "Roles - Leer")
+
+      create(:membership_role, church_membership: membership, role:)
+      create(:role_permission, role:, permission:)
+
+      expect(membership).to have_permission("roles", "read")
+      expect(membership).not_to have_permission("roles", "create")
+      expect(membership).not_to have_permission("roles", "update")
+      expect(membership).not_to have_permission("roles", "deactivate")
     end
   end
 end
