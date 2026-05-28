@@ -58,7 +58,7 @@ Controladores agrupados por área:
 
 `Platform::` siempre hereda de `Platform::BaseController`, exige `current_user.super_admin?` y usa `public_id` en rutas de recursos.
 
-`ChurchAdmin::` siempre hereda de `ChurchAdmin::BaseController`, resuelve la iglesia desde `church_public_id`, setea `Current.church`/`Current.church_membership` y usa `public_id` en roles, membresias y recursos internos.
+`ChurchAdmin::` siempre hereda de `ChurchAdmin::BaseController`, resuelve la iglesia desde `church_public_id`, setea `Current.church`/`Current.church_membership` y usa `public_id` en roles, membresias, miembros y recursos internos.
 
 Lógica compleja vive en `app/services/` (no en modelos ni controladores). Ver estructura sugerida en la sección 10 de `general planification.md`.
 

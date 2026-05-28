@@ -2476,6 +2476,11 @@ Estado actual:
 - Agregar dirección.
 - Agregar datos de bautismo y membresía.
 
+Estado actual:
+
+- Implementado: modelo `Member`, CRUD administrativo por iglesia, perfil de miembro, vínculo opcional a usuario global de la misma iglesia, dirección en el perfil, fechas de bautismo/membresía y activación/desactivación.
+- Pendiente: familia/hogar, ocupaciones, habilidades, ministerios y solicitudes de cambio de perfil.
+
 ### Etapa 7 - Solicitudes De Cambio
 
 - Permitir que miembro edite perfil mediante solicitud.
@@ -2753,13 +2758,13 @@ Elementos necesarios:
 
 ### Miembros
 
-- [ ] CRUD de miembros.
-- [ ] Perfil de miembro.
-- [ ] Dirección.
+- [x] CRUD de miembros.
+- [x] Perfil de miembro.
+- [x] Dirección.
 - [ ] Familia/hogar.
-- [ ] Bautismo.
-- [ ] Membresía oficial.
-- [ ] Activar/desactivar.
+- [x] Bautismo.
+- [x] Membresía oficial.
+- [x] Activar/desactivar.
 - [ ] Solicitudes de cambio.
 
 ### Ministerios

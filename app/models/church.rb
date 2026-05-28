@@ -6,6 +6,7 @@ class Church < ApplicationRecord
   has_many :church_memberships, dependent: :destroy
   has_many :users, through: :church_memberships
   has_many :roles, dependent: :destroy
+  has_many :members, dependent: :destroy
 
   enum :status, { active: "active", inactive: "inactive" }, validate: true
 
