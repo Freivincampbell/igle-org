@@ -1,0 +1,136 @@
+module ChurchAdmin
+  class EventsController < BaseController
+    before_action :set_event, only: %i[show edit update cancel reschedule attendance update_attendance]
+    before_action :set_form_options, only: %i[new create edit update]
+
+    def index
+      authorize Event
+
+      scope = policy_scope(Event).where(church: @church)
+
+      @filter = params[:filter].presence || "upcoming"
+      @events = case @filter
+      when "past" then scope.past
+      when "all" then scope.ordered
+      else scope.upcoming
+      end
+    end
+
+    def show
+      authorize @event
+      @rsvps = @event.event_rsvps.includes(:member)
+      @attendances = @event.event_attendances.includes(:member)
+    end
+
+    def new
+      @event = @church.events.new(default_event_attributes)
+      authorize @event
+    end
+
+    def create
+      @event = @church.events.new(event_params)
+      @event.created_by = current_user
+      authorize @event
+
+      if @event.save
+        redirect_to church_admin_event_path(@church, @event), notice: t("church_admin.events.created")
+      else
+        render :new, status: :unprocessable_content
+      end
+    end
+
+    def edit
+      authorize @event
+    end
+
+    def update
+      authorize @event
+
+      if @event.update(event_params)
+        redirect_to church_admin_event_path(@church, @event), notice: t("church_admin.events.updated")
+      else
+        render :edit, status: :unprocessable_content
+      end
+    end
+
+    def cancel
+      authorize @event, :deactivate?
+      @event.cancelled!
+      redirect_to church_admin_event_path(@church, @event), notice: t("church_admin.events.cancelled")
+    end
+
+    def reschedule
+      authorize @event, :activate?
+      @event.scheduled!
+      redirect_to church_admin_event_path(@church, @event), notice: t("church_admin.events.rescheduled")
+    end
+
+    def attendance
+      authorize @event, :update?
+      @members = @church.members.active.ordered
+      @attendances_by_member = @event.event_attendances.includes(:member).index_by(&:member_id)
+    end
+
+    def update_attendance
+      authorize @event, :update?
+
+      attended_member_ids = Array(params.dig(:attendance, :member_ids)).map(&:to_i)
+
+      Event.transaction do
+        @church.members.active.find_each do |member|
+          attendance = @event.event_attendances.find_or_initialize_by(member:, church: @church)
+          if attended_member_ids.include?(member.id)
+            attendance.attended = true
+            attendance.checked_in_at ||= Time.current
+            attendance.checked_in_by ||= current_user
+            attendance.save!
+          elsif attendance.persisted?
+            attendance.destroy!
+          end
+        end
+      end
+
+      redirect_to attendance_church_admin_event_path(@church, @event), notice: t("church_admin.events.attendance_updated")
+    end
+
+    private
+
+    def set_event
+      @event = @church.events.find_by_public_id!(params[:public_id])
+    end
+
+    def set_form_options
+      @ministry_options = @church.ministries.where(status: "active").order(:name).pluck(:name, :id)
+      @member_options = @church.members.active.ordered.map { |m| [ m.full_name, m.id ] }
+    end
+
+    def event_params
+      params.require(:event).permit(
+        :title,
+        :description,
+        :event_type,
+        :location,
+        :starts_at,
+        :ends_at,
+        :visibility,
+        :status,
+        :ministry_id,
+        :responsible_member_id,
+        :recurring,
+        :recurrence_frequency,
+        :recurrence_until,
+        :capacity,
+        :food_expected
+      )
+    end
+
+    def default_event_attributes
+      {
+        event_type: "service",
+        visibility: "members_only",
+        status: "scheduled",
+        recurrence_frequency: "none"
+      }
+    end
+  end
+end

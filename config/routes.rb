@@ -63,6 +63,12 @@ Rails.application.routes.draw do
           patch :activate
           patch :deactivate
           patch :members, action: :update_members
+      resources :events, param: :public_id, only: %i[index show new create edit update] do
+        member do
+          patch :cancel
+          patch :reschedule
+          get :attendance
+          patch :attendance, action: :update_attendance
         end
       end
     end

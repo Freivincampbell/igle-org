@@ -4,6 +4,7 @@ class Ministry < ApplicationRecord
 
   has_many :ministry_memberships, dependent: :destroy
   has_many :members, through: :ministry_memberships
+  has_many :events, dependent: :nullify
 
   enum :status, { active: "active", inactive: "inactive" }, validate: true
 

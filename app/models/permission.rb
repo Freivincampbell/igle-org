@@ -23,6 +23,7 @@ class Permission < ApplicationRecord
     members
     ministries
     families
+    events
     church_settings
   ].freeze
 
