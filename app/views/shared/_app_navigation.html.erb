@@ -1,0 +1,44 @@
+<% if user_signed_in? %>
+  <header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <%= link_to "Igle Org", root_path, class: "text-base font-semibold text-slate-950" %>
+
+        <nav class="flex flex-wrap items-center gap-2 text-sm">
+          <% if current_user.super_admin? %>
+            <%= link_to "Plataforma", platform_root_path, class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <%= link_to "Mis iglesias", churches_path, class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% if current_church.present? && current_church_membership&.active? %>
+            <%= link_to current_church.name, church_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+        </nav>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 text-sm">
+        <span class="text-slate-500"><%= current_user.email %></span>
+        <%= button_to "Cerrar sesion", destroy_user_session_path, method: :delete, form_class: "inline-flex", class: "rounded-md border border-slate-300 bg-white px-3 py-2 font-medium text-slate-700 hover:bg-slate-50" %>
+      </div>
+    </div>
+
+    <% if current_church.present? && current_church_membership&.active? %>
+      <div class="border-t border-slate-100">
+        <nav class="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-2 px-6 py-3 text-sm">
+          <%= link_to "Resumen", church_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% if policy(Role).index? %>
+            <%= link_to "Roles", church_admin_roles_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <% if policy(ChurchMembership).index? %>
+            <%= link_to "Usuarios", church_admin_memberships_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <% if policy(Member).index? %>
+            <%= link_to "Miembros", church_admin_members_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <% if policy(Ministry).index? %>
+            <%= link_to "Ministerios", church_admin_ministries_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+        </nav>
+      </div>
+    <% end %>
+  </header>
+<% end %>
