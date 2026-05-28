@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_100001) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -113,6 +113,75 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_100001) do
     t.index ["public_id"], name: "index_churches_on_public_id", unique: true
     t.index ["slug"], name: "index_churches_on_slug", unique: true, where: "(slug IS NOT NULL)"
     t.index ["status"], name: "index_churches_on_status"
+  end
+
+  create_table "event_attendances", force: :cascade do |t|
+    t.boolean "attended", default: true, null: false
+    t.datetime "checked_in_at"
+    t.bigint "checked_in_by_id"
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "event_id", null: false
+    t.bigint "member_id", null: false
+    t.text "notes"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.datetime "updated_at", null: false
+    t.index ["checked_in_by_id"], name: "index_event_attendances_on_checked_in_by_id"
+    t.index ["church_id", "event_id"], name: "index_event_attendances_on_church_id_and_event_id"
+    t.index ["church_id"], name: "index_event_attendances_on_church_id"
+    t.index ["event_id", "member_id"], name: "index_event_attendances_on_event_id_and_member_id", unique: true
+    t.index ["event_id"], name: "index_event_attendances_on_event_id"
+    t.index ["member_id"], name: "index_event_attendances_on_member_id"
+    t.index ["public_id"], name: "index_event_attendances_on_public_id", unique: true
+  end
+
+  create_table "event_rsvps", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "event_id", null: false
+    t.integer "guests_count", default: 0, null: false
+    t.bigint "member_id", null: false
+    t.text "notes"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "attending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "status"], name: "index_event_rsvps_on_church_id_and_status"
+    t.index ["church_id"], name: "index_event_rsvps_on_church_id"
+    t.index ["event_id", "member_id"], name: "index_event_rsvps_on_event_id_and_member_id", unique: true
+    t.index ["event_id"], name: "index_event_rsvps_on_event_id"
+    t.index ["member_id"], name: "index_event_rsvps_on_member_id"
+    t.index ["public_id"], name: "index_event_rsvps_on_public_id", unique: true
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.integer "capacity"
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.text "description"
+    t.datetime "ends_at"
+    t.string "event_type", default: "service", null: false
+    t.boolean "food_expected", default: false, null: false
+    t.string "location"
+    t.bigint "ministry_id"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "recurrence_frequency", default: "none", null: false
+    t.date "recurrence_until"
+    t.boolean "recurring", default: false, null: false
+    t.bigint "responsible_member_id"
+    t.datetime "starts_at", null: false
+    t.string "status", default: "scheduled", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.string "visibility", default: "members_only", null: false
+    t.index ["church_id", "event_type"], name: "index_events_on_church_id_and_event_type"
+    t.index ["church_id", "starts_at"], name: "index_events_on_church_id_and_starts_at"
+    t.index ["church_id", "status"], name: "index_events_on_church_id_and_status"
+    t.index ["church_id"], name: "index_events_on_church_id"
+    t.index ["created_by_id"], name: "index_events_on_created_by_id"
+    t.index ["ministry_id"], name: "index_events_on_ministry_id"
+    t.index ["public_id"], name: "index_events_on_public_id", unique: true
+    t.index ["responsible_member_id"], name: "index_events_on_responsible_member_id"
   end
 
   create_table "members", force: :cascade do |t|
@@ -273,6 +342,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_100001) do
   add_foreign_key "church_memberships", "churches"
   add_foreign_key "church_memberships", "users"
   add_foreign_key "church_service_times", "churches"
+  add_foreign_key "event_attendances", "churches"
+  add_foreign_key "event_attendances", "events"
+  add_foreign_key "event_attendances", "members"
+  add_foreign_key "event_attendances", "users", column: "checked_in_by_id"
+  add_foreign_key "event_rsvps", "churches"
+  add_foreign_key "event_rsvps", "events"
+  add_foreign_key "event_rsvps", "members"
+  add_foreign_key "events", "churches"
+  add_foreign_key "events", "members", column: "responsible_member_id"
+  add_foreign_key "events", "ministries"
+  add_foreign_key "events", "users", column: "created_by_id"
   add_foreign_key "members", "churches"
   add_foreign_key "members", "users"
   add_foreign_key "membership_roles", "church_memberships"

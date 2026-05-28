@@ -1,0 +1,38 @@
+<section class="mx-auto w-full max-w-5xl px-6 py-10">
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %> / <%= @event.title %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Registrar asistencia</h1>
+    <p class="mt-1 text-sm text-slate-500">Marca los miembros que asistieron al evento.</p>
+  </div>
+
+  <%= form_with url: attendance_church_admin_event_path(@church, @event), method: :patch, class: "mt-6" do %>
+    <div class="rounded-lg border border-slate-200 bg-white">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+          <tr>
+            <th class="px-4 py-3 w-12">Asistio</th>
+            <th class="px-4 py-3">Miembro</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% if @members.any? %>
+            <% @members.each do |member| %>
+              <% checked = @attendances_by_member[member.id]&.attended %>
+              <tr>
+                <td class="px-4 py-2"><%= check_box_tag "attendance[member_ids][]", member.id, checked, id: "attendance_member_#{member.id}" %></td>
+                <td class="px-4 py-2"><label for="attendance_member_<%= member.id %>"><%= member.full_name %></label></td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr><td colspan="2" class="px-4 py-8 text-center text-slate-500">No hay miembros activos.</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-3">
+      <%= link_to "Cancelar", church_admin_event_path(@church, @event), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <%= submit_tag "Guardar asistencia", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    </div>
+  <% end %>
+</section>

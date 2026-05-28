@@ -44,4 +44,20 @@ module ApplicationHelper
   def church_service_time_status_label(status)
     t("ministries.statuses.#{status}", default: status.to_s.humanize)
   end
+
+  def event_type_label(event_type)
+    t("events.event_types.#{event_type}", default: event_type.to_s.humanize)
+  end
+
+  def event_visibility_label(visibility)
+    t("events.visibilities.#{visibility}", default: visibility.to_s.humanize)
+  end
+
+  def event_status_label(status)
+    t("events.statuses.#{status}", default: status.to_s.humanize)
+  end
+
+  def event_recurrence_label(recurrence)
+    t("events.recurrence_frequencies.#{recurrence}", default: recurrence.to_s.humanize)
+  end
 end

@@ -75,7 +75,7 @@ RSpec.describe "Church admin roles" do
       permission_for("roles", "read")
       permission_for("roles", "create")
       permission_for("roles", "manage")
-      permission_for("events", "read")
+      permission_for("pastoral_notes", "read")
 
       sign_in membership.user
 
@@ -86,7 +86,7 @@ RSpec.describe "Church admin roles" do
       expect(response.body).to include("Crear/editar")
       expect(response.body).to include("Administrar")
       expect(response.body).to include("Roles")
-      expect(response.body).not_to include("Eventos")
+      expect(response.body).not_to include("Notas pastorales")
     end
 
     it "updates the role permission matrix" do
