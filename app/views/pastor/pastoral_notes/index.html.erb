@@ -1,0 +1,46 @@
+<section class="mx-auto w-full max-w-5xl px-6 py-10">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Notas pastorales</h1>
+      <p class="text-sm text-slate-500">Acceso restringido solo a roles pastorales con permiso explicito.</p>
+    </div>
+    <% if policy(PastoralNote).create? %>
+      <%= link_to "Nueva nota", new_church_pastor_pastoral_note_path(@church), class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <% end %>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3">Miembro</th>
+          <th class="px-4 py-3">Tipo</th>
+          <th class="px-4 py-3">Pastor</th>
+          <th class="px-4 py-3">Fecha</th>
+          <th class="px-4 py-3 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @notes.any? %>
+          <% @notes.each do |note| %>
+            <tr>
+              <td class="px-4 py-3 font-medium text-slate-950"><%= note.member.full_name %></td>
+              <td class="px-4 py-3 text-slate-600"><%= pastoral_note_type_label(note.note_type) %></td>
+              <td class="px-4 py-3 text-slate-600"><%= note.pastor.email %></td>
+              <td class="px-4 py-3 text-slate-600"><%= l(note.created_at) %></td>
+              <td class="px-4 py-3 text-right">
+                <%= link_to "Ver", church_pastor_pastoral_note_path(@church, note), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                <% if policy(note).edit? %>
+                  <%= link_to "Editar", edit_church_pastor_pastoral_note_path(@church, note), class: "ml-3 font-medium text-slate-600 hover:text-slate-950" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">No hay notas registradas.</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

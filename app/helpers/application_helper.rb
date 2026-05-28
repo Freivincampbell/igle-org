@@ -60,4 +60,8 @@ module ApplicationHelper
   def event_recurrence_label(recurrence)
     t("events.recurrence_frequencies.#{recurrence}", default: recurrence.to_s.humanize)
   end
+
+  def pastoral_note_type_label(type)
+    t("pastoral_notes.note_types.#{type}", default: type.to_s.humanize)
+  end
 end

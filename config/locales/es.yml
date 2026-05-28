@@ -154,6 +154,17 @@ es:
     statuses:
       active: "Activo"
       inactive: "Inactivo"
+  pastoral_notes:
+    note_types:
+      counseling: "Consejeria"
+      follow_up: "Seguimiento"
+      general: "General"
+      prayer: "Oracion"
+  pastor:
+    pastoral_notes:
+      created: "Nota pastoral creada."
+      removed: "Nota pastoral eliminada."
+      updated: "Nota pastoral actualizada."
   platform:
     church_memberships:
       owner_assigned: "Administrador owner asignado correctamente."

@@ -28,8 +28,8 @@ RSpec.describe Permissions::RoleMatrixAssignment do
     end
 
     it "rejects permissions that are not assignable from the matrix" do
-      role = create(:role, pastoral: true)
-      permission = create(:permission, module_key: "pastoral_notes", action_key: "read", name: "Notas pastorales - Leer")
+      role = create(:role)
+      permission = create(:permission, module_key: "reports", action_key: "read", name: "Reportes - Leer")
 
       assignment = described_class.new(role:, permission_public_ids: [ permission.public_id ])
 

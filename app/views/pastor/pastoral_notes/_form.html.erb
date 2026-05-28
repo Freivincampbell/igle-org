@@ -1,0 +1,29 @@
+<% if note.errors.any? %>
+  <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+    <ul class="list-inside list-disc space-y-1">
+      <% note.errors.full_messages.each { |m| %><li><%= m %></li><% } %>
+    </ul>
+  </div>
+<% end %>
+<%= form_with model: note, url: url, method: method, class: "space-y-4" do |form| %>
+  <div>
+    <%= form.label :member_id, "Miembro", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.select :member_id, @member_options, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+  <div>
+    <%= form.label :note_type, "Tipo", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.select :note_type, PastoralNote::NOTE_TYPES.map { |t| [ pastoral_note_type_label(t), t ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+  <div>
+    <%= form.label :title, "Titulo", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.text_field :title, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+  <div>
+    <%= form.label :body, "Contenido", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.text_area :body, rows: 6, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+  <div class="flex justify-end gap-3">
+    <%= link_to "Cancelar", church_pastor_pastoral_notes_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+    <%= form.submit "Guardar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+  </div>
+<% end %>
