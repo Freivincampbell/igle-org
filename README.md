@@ -376,7 +376,29 @@ puts "Clave temporal: #{temporary_access}"
 
 Luego asigna roles a ese usuario desde `/churches/:church_uuid/admin/memberships`.
 
-### 10. Smoke Tests Rapidos
+### 10. Probar Miembros Oficiales
+
+Desde el detalle de una iglesia, entra a:
+
+- `/churches/:church_uuid/admin/members`
+
+Flujo manual recomendado:
+
+1. Crear un miembro desde `Nuevo miembro`.
+2. Completar los datos obligatorios: nombre, apellidos, telefono, fecha de nacimiento, genero y estado civil.
+3. Agregar direccion, datos de bautismo y fecha de membresia oficial si aplica.
+4. Vincular un `Usuario de acceso` solo si esa persona ya tiene usuario dentro de la iglesia.
+5. Guardar y confirmar que el detalle use UUID en la URL, nunca el `id` interno.
+6. Editar el miembro y actualizar datos de contacto o direccion.
+7. Desactivar el miembro y volver a activarlo.
+
+Notas:
+
+- El email del miembro es opcional.
+- El usuario vinculado tambien es opcional.
+- El sistema no borra miembros; usa estado activo/inactivo.
+
+### 11. Smoke Tests Rapidos
 
 ```sh
 curl -s -o /dev/null -w 'root:%{http_code}\n' http://localhost:3000
@@ -427,7 +449,7 @@ docker compose exec -T web bin/rails about
 docker compose exec -T web bundle exec rspec
 docker compose exec -T web bin/rails test
 docker compose exec -T web bin/rubocop
-docker compose exec -T web bin/brakeman --quiet
+docker compose exec -T web bundle exec brakeman --quiet
 docker compose exec -T web bin/bundler-audit check --update
 ```
 
@@ -439,7 +461,7 @@ bin/rails about
 bundle exec rspec
 bin/rails test
 bin/rubocop
-bin/brakeman --quiet
+bundle exec brakeman --quiet
 bin/bundler-audit check --update
 ```
 
@@ -473,6 +495,7 @@ La fundacion multi-tenant usa:
 - `permissions`: catalogo global de modulo + accion.
 - `role_permissions`: permisos asignados a cada rol.
 - `membership_roles`: roles asignados a usuarios dentro de una iglesia.
+- `members`: perfiles oficiales de miembros por iglesia, con contacto, direccion y estado.
 
 Todas estas tablas tienen `public_id` UUID único. Las tablas internas de Rails, como `active_storage_*`, no se tratan como recursos del dominio y no deben exponerse directamente.
 
@@ -533,7 +556,7 @@ Archivos que no deben subirse:
 
 ## Siguiente Paso
 
-Con la fundacion multi-tenant, el panel de plataforma y la administracion de roles/permisos creada, el siguiente paso es construir la base de miembros oficiales.
+Con la fundacion multi-tenant, el panel de plataforma, la administracion de roles/permisos y la base de miembros oficiales creadas, el siguiente paso recomendado es construir ministerios para poder asignar miembros a areas de servicio.
 
 El panel de plataforma ya permite al super administrador:
 
@@ -550,3 +573,7 @@ La administracion interna de iglesia ya permite al owner o usuario autorizado:
 - Activar o desactivar roles.
 - Asignar permisos por modulo y accion.
 - Asignar roles a usuarios de la iglesia.
+- Crear miembros oficiales.
+- Editar perfil administrativo de miembros.
+- Registrar direccion, bautismo y fecha de membresia oficial.
+- Activar o desactivar miembros.

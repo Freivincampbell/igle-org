@@ -6,6 +6,11 @@ es:
   authorization:
     not_authorized: "No tienes permisos para realizar esta accion."
   church_admin:
+    members:
+      activated: "Miembro activado correctamente."
+      created: "Miembro creado correctamente."
+      deactivated: "Miembro desactivado correctamente."
+      updated: "Miembro actualizado correctamente."
     memberships:
       roles_updated: "Roles de usuario actualizados correctamente."
     roles:
@@ -49,6 +54,21 @@ es:
         other: "%{count} errores impidieron guardar este %{resource}:"
       taken: "ya esta en uso"
   hello: "Hola mundo"
+  members:
+    genders:
+      female: "Femenino"
+      male: "Masculino"
+      not_specified: "No especificado"
+    marital_statuses:
+      divorced: "Divorciado"
+      married: "Casado"
+      other: "Otro"
+      separated: "Separado"
+      single: "Soltero"
+      widowed: "Viudo"
+    statuses:
+      active: "Activo"
+      inactive: "Inactivo"
   platform:
     church_memberships:
       owner_assigned: "Administrador owner asignado correctamente."

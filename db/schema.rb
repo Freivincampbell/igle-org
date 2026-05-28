@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_093000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_230000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -81,6 +81,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_093000) do
     t.index ["name"], name: "index_churches_on_name"
     t.index ["public_id"], name: "index_churches_on_public_id", unique: true
     t.index ["status"], name: "index_churches_on_status"
+  end
+
+  create_table "members", force: :cascade do |t|
+    t.string "address_line_1"
+    t.string "address_line_2"
+    t.date "baptized_on"
+    t.date "birth_date", null: false
+    t.integer "children_count", default: 0, null: false
+    t.bigint "church_id", null: false
+    t.string "city"
+    t.string "country"
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.string "emergency_contact_name"
+    t.string "emergency_contact_phone"
+    t.string "first_name", null: false
+    t.string "gender", null: false
+    t.string "last_name", null: false
+    t.string "marital_status", null: false
+    t.string "member_status", default: "active", null: false
+    t.string "middle_name"
+    t.text "notes"
+    t.date "official_membership_on"
+    t.string "phone", null: false
+    t.string "postal_code"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "second_last_name", null: false
+    t.string "secondary_phone"
+    t.string "state"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["church_id", "email"], name: "index_members_on_church_id_and_email", unique: true, where: "(email IS NOT NULL)"
+    t.index ["church_id", "last_name", "second_last_name", "first_name"], name: "index_members_on_church_and_name"
+    t.index ["church_id", "member_status"], name: "index_members_on_church_id_and_member_status"
+    t.index ["church_id"], name: "index_members_on_church_id"
+    t.index ["public_id"], name: "index_members_on_public_id", unique: true
+    t.index ["user_id"], name: "index_members_on_user_id"
   end
 
   create_table "membership_roles", force: :cascade do |t|
@@ -173,6 +210,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_093000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "church_memberships", "churches"
   add_foreign_key "church_memberships", "users"
+  add_foreign_key "members", "churches"
+  add_foreign_key "members", "users"
   add_foreign_key "membership_roles", "church_memberships"
   add_foreign_key "membership_roles", "roles"
   add_foreign_key "role_permissions", "permissions"

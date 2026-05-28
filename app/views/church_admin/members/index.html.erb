@@ -1,0 +1,58 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <%= render "church_admin/shared/nav", church: @church %>
+
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Miembros</h1>
+    </div>
+
+    <% if policy(Member).new? %>
+      <%= link_to "Nuevo miembro", new_church_admin_member_path(@church), class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <% end %>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3">Nombre</th>
+          <th class="px-4 py-3">Contacto</th>
+          <th class="px-4 py-3">Estado</th>
+          <th class="px-4 py-3 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @members.any? %>
+          <% @members.each do |member| %>
+            <tr>
+              <td class="px-4 py-4">
+                <div class="font-medium text-slate-950"><%= member.full_name %></div>
+                <div class="mt-1 text-xs text-slate-500"><%= member.public_id %></div>
+              </td>
+              <td class="px-4 py-4 text-slate-600">
+                <div><%= member.phone %></div>
+                <div class="mt-1 text-xs"><%= member.email.presence || "Sin email" %></div>
+              </td>
+              <td class="px-4 py-4 text-slate-600"><%= member_status_label(member.member_status) %></td>
+              <td class="px-4 py-4 text-right">
+                <div class="flex justify-end gap-3">
+                  <% if policy(member).show? %>
+                    <%= link_to "Ver", church_admin_member_path(@church, member), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% end %>
+                  <% if policy(member).edit? %>
+                    <%= link_to "Editar", edit_church_admin_member_path(@church, member), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="4" class="px-4 py-8 text-center text-slate-500">No hay miembros registrados.</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

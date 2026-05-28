@@ -7,6 +7,7 @@ class User < ApplicationRecord
   has_many :churches, through: :church_memberships
   has_many :active_church_memberships, -> { active }, class_name: "ChurchMembership", inverse_of: :user
   has_many :active_churches, through: :active_church_memberships, source: :church
+  has_many :members, dependent: :nullify
 
   enum :platform_role, { user: "user", super_admin: "super_admin" }, validate: true
   enum :status, { active: "active", inactive: "inactive" }, validate: true

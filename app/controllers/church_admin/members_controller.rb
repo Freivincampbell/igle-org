@@ -1,0 +1,114 @@
+module ChurchAdmin
+  class MembersController < BaseController
+    before_action :set_member, only: %i[show edit update activate deactivate]
+    before_action :set_user_options, only: %i[new create edit update]
+
+    def index
+      authorize Member
+
+      @members = policy_scope(Member)
+        .where(church: @church)
+        .ordered
+    end
+
+    def show
+      authorize @member
+    end
+
+    def new
+      @member = @church.members.new(default_member_attributes)
+      authorize @member
+    end
+
+    def create
+      @member = @church.members.new(member_params)
+      authorize @member
+
+      if @member.save
+        redirect_to church_admin_member_path(@church, @member), notice: t("church_admin.members.created")
+      else
+        render :new, status: :unprocessable_content
+      end
+    end
+
+    def edit
+      authorize @member
+    end
+
+    def update
+      authorize @member
+
+      if @member.update(member_params)
+        redirect_to church_admin_member_path(@church, @member), notice: t("church_admin.members.updated")
+      else
+        render :edit, status: :unprocessable_content
+      end
+    end
+
+    def activate
+      authorize @member
+      @member.active!
+
+      redirect_to church_admin_member_path(@church, @member), notice: t("church_admin.members.activated")
+    end
+
+    def deactivate
+      authorize @member
+      @member.inactive!
+
+      redirect_to church_admin_member_path(@church, @member), notice: t("church_admin.members.deactivated")
+    end
+
+    private
+
+    def set_member
+      @member = @church.members.find_by_public_id!(params[:public_id])
+    end
+
+    def set_user_options
+      @user_options = @church.church_memberships
+        .active
+        .joins(:user)
+        .includes(:user)
+        .order("users.email")
+        .map { |membership| [ membership.user.email, membership.user_id ] }
+    end
+
+    def member_params
+      params.require(:member).permit(
+        :user_id,
+        :first_name,
+        :middle_name,
+        :last_name,
+        :second_last_name,
+        :email,
+        :phone,
+        :secondary_phone,
+        :birth_date,
+        :gender,
+        :marital_status,
+        :children_count,
+        :baptized_on,
+        :official_membership_on,
+        :member_status,
+        :address_line_1,
+        :address_line_2,
+        :city,
+        :state,
+        :postal_code,
+        :country,
+        :emergency_contact_name,
+        :emergency_contact_phone,
+        :notes
+      )
+    end
+
+    def default_member_attributes
+      {
+        member_status: "active",
+        children_count: 0,
+        country: @church.country
+      }
+    end
+  end
+end
