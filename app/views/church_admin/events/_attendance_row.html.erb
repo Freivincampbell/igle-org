@@ -4,13 +4,18 @@
 <% recorded = attendances_by_member[member.id] %>
 <% checked = recorded ? recorded.attended : default_checked %>
 <label data-attendance-filter-target="row" data-member-name="<%= member.full_name %>"
-       class="flex items-center gap-3 border-t border-slate-100 px-4 py-3 hover:bg-slate-50">
+       class="flex items-center gap-3 border-t border-slate-100 px-5 py-3 hover:bg-slate-50/80 transition-colors">
   <%= check_box_tag "attendance[member_ids][]", member.public_id, checked,
         id: "attendance_member_#{member.public_id}",
         data: { attendance_filter_target: "checkbox", action: "change->attendance-filter#updateCount" },
         class: "h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500" %>
-  <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white <%= member_avatar_color(member.public_id) %>">
+  <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-violet-100 text-violet-700">
     <%= member_initials(member) %>
   </span>
-  <span class="text-sm font-medium text-slate-900"><%= member.full_name %></span>
+  <span class="flex-1 text-sm font-medium text-slate-900"><%= member.full_name %></span>
+  <% if checked %>
+    <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">Presente</span>
+  <% else %>
+    <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-500 ring-1 ring-slate-200">Ausente</span>
+  <% end %>
 </label>

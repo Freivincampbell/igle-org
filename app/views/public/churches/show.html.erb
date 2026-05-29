@@ -2,16 +2,16 @@
 <%
   primary = @church.primary_color.presence
   primary = "##{primary}" if primary && !primary.start_with?("#")
-  accent = primary || "#0f172a"
+  accent = primary || "#7c3aed"
 %>
 
 <section class="mx-auto w-full max-w-3xl px-6 py-12">
   <header class="flex flex-col items-center text-center">
     <% if @church.logo.attached? %>
       <%= image_tag @church.logo.variant(resize_to_limit: [ 200, 200 ]).processed,
-            alt: @church.name, class: "mb-6 h-28 w-28 rounded-full object-cover shadow" %>
+            alt: @church.name, class: "mb-6 h-28 w-28 rounded-full object-cover shadow-card" %>
     <% end %>
-    <h1 class="text-4xl font-semibold" style="color: <%= accent %>;"><%= @church.name %></h1>
+    <h1 class="text-4xl font-bold text-slate-900" style="color: <%= accent %>;"><%= @church.name %></h1>
     <% if @church.description.present? %>
       <p class="mt-4 max-w-2xl text-base leading-relaxed text-slate-600"><%= @church.description %></p>
     <% end %>
@@ -19,20 +19,22 @@
 
   <% if @service_times.any? %>
     <section class="mt-12">
-      <h2 class="text-lg font-semibold" style="color: <%= accent %>;">Horarios de culto</h2>
-      <ul class="mt-4 divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
-        <% @service_times.each do |service_time| %>
-          <li class="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3">
-            <span class="font-medium text-slate-900">
-              <%= service_time.day_name %> — <%= service_time.name %>
-            </span>
-            <span class="text-sm text-slate-600">
-              <%= service_time.starts_at.strftime("%H:%M") %><% if service_time.ends_at.present? %>–<%= service_time.ends_at.strftime("%H:%M") %><% end %>
-              <% if service_time.location.present? %>· <%= service_time.location %><% end %>
-            </span>
-          </li>
-        <% end %>
-      </ul>
+      <h2 class="mb-4 text-xs font-semibold uppercase tracking-widest" style="color: <%= accent %>;">Horarios de culto</h2>
+      <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+        <ul class="divide-y divide-slate-200">
+          <% @service_times.each do |service_time| %>
+            <li class="flex flex-wrap items-baseline justify-between gap-2 px-5 py-4">
+              <span class="font-medium text-slate-900">
+                <%= service_time.day_name %> — <%= service_time.name %>
+              </span>
+              <span class="text-sm text-slate-500">
+                <%= service_time.starts_at.strftime("%H:%M") %><% if service_time.ends_at.present? %>–<%= service_time.ends_at.strftime("%H:%M") %><% end %>
+                <% if service_time.location.present? %>· <%= service_time.location %><% end %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
     </section>
   <% end %>
 </section>

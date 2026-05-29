@@ -1,5 +1,5 @@
 <% if event.errors.any? %>
-  <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+  <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
     <ul class="list-inside list-disc space-y-1">
       <% event.errors.full_messages.each do |message| %>
         <li><%= message %></li>
@@ -12,35 +12,35 @@
   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
     <div class="md:col-span-2">
       <%= form.label :title, "Titulo", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.text_field :title, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.text_field :title, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :event_type, "Tipo", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :event_type, Event::EVENT_TYPES.map { |t| [ event_type_label(t), t ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.select :event_type, Event::EVENT_TYPES.map { |t| [ event_type_label(t), t ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :visibility, "Visibilidad", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :visibility, Event::VISIBILITIES.map { |v| [ event_visibility_label(v), v ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.select :visibility, Event::VISIBILITIES.map { |v| [ event_visibility_label(v), v ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :starts_at, "Inicio", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.datetime_local_field :starts_at, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.datetime_local_field :starts_at, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :ends_at, "Fin", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.datetime_local_field :ends_at, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.datetime_local_field :ends_at, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :location, "Lugar", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.text_field :location, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.text_field :location, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :capacity, "Capacidad", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.number_field :capacity, min: 0, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.number_field :capacity, min: 0, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :ministry_id, "Ministerio (opcional)", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :ministry_id, @ministry_options, { include_blank: "-" }, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.select :ministry_id, @ministry_options, { include_blank: "-" }, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :responsible_member_public_id, "Responsable (opcional)", class: "block text-sm font-medium text-slate-700" %>
@@ -77,7 +77,7 @@
                  autocomplete="off"
                  data-member-search-target="input"
                  data-action="input->member-search#search keydown->member-search#keydown"
-                 class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:ring-violet-500">
+                 class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
           <turbo-frame id="member-results-responsible" data-member-search-target="results"
                        class="absolute z-10 mt-1 block w-full rounded-md border border-slate-200 bg-white shadow-lg empty:hidden"></turbo-frame>
         </div>
@@ -85,7 +85,7 @@
     </div>
     <div>
       <%= form.label :status, "Estado", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :status, [ [ "Programado", "scheduled" ], [ "Cancelado", "cancelled" ], [ "Completado", "completed" ] ], {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.select :status, [ [ "Programado", "scheduled" ], [ "Cancelado", "cancelled" ], [ "Completado", "completed" ] ], {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div class="md:col-span-2 flex items-center gap-2">
       <%= form.check_box :recurring %>
@@ -93,11 +93,11 @@
     </div>
     <div>
       <%= form.label :recurrence_frequency, "Frecuencia", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :recurrence_frequency, Event::RECURRENCE_FREQUENCIES.map { |f| [ event_recurrence_label(f), f ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.select :recurrence_frequency, Event::RECURRENCE_FREQUENCIES.map { |f| [ event_recurrence_label(f), f ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :recurrence_until, "Hasta (opcional)", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.date_field :recurrence_until, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.date_field :recurrence_until, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div class="md:col-span-2 flex items-center gap-2">
       <%= form.check_box :food_expected %>
@@ -105,12 +105,12 @@
     </div>
     <div class="md:col-span-2">
       <%= form.label :description, "Descripcion", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.text_area :description, rows: 4, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.text_area :description, rows: 4, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
   </div>
 
   <div class="flex justify-end gap-3">
-    <%= link_to "Cancelar", church_admin_events_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
-    <%= form.submit "Guardar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <%= link_to "Cancelar", church_admin_events_path(@church), class: "rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
+    <%= form.submit "Guardar", class: "rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
   </div>
 <% end %>

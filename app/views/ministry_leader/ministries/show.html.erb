@@ -1,31 +1,31 @@
-<section class="mx-auto w-full max-w-5xl px-6 py-10">
+<section class="mx-auto w-full max-w-7xl px-6 py-8">
   <div class="mb-6">
-    <%= link_to "← Mis ministerios", church_ministry_leader_ministries_path(@church), class: "text-sm text-slate-600 hover:text-slate-950" %>
+    <%= link_to "← Mis ministerios", church_ministry_leader_ministries_path(@church), class: "text-sm text-slate-600 hover:text-violet-600 transition-colors" %>
   </div>
 
   <div>
-    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
-    <h1 class="mt-2 text-3xl font-semibold text-slate-950"><%= @ministry.name %></h1>
+    <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
+    <h1 class="mt-1 text-2xl font-bold text-slate-900"><%= @ministry.name %></h1>
     <% if @ministry.description.present? %>
       <p class="mt-2 text-sm text-slate-500"><%= @ministry.description %></p>
     <% end %>
   </div>
 
   <div class="mt-8">
-    <h2 class="text-lg font-semibold text-slate-950">Miembros activos (<%= @members.count %>)</h2>
-    <div class="mt-4 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <h2 class="text-base font-semibold text-slate-900">Miembros activos (<%= @members.count %>)</h2>
+    <div class="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
       <table class="min-w-full divide-y divide-slate-200 text-sm">
-        <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <thead>
           <tr>
-            <th class="px-4 py-3">Nombre</th>
-            <th class="px-4 py-3">Rol</th>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nombre</th>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Rol</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200">
           <% @members.each do |mm| %>
-            <tr>
-              <td class="px-4 py-3 font-medium text-slate-950"><%= mm.member.full_name %></td>
-              <td class="px-4 py-3 text-slate-600 capitalize"><%= mm.ministry_role %></td>
+            <tr class="group hover:bg-slate-50/80 transition-colors">
+              <td class="px-5 py-3 font-medium text-slate-900"><%= mm.member.full_name %></td>
+              <td class="px-5 py-3 text-slate-600 capitalize"><%= mm.ministry_role %></td>
             </tr>
           <% end %>
         </tbody>

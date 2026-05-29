@@ -1,5 +1,5 @@
 <% if member_occupation.errors.any? %>
-  <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+  <div class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
     <ul class="list-inside list-disc space-y-1">
       <% member_occupation.errors.full_messages.each { |m| %><li><%= m %></li><% } %>
     </ul>
@@ -9,50 +9,50 @@
   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
     <div>
       <%= form.label :occupation_id, "Ocupacion del catalogo", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :occupation_id, @church.occupations.where(status: "active").order(:name).pluck(:name, :id), { include_blank: "-" }, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.select :occupation_id, @church.occupations.where(status: "active").order(:name).pluck(:name, :id), { include_blank: "-" }, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-violet-600 focus:ring-violet-500 focus:outline-none" %>
     </div>
     <div>
       <%= form.label :employment_status, "Estado laboral", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :employment_status, MemberOccupation::EMPLOYMENT_STATUSES.map { |s| [ employment_status_label(s), s ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.select :employment_status, MemberOccupation::EMPLOYMENT_STATUSES.map { |s| [ employment_status_label(s), s ] }, {}, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-violet-600 focus:ring-violet-500 focus:outline-none" %>
     </div>
     <div>
       <%= form.label :company_name, "Empresa", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.text_field :company_name, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.text_field :company_name, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :job_title, "Cargo", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.text_field :job_title, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.text_field :job_title, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :work_type, "Tipo de trabajo", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :work_type, MemberOccupation::WORK_TYPES.map { |t| [ work_type_label(t), t ] }, { include_blank: "-" }, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.select :work_type, MemberOccupation::WORK_TYPES.map { |t| [ work_type_label(t), t ] }, { include_blank: "-" }, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-violet-600 focus:ring-violet-500 focus:outline-none" %>
     </div>
     <div>
       <%= form.label :years_of_experience, "Anios de experiencia", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.number_field :years_of_experience, min: 0, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.number_field :years_of_experience, min: 0, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :professional_contact, "Contacto profesional", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.text_field :professional_contact, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.text_field :professional_contact, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <%= form.label :profile_url, "Perfil web", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.url_field :profile_url, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.url_field :profile_url, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div class="md:col-span-2 space-y-2">
-      <label class="flex items-center gap-2"><%= form.check_box :current %> Trabajo actual</label>
-      <label class="flex items-center gap-2"><%= form.check_box :looking_for_work %> Buscando trabajo</label>
-      <label class="flex items-center gap-2"><%= form.check_box :offers_services %> Ofrece servicios</label>
-      <label class="flex items-center gap-2"><%= form.check_box :available_for_projects %> Disponible para proyectos</label>
-      <label class="flex items-center gap-2"><%= form.check_box :public_in_directory %> Aparece en el directorio publico</label>
+      <label class="flex items-center gap-2"><%= form.check_box :current, class: "text-violet-600 focus:ring-violet-500" %> Trabajo actual</label>
+      <label class="flex items-center gap-2"><%= form.check_box :looking_for_work, class: "text-violet-600 focus:ring-violet-500" %> Buscando trabajo</label>
+      <label class="flex items-center gap-2"><%= form.check_box :offers_services, class: "text-violet-600 focus:ring-violet-500" %> Ofrece servicios</label>
+      <label class="flex items-center gap-2"><%= form.check_box :available_for_projects, class: "text-violet-600 focus:ring-violet-500" %> Disponible para proyectos</label>
+      <label class="flex items-center gap-2"><%= form.check_box :public_in_directory, class: "text-violet-600 focus:ring-violet-500" %> Aparece en el directorio publico</label>
     </div>
     <div class="md:col-span-2">
       <%= form.label :description, "Descripcion de servicios", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.text_area :description, rows: 3, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= form.text_area :description, rows: 3, class: "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
   </div>
   <div class="flex justify-end gap-3">
-    <%= link_to "Cancelar", church_admin_member_path(@church, @member), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
-    <%= form.submit "Guardar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <%= link_to "Cancelar", church_admin_member_path(@church, @member), class: "rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
+    <%= form.submit "Guardar", class: "rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
   </div>
 <% end %>

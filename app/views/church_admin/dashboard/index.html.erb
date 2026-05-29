@@ -1,98 +1,205 @@
-<section class="mx-auto w-full max-w-6xl px-6 py-10">
-  <div>
-    <p class="text-sm font-medium text-slate-500">Panel de administración</p>
-    <h1 class="mt-2 text-3xl font-semibold text-slate-950"><%= @church.name %></h1>
-  </div>
+<section class="mx-auto w-full max-w-7xl px-6 py-8">
 
-  <%# Tarjetas de estadísticas %>
-  <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-    <% [
-      { label: "Miembros activos",        value: @stats[:members_active],          path: church_admin_members_path(@church) },
-      { label: "Ministerios activos",     value: @stats[:ministries_active],       path: church_admin_ministries_path(@church) },
-      { label: "Eventos próximos",        value: @stats[:events_upcoming],         path: church_admin_events_path(@church) },
-      { label: "Solicitudes pendientes",  value: @stats[:pending_change_requests], path: church_admin_profile_change_requests_path(@church) },
-    ].each do |stat| %>
-      <div class="rounded-lg border border-slate-200 bg-white p-5">
-        <p class="text-2xl font-bold text-slate-950"><%= stat[:value] %></p>
-        <p class="mt-1 text-xs font-medium text-slate-500"><%= stat[:label] %></p>
-        <%= link_to "Ver →", stat[:path], class: "mt-2 block text-xs font-medium text-slate-400 hover:text-slate-700" %>
-      </div>
+  <%# ── Page header ── %>
+  <div class="flex items-start justify-between">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-widest text-violet-500">Panel de administración</p>
+      <h1 class="mt-1.5 text-2xl font-bold text-slate-900"><%= @church.name %></h1>
+    </div>
+    <% if policy(Member).new? %>
+      <%= link_to new_church_admin_member_path(@church),
+            class: "inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors" do %>
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        Nuevo miembro
+      <% end %>
     <% end %>
   </div>
 
-  <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+  <%# ── Stat cards ── %>
+  <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+    <%
+      stats = [
+        {
+          label: "Miembros activos",
+          value: @stats[:members_active],
+          path: church_admin_members_path(@church),
+          icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />',
+          color: "violet"
+        },
+        {
+          label: "Ministerios activos",
+          value: @stats[:ministries_active],
+          path: church_admin_ministries_path(@church),
+          icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />',
+          color: "sky"
+        },
+        {
+          label: "Eventos próximos",
+          value: @stats[:events_upcoming],
+          path: church_admin_events_path(@church),
+          icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />',
+          color: "emerald"
+        },
+        {
+          label: "Solicitudes pendientes",
+          value: @stats[:pending_change_requests],
+          path: church_admin_profile_change_requests_path(@church),
+          icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z" />',
+          color: "amber"
+        }
+      ]
+      color_map = {
+        "violet" => { bg: "bg-violet-50", icon: "text-violet-600", hover_border: "hover:border-violet-200" },
+        "sky"    => { bg: "bg-sky-50",    icon: "text-sky-600",    hover_border: "hover:border-sky-200" },
+        "emerald"=> { bg: "bg-emerald-50",icon: "text-emerald-600",hover_border: "hover:border-emerald-200" },
+        "amber"  => { bg: "bg-amber-50",  icon: "text-amber-600",  hover_border: "hover:border-amber-200" }
+      }
+    %>
+    <% stats.each do |stat| %>
+      <% c = color_map[stat[:color]] %>
+      <%= link_to stat[:path],
+            class: "group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-card transition-all duration-200 hover:shadow-card-hover #{c[:hover_border]}" do %>
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <p class="text-xs font-medium text-slate-500"><%= stat[:label] %></p>
+            <p class="mt-2 text-3xl font-bold text-slate-900"><%= stat[:value] %></p>
+          </div>
+          <div class="rounded-lg <%= c[:bg] %> p-2.5 <%= c[:icon] %> transition-transform duration-200 group-hover:scale-110">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <%= stat[:icon].html_safe %>
+            </svg>
+          </div>
+        </div>
+        <p class="mt-3 text-xs font-medium text-slate-400 group-hover:<%= c[:icon] %> transition-colors">Ver detalles →</p>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# ── Main grid ── %>
+  <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+
     <%# Próximos eventos %>
-    <div>
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-semibold text-slate-950">Próximos eventos</h2>
-        <%= link_to "Ver todos →", church_admin_events_path(@church), class: "text-sm text-slate-500 hover:text-slate-950" %>
+    <div class="rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div class="flex items-center gap-2">
+          <div class="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-50 text-emerald-600">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900">Próximos eventos</h2>
+        </div>
+        <%= link_to "Ver todos", church_admin_events_path(@church),
+              class: "text-xs font-medium text-violet-600 hover:text-violet-700 transition-colors" %>
       </div>
-      <div class="mt-3 overflow-hidden rounded-lg border border-slate-200 bg-white divide-y divide-slate-100">
+      <div class="divide-y divide-slate-50">
         <% if @upcoming_events.any? %>
           <% @upcoming_events.each do |event| %>
-            <div class="px-4 py-3 flex items-center justify-between gap-4">
-              <div>
-                <p class="text-sm font-medium text-slate-950"><%= event.title %></p>
-                <p class="text-xs text-slate-500"><%= l(event.starts_at, format: :default) %><% if event.ministry %> · <%= event.ministry.name %><% end %></p>
+            <div class="flex items-center justify-between gap-4 px-5 py-3 hover:bg-slate-50 transition-colors">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-600">
+                  <%= l(event.starts_at, format: :day_abbr) rescue event.starts_at.day %>
+                </div>
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium text-slate-900"><%= event.title %></p>
+                  <p class="text-xs text-slate-500"><%= l(event.starts_at, format: :default) %><% if event.ministry %> · <span class="text-violet-500"><%= event.ministry.name %></span><% end %></p>
+                </div>
               </div>
-              <%= link_to "Ver", church_admin_event_path(@church, event), class: "text-xs font-medium text-slate-500 hover:text-slate-950 shrink-0" %>
+              <%= link_to "Ver", church_admin_event_path(@church, event),
+                    class: "shrink-0 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
             </div>
           <% end %>
         <% else %>
-          <p class="px-4 py-8 text-center text-sm text-slate-400">No hay eventos próximos.</p>
+          <div class="flex flex-col items-center py-10 text-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+              </svg>
+            </div>
+            <p class="mt-3 text-sm text-slate-500">No hay eventos próximos.</p>
+          </div>
         <% end %>
       </div>
     </div>
 
     <%# Miembros recientes %>
-    <div>
-      <div class="flex items-center justify-between">
-        <h2 class="text-base font-semibold text-slate-950">Miembros recientes</h2>
-        <%= link_to "Ver todos →", church_admin_members_path(@church), class: "text-sm text-slate-500 hover:text-slate-950" %>
+    <div class="rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div class="flex items-center gap-2">
+          <div class="flex h-7 w-7 items-center justify-center rounded-md bg-violet-50 text-violet-600">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+            </svg>
+          </div>
+          <h2 class="text-sm font-semibold text-slate-900">Miembros recientes</h2>
+        </div>
+        <%= link_to "Ver todos", church_admin_members_path(@church),
+              class: "text-xs font-medium text-violet-600 hover:text-violet-700 transition-colors" %>
       </div>
-      <div class="mt-3 overflow-hidden rounded-lg border border-slate-200 bg-white divide-y divide-slate-100">
+      <div class="divide-y divide-slate-50">
         <% if @recent_members.any? %>
           <% @recent_members.each do |member| %>
-            <div class="px-4 py-3 flex items-center gap-3">
+            <div class="flex items-center gap-3 px-5 py-3 hover:bg-slate-50 transition-colors">
               <% if member.photo.attached? %>
                 <%= image_tag member.photo.variant(resize_to_fill: [32, 32]).processed,
-                      class: "h-8 w-8 rounded-full object-cover" %>
+                      class: "h-8 w-8 rounded-full object-cover ring-2 ring-white shadow-sm" %>
               <% else %>
-                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-400">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-xs font-bold text-violet-700 ring-2 ring-white shadow-sm">
                   <%= member.first_name&.first&.upcase %>
                 </div>
               <% end %>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-slate-950 truncate"><%= member.full_name %></p>
+                <p class="truncate text-sm font-medium text-slate-900"><%= member.full_name %></p>
               </div>
-              <%= link_to "Ver", church_admin_member_path(@church, member), class: "text-xs font-medium text-slate-500 hover:text-slate-950 shrink-0" %>
+              <%= link_to "Ver", church_admin_member_path(@church, member),
+                    class: "shrink-0 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
             </div>
           <% end %>
         <% else %>
-          <p class="px-4 py-8 text-center text-sm text-slate-400">No hay miembros registrados.</p>
+          <div class="flex flex-col items-center py-10 text-center">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              </svg>
+            </div>
+            <p class="mt-3 text-sm text-slate-500">No hay miembros registrados.</p>
+          </div>
         <% end %>
       </div>
     </div>
 
     <%# Solicitudes pendientes %>
     <% if @pending_requests.any? %>
-      <div class="lg:col-span-2">
-        <div class="flex items-center justify-between">
-          <h2 class="text-base font-semibold text-slate-950">Solicitudes de cambio pendientes</h2>
-          <%= link_to "Ver todas →", church_admin_profile_change_requests_path(@church), class: "text-sm text-slate-500 hover:text-slate-950" %>
+      <div class="lg:col-span-2 rounded-xl border border-amber-200 bg-white shadow-card overflow-hidden">
+        <div class="flex items-center justify-between border-b border-amber-100 bg-amber-50 px-5 py-4">
+          <div class="flex items-center gap-2">
+            <div class="flex h-7 w-7 items-center justify-center rounded-md bg-amber-100 text-amber-600">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+              </svg>
+            </div>
+            <h2 class="text-sm font-semibold text-amber-900">Solicitudes de cambio pendientes</h2>
+            <span class="rounded-full bg-amber-600 px-2 py-0.5 text-xs font-bold text-white"><%= @pending_requests.size %></span>
+          </div>
+          <%= link_to "Ver todas", church_admin_profile_change_requests_path(@church),
+                class: "text-xs font-medium text-amber-700 hover:text-amber-900 transition-colors" %>
         </div>
-        <div class="mt-3 overflow-hidden rounded-lg border border-amber-200 bg-amber-50 divide-y divide-amber-100">
+        <div class="divide-y divide-amber-50">
           <% @pending_requests.each do |req| %>
-            <div class="px-4 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center justify-between gap-4 px-5 py-3 hover:bg-amber-50/50 transition-colors">
               <div>
-                <p class="text-sm font-medium text-slate-950"><%= req.member.full_name %></p>
+                <p class="text-sm font-medium text-slate-900"><%= req.member.full_name %></p>
                 <p class="text-xs text-slate-500">Solicitado <%= time_ago_in_words(req.created_at) %></p>
               </div>
-              <%= link_to "Revisar", church_admin_profile_change_request_path(@church, req), class: "text-xs font-medium text-amber-700 hover:text-amber-900 shrink-0" %>
+              <%= link_to "Revisar", church_admin_profile_change_request_path(@church, req),
+                    class: "shrink-0 rounded-md bg-amber-100 px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-200 transition-colors" %>
             </div>
           <% end %>
         </div>
       </div>
     <% end %>
+
   </div>
 </section>
