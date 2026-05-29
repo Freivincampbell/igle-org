@@ -51,6 +51,8 @@ module ApplicationHelper
 
   def family_status_label(status)
     t("families.statuses.#{status}", default: status.to_s.humanize)
+  end
+
   def event_type_label(event_type)
     t("events.event_types.#{event_type}", default: event_type.to_s.humanize)
   end
