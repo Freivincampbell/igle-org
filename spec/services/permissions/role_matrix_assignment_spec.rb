@@ -29,7 +29,11 @@ RSpec.describe Permissions::RoleMatrixAssignment do
 
     it "rejects permissions that are not assignable from the matrix" do
       role = create(:role)
-      permission = create(:permission, module_key: "reports", action_key: "read", name: "Reportes - Leer")
+      # Un permiso cuyo module_key queda fuera de ASSIGNABLE_MODULE_KEYS no debe
+      # poder asignarse desde la matriz. Se salta la validación de inclusión a
+      # propósito para simular ese registro no asignable.
+      permission = build(:permission, module_key: "non_assignable_module", action_key: "read", name: "No asignable")
+      permission.save!(validate: false)
 
       assignment = described_class.new(role:, permission_public_ids: [ permission.public_id ])
 
