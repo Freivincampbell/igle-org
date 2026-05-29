@@ -11,6 +11,7 @@ permission_labels = {
   "skills" => "Habilidades",
   "service_directory" => "Directorio de servicios",
   "profile_change_requests" => "Solicitudes de cambio",
+  "reports" => "Reportes",
   "pastoral_notes" => "Notas pastorales"
 }
 

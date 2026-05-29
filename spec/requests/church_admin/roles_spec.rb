@@ -112,7 +112,10 @@ RSpec.describe "Church admin roles" do
       church = create(:church)
       membership = create(:church_membership, :owner, church:)
       role = create(:role, church:)
-      permission = permission_for("reports", "read")
+      # module_key fuera de ASSIGNABLE_MODULE_KEYS: se salta la validación de
+      # inclusión para simular un permiso no asignable desde la matriz.
+      permission = build(:permission, module_key: "non_assignable_module", action_key: "read", name: "No asignable")
+      permission.save!(validate: false)
 
       sign_in membership.user
 

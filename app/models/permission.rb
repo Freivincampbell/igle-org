@@ -15,8 +15,8 @@ class Permission < ApplicationRecord
     profile_change_requests
     reports
     church_settings
-    pastoral_notes
-  ].freeze
+    service_directory
+    pastoral_notes].freeze
   ASSIGNABLE_MODULE_KEYS = %w[
     church_memberships
     roles
@@ -30,6 +30,7 @@ class Permission < ApplicationRecord
     skills
     service_directory
     profile_change_requests
+    reports
     pastoral_notes
   ].freeze
 

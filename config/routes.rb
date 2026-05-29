@@ -104,6 +104,9 @@ Rails.application.routes.draw do
 
       get "service_directory" => "service_directory#index", as: :service_directory
 
+      get "reports", to: "reports#index", as: :reports
+      get "reports/:report", to: "reports#show", as: :report
+
       resources :profile_change_requests, param: :public_id, only: %i[index show] do
         member do
           patch :approve

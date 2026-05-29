@@ -76,6 +76,7 @@ gem "pagy", "~> 43.4"
 gem "pg_search", "~> 2.3"
 gem "paper_trail", "~> 17.0"
 gem "caxlsx", "~> 4.4"
+gem "csv", "~> 3.3"
 gem "dotenv-rails", "~> 3.2"
 
 gem "rspec-rails", "~> 8.0", groups: [ :development, :test ]
