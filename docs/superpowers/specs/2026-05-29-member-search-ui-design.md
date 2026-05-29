@@ -188,11 +188,17 @@ URL resultado: `GET /churches/:church_public_id/admin/members/search`
 - Los parámetros enviados al servidor por todos los formularios son idénticos a los actuales — los service objects (`Families::MemberAssignment`, `Ministries::MemberAssignment`, `Boards::PositionAssignment`) y el `update_attendance` no requieren cambios.
 - La autorización (Pundit) no cambia. El nuevo endpoint `search` reutiliza `MemberPolicy#index?`.
 - Las rutas de envío de formularios no cambian.
-- `pg_search` ya está disponible en el proyecto — la búsqueda de nombre usa el scope `search_by_name` que ya existe en `Member`.
+- `pg_search` está en el Gemfile pero aún no está configurado en ningún modelo. Hay que agregar `include PgSearch::Model` y `pg_search_scope :search_by_name, against: %i[first_name middle_name last_name second_last_name], using: { tsearch: { prefix: true } }` al modelo `Member` como parte de esta implementación.
 
 ---
 
-## Archivos nuevos
+## Archivos nuevos y modificados en modelos
+
+| Archivo | Cambio |
+|---|---|
+| `app/models/member.rb` | Agregar `include PgSearch::Model` + `pg_search_scope :search_by_name` |
+
+## Archivos nuevos (JS y vistas)
 
 | Archivo | Tipo |
 |---|---|
