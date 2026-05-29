@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -263,6 +263,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
     t.index ["public_id"], name: "index_ministry_memberships_on_public_id", unique: true
   end
 
+  create_table "pastoral_notes", force: :cascade do |t|
+    t.text "body", null: false
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "member_id", null: false
+    t.string "note_type", default: "general", null: false
+    t.bigint "pastor_id", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "member_id"], name: "index_pastoral_notes_on_church_id_and_member_id"
+    t.index ["church_id", "note_type"], name: "index_pastoral_notes_on_church_id_and_note_type"
+    t.index ["church_id"], name: "index_pastoral_notes_on_church_id"
+    t.index ["member_id"], name: "index_pastoral_notes_on_member_id"
+    t.index ["pastor_id"], name: "index_pastoral_notes_on_pastor_id"
+    t.index ["public_id"], name: "index_pastoral_notes_on_public_id", unique: true
+  end
+
   create_table "permissions", force: :cascade do |t|
     t.string "action_key", null: false
     t.datetime "created_at", null: false
@@ -360,6 +378,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
   add_foreign_key "ministries", "churches"
   add_foreign_key "ministry_memberships", "members"
   add_foreign_key "ministry_memberships", "ministries"
+  add_foreign_key "pastoral_notes", "churches"
+  add_foreign_key "pastoral_notes", "members"
+  add_foreign_key "pastoral_notes", "users", column: "pastor_id"
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"
   add_foreign_key "roles", "churches"
