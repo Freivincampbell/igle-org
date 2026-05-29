@@ -50,4 +50,24 @@ RSpec.describe Member do
     expect(member).not_to be_valid
     expect(member.errors[:user]).to include("debe pertenecer a la iglesia")
   end
+
+  describe ".search_by_name" do
+    it "encuentra miembros por prefijo de nombre o apellido" do
+      church = create(:church)
+      ana = create(:member, church:, first_name: "Ana", last_name: "Rojas")
+      _luis = create(:member, church:, first_name: "Luis", last_name: "Mora")
+
+      results = church.members.search_by_name("ro")
+
+      expect(results).to include(ana)
+      expect(results).not_to include(_luis)
+    end
+
+    it "ignora mayúsculas" do
+      church = create(:church)
+      ana = create(:member, church:, first_name: "Ana", last_name: "Rojas")
+
+      expect(church.members.search_by_name("ANA")).to include(ana)
+    end
+  end
 end
