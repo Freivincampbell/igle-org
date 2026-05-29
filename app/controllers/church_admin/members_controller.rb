@@ -11,6 +11,26 @@ module ChurchAdmin
         .ordered
     end
 
+    def search
+      authorize Member
+
+      query = params[:q].to_s.strip
+      @results = if query.length < 2
+        Member.none
+      else
+        policy_scope(Member)
+          .where(church: @church)
+          .where.not(public_id: Array(params[:exclude]))
+          .search_by_name(query)
+          .reorder(:last_name, :first_name)
+          .limit(10)
+      end
+
+      @frame_id = params[:frame_id].to_s.gsub(/[^a-zA-Z0-9_-]/, "").presence || "member-search-results"
+
+      render layout: false
+    end
+
     def show
       authorize @member
     end

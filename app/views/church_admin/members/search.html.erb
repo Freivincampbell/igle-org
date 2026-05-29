@@ -1,0 +1,27 @@
+<%= turbo_frame_tag @frame_id do %>
+  <% if @results.any? %>
+    <ul class="max-h-64 overflow-auto divide-y divide-slate-100">
+      <% @results.each do |member| %>
+        <li>
+          <button type="button"
+                  class="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-violet-50"
+                  data-action="click->member-search#addMember"
+                  data-public-id="<%= member.public_id %>"
+                  data-name="<%= member.full_name %>"
+                  data-initials="<%= member_initials(member) %>"
+                  data-color="<%= member_avatar_color(member.public_id) %>">
+            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white <%= member_avatar_color(member.public_id) %>">
+              <%= member_initials(member) %>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block truncate text-sm font-medium text-slate-900"><%= member.full_name %></span>
+              <span class="block truncate text-xs text-slate-400"><%= member.email.presence || member.phone %></span>
+            </span>
+          </button>
+        </li>
+      <% end %>
+    </ul>
+  <% elsif params[:q].to_s.strip.length >= 2 %>
+    <p class="px-3 py-4 text-center text-sm text-slate-400">Sin resultados para «<%= params[:q] %>»</p>
+  <% end %>
+<% end %>

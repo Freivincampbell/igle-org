@@ -1,6 +1,7 @@
 class Member < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  include PgSearch::Model
   has_paper_trail skip: %i[updated_at]
   has_one_attached :photo
 
@@ -41,6 +42,10 @@ class Member < ApplicationRecord
   validate :user_belongs_to_church
 
   scope :ordered, -> { order(:last_name, :second_last_name, :first_name) }
+
+  pg_search_scope :search_by_name,
+    against: %i[first_name middle_name last_name second_last_name],
+    using: { tsearch: { prefix: true } }
 
   def full_name
     [ first_name, middle_name, last_name, second_last_name ].compact_blank.join(" ")

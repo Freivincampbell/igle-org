@@ -83,7 +83,6 @@ module ChurchAdmin
     end
 
     def set_member_assignment_options
-      @assignable_members = @church.members.active.ordered
       @active_ministry_memberships = @ministry.ministry_memberships.active.includes(:member).index_by do |membership|
         membership.member.public_id
       end

@@ -83,7 +83,6 @@ module ChurchAdmin
     end
 
     def set_member_options
-      @assignable_members = @church.members.active.ordered
       @current_family_members = @family.family_members.includes(:member).index_by { |fm| fm.member.public_id }
     end
 

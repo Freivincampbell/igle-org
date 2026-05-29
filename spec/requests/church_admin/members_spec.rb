@@ -180,4 +180,58 @@ RSpec.describe "Church admin members" do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe "GET /churches/:church_public_id/admin/members/search" do
+    it "devuelve solo miembros que coinciden con q" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      ana = create(:member, church:, first_name: "Ana", last_name: "Rojas")
+      _luis = create(:member, church:, first_name: "Luis", last_name: "Mora")
+
+      sign_in membership.user
+
+      get search_church_admin_members_path(church), params: { q: "ana" }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(ana.full_name)
+      expect(response.body).not_to include("Luis")
+    end
+
+    it "excluye los public_ids enviados en exclude[]" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      ana = create(:member, church:, first_name: "Ana", last_name: "Rojas")
+
+      sign_in membership.user
+
+      get search_church_admin_members_path(church), params: { q: "ana", exclude: [ ana.public_id ] }
+
+      expect(response.body).not_to include(ana.full_name)
+    end
+
+    it "no busca con menos de 2 caracteres" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      create(:member, church:, first_name: "Ana", last_name: "Rojas")
+
+      sign_in membership.user
+
+      get search_church_admin_members_path(church), params: { q: "a" }
+
+      expect(response.body).not_to include("Rojas")
+    end
+
+    it "no expone miembros de otra iglesia" do
+      church_a = create(:church)
+      church_b = create(:church)
+      membership = create(:church_membership, :owner, church: church_a)
+      _otro = create(:member, church: church_b, first_name: "Ana", last_name: "Externa")
+
+      sign_in membership.user
+
+      get search_church_admin_members_path(church_a), params: { q: "ana" }
+
+      expect(response.body).not_to include("Externa")
+    end
+  end
 end
