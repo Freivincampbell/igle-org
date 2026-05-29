@@ -18,7 +18,7 @@ module Pastor
     end
 
     def create
-      @note = @church.pastoral_notes.new(note_params.merge(pastor: current_user))
+      @note = @church.pastoral_notes.new(note_params.merge(pastor: current_user, member: resolve_member))
       authorize @note
 
       if @note.save
@@ -35,7 +35,7 @@ module Pastor
     def update
       authorize @note
 
-      if @note.update(note_params)
+      if @note.update(note_params.merge(member: resolve_member))
         redirect_to church_pastor_pastoral_note_path(@church, @note), notice: t("pastor.pastoral_notes.updated")
       else
         render :edit, status: :unprocessable_content
@@ -55,11 +55,18 @@ module Pastor
     end
 
     def set_member_options
-      @member_options = @church.members.active.ordered.map { |m| [ m.full_name, m.id ] }
+      @member_options = @church.members.active.ordered.map { |m| [ m.full_name, m.public_id ] }
+    end
+
+    def resolve_member
+      public_id = params.dig(:pastoral_note, :member_public_id)
+      return nil if public_id.blank?
+
+      @church.members.find_by_public_id!(public_id)
     end
 
     def note_params
-      params.require(:pastoral_note).permit(:member_id, :title, :body, :note_type)
+      params.require(:pastoral_note).permit(:title, :body, :note_type)
     end
   end
 end

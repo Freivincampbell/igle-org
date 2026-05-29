@@ -34,6 +34,22 @@ RSpec.describe "Church admin events" do
     end
   end
 
+  describe "GET new" do
+    it "renders member options using public_id, not the internal id" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      member = create(:member, church:, first_name: "Ana", last_name: "Lopez", second_last_name: "Diaz")
+
+      sign_in membership.user
+
+      get new_church_admin_event_path(church)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(%(<option value="#{member.public_id}">#{member.full_name}</option>))
+      expect(response.body).not_to include(%(<option value="#{member.id}">#{member.full_name}</option>))
+    end
+  end
+
   describe "GET index" do
     it "lists events only for the current church" do
       church_a = create(:church)
@@ -68,6 +84,20 @@ RSpec.describe "Church admin events" do
       expect(event.created_by).to eq(membership.user)
     end
 
+    it "assigns the responsible member resolved by public_id" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      member = create(:member, church:)
+
+      sign_in membership.user
+
+      post church_admin_events_path(church), params: {
+        event: event_params(responsible_member_public_id: member.public_id)
+      }
+
+      expect(church.events.last.responsible_member).to eq(member)
+    end
+
     it "rejects ministry from another church" do
       church = create(:church)
       foreign_ministry = create(:ministry)
@@ -82,8 +112,42 @@ RSpec.describe "Church admin events" do
     end
   end
 
+  describe "PATCH update" do
+    it "updates the responsible member resolved by public_id" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      event = create(:event, church:)
+      member = create(:member, church:)
+
+      sign_in membership.user
+
+      patch church_admin_event_path(church, event), params: {
+        event: event_params(responsible_member_public_id: member.public_id)
+      }
+
+      expect(event.reload.responsible_member).to eq(member)
+    end
+  end
+
+  describe "GET attendance" do
+    it "renders attendance checkboxes using public_id, not the internal id" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      event = create(:event, church:)
+      member = create(:member, church:)
+
+      sign_in membership.user
+
+      get attendance_church_admin_event_path(church, event)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(%(id="attendance_member_#{member.public_id}"))
+      expect(response.body).not_to include(%(id="attendance_member_#{member.id}"))
+    end
+  end
+
   describe "PATCH update_attendance" do
-    it "records and removes attendance for active members" do
+    it "records and removes attendance for active members by public_id" do
       church = create(:church)
       membership = create(:church_membership, :owner, church:)
       event = create(:event, church:)
@@ -93,13 +157,13 @@ RSpec.describe "Church admin events" do
       sign_in membership.user
 
       patch attendance_church_admin_event_path(church, event), params: {
-        attendance: { member_ids: [ member_a.id ] }
+        attendance: { member_ids: [ member_a.public_id ] }
       }
 
       expect(event.event_attendances.pluck(:member_id)).to contain_exactly(member_a.id)
 
       patch attendance_church_admin_event_path(church, event), params: {
-        attendance: { member_ids: [ member_b.id ] }
+        attendance: { member_ids: [ member_b.public_id ] }
       }
 
       expect(event.reload.event_attendances.pluck(:member_id)).to contain_exactly(member_b.id)

@@ -7,8 +7,8 @@
 <% end %>
 <%= form_with model: note, url: url, method: method, class: "space-y-4" do |form| %>
   <div>
-    <%= form.label :member_id, "Miembro", class: "block text-sm font-medium text-slate-700" %>
-    <%= form.select :member_id, @member_options, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    <%= form.label :member_public_id, "Miembro", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.select :member_public_id, @member_options, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
   </div>
   <div>
     <%= form.label :note_type, "Tipo", class: "block text-sm font-medium text-slate-700" %>
