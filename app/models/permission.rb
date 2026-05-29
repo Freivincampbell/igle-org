@@ -30,6 +30,7 @@ class Permission < ApplicationRecord
     skills
     service_directory
     profile_change_requests
+    reports
     pastoral_notes
   ].freeze
 
