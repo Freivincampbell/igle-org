@@ -1,5 +1,10 @@
 module ChurchAdmin
   class ReportsController < BaseController
+    # El índice lista un registro estático de reportes (no un modelo con
+    # policy_scope); se autoriza con ReportPolicy y se filtra por @church en cada
+    # reporte. Exento del guard verify_policy_scoped de ApplicationController.
+    skip_after_action :verify_policy_scoped, only: :index
+
     def index
       authorize ReportPolicy, :index?, policy_class: ReportPolicy
       @registry = Reports::Registry::REGISTRY
