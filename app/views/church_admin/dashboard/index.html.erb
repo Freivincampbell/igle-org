@@ -1,0 +1,98 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <div>
+    <p class="text-sm font-medium text-slate-500">Panel de administración</p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950"><%= @church.name %></h1>
+  </div>
+
+  <%# Tarjetas de estadísticas %>
+  <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+    <% [
+      { label: "Miembros activos",        value: @stats[:members_active],          path: church_admin_members_path(@church) },
+      { label: "Ministerios activos",     value: @stats[:ministries_active],       path: church_admin_ministries_path(@church) },
+      { label: "Eventos próximos",        value: @stats[:events_upcoming],         path: church_admin_events_path(@church) },
+      { label: "Solicitudes pendientes",  value: @stats[:pending_change_requests], path: church_admin_profile_change_requests_path(@church) },
+    ].each do |stat| %>
+      <div class="rounded-lg border border-slate-200 bg-white p-5">
+        <p class="text-2xl font-bold text-slate-950"><%= stat[:value] %></p>
+        <p class="mt-1 text-xs font-medium text-slate-500"><%= stat[:label] %></p>
+        <%= link_to "Ver →", stat[:path], class: "mt-2 block text-xs font-medium text-slate-400 hover:text-slate-700" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
+    <%# Próximos eventos %>
+    <div>
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-semibold text-slate-950">Próximos eventos</h2>
+        <%= link_to "Ver todos →", church_admin_events_path(@church), class: "text-sm text-slate-500 hover:text-slate-950" %>
+      </div>
+      <div class="mt-3 overflow-hidden rounded-lg border border-slate-200 bg-white divide-y divide-slate-100">
+        <% if @upcoming_events.any? %>
+          <% @upcoming_events.each do |event| %>
+            <div class="px-4 py-3 flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-medium text-slate-950"><%= event.title %></p>
+                <p class="text-xs text-slate-500"><%= l(event.starts_at, format: :default) %><% if event.ministry %> · <%= event.ministry.name %><% end %></p>
+              </div>
+              <%= link_to "Ver", church_admin_event_path(@church, event), class: "text-xs font-medium text-slate-500 hover:text-slate-950 shrink-0" %>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="px-4 py-8 text-center text-sm text-slate-400">No hay eventos próximos.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Miembros recientes %>
+    <div>
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-semibold text-slate-950">Miembros recientes</h2>
+        <%= link_to "Ver todos →", church_admin_members_path(@church), class: "text-sm text-slate-500 hover:text-slate-950" %>
+      </div>
+      <div class="mt-3 overflow-hidden rounded-lg border border-slate-200 bg-white divide-y divide-slate-100">
+        <% if @recent_members.any? %>
+          <% @recent_members.each do |member| %>
+            <div class="px-4 py-3 flex items-center gap-3">
+              <% if member.photo.attached? %>
+                <%= image_tag member.photo.variant(resize_to_fill: [32, 32]).processed,
+                      class: "h-8 w-8 rounded-full object-cover" %>
+              <% else %>
+                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-xs font-semibold text-slate-400">
+                  <%= member.first_name&.first&.upcase %>
+                </div>
+              <% end %>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-slate-950 truncate"><%= member.full_name %></p>
+              </div>
+              <%= link_to "Ver", church_admin_member_path(@church, member), class: "text-xs font-medium text-slate-500 hover:text-slate-950 shrink-0" %>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="px-4 py-8 text-center text-sm text-slate-400">No hay miembros registrados.</p>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Solicitudes pendientes %>
+    <% if @pending_requests.any? %>
+      <div class="lg:col-span-2">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-semibold text-slate-950">Solicitudes de cambio pendientes</h2>
+          <%= link_to "Ver todas →", church_admin_profile_change_requests_path(@church), class: "text-sm text-slate-500 hover:text-slate-950" %>
+        </div>
+        <div class="mt-3 overflow-hidden rounded-lg border border-amber-200 bg-amber-50 divide-y divide-amber-100">
+          <% @pending_requests.each do |req| %>
+            <div class="px-4 py-3 flex items-center justify-between gap-4">
+              <div>
+                <p class="text-sm font-medium text-slate-950"><%= req.member.full_name %></p>
+                <p class="text-xs text-slate-500">Solicitado <%= time_ago_in_words(req.created_at) %></p>
+              </div>
+              <%= link_to "Revisar", church_admin_profile_change_request_path(@church, req), class: "text-xs font-medium text-amber-700 hover:text-amber-900 shrink-0" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>

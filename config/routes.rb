@@ -19,7 +19,7 @@ Rails.application.routes.draw do
 
   resources :churches, param: :public_id, only: %i[index show] do
     namespace :admin, module: :church_admin, as: :admin do
-      root "roles#index"
+      root "dashboard#index"
 
       resources :roles, param: :public_id, only: %i[index show new create edit update] do
         member do
