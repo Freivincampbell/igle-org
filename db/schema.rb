@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_140003) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -419,6 +419,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_140003) do
     t.index ["public_id"], name: "index_permissions_on_public_id", unique: true
   end
 
+  create_table "profile_change_requests", force: :cascade do |t|
+    t.jsonb "changes_payload", default: {}, null: false
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "member_id", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.bigint "requested_by_id"
+    t.text "review_notes"
+    t.datetime "reviewed_at"
+    t.bigint "reviewed_by_id"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "status"], name: "index_profile_change_requests_on_church_id_and_status"
+    t.index ["church_id"], name: "index_profile_change_requests_on_church_id"
+    t.index ["member_id", "status"], name: "index_profile_change_requests_on_member_id_and_status"
+    t.index ["member_id"], name: "index_profile_change_requests_on_member_id"
+    t.index ["public_id"], name: "index_profile_change_requests_on_public_id", unique: true
+    t.index ["requested_by_id"], name: "index_profile_change_requests_on_requested_by_id"
+    t.index ["reviewed_by_id"], name: "index_profile_change_requests_on_reviewed_by_id"
+  end
+
   create_table "role_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "permission_id", null: false
@@ -530,6 +551,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_140003) do
   add_foreign_key "ministries", "churches"
   add_foreign_key "ministry_memberships", "members"
   add_foreign_key "ministry_memberships", "ministries"
+  add_foreign_key "profile_change_requests", "churches"
+  add_foreign_key "profile_change_requests", "members"
+  add_foreign_key "profile_change_requests", "users", column: "requested_by_id"
+  add_foreign_key "profile_change_requests", "users", column: "reviewed_by_id"
   add_foreign_key "occupations", "churches"
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"

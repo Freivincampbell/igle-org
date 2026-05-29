@@ -9,7 +9,8 @@ permission_labels = {
   "church_settings" => "Configuracion de iglesia",
   "occupations" => "Ocupaciones",
   "skills" => "Habilidades",
-  "service_directory" => "Directorio de servicios"
+  "service_directory" => "Directorio de servicios",
+  "profile_change_requests" => "Solicitudes de cambio"
 }
 
 action_labels = {

@@ -20,6 +20,7 @@ class Church < ApplicationRecord
   has_many :skills, dependent: :destroy
   has_many :member_occupations, dependent: :destroy
   has_many :member_skills, dependent: :destroy
+  has_many :profile_change_requests, dependent: :destroy
 
   enum :status, { active: "active", inactive: "inactive" }, validate: true
 

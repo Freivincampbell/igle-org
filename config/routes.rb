@@ -103,6 +103,18 @@ Rails.application.routes.draw do
       end
 
       get "service_directory" => "service_directory#index", as: :service_directory
+
+      resources :profile_change_requests, param: :public_id, only: %i[index show] do
+        member do
+          patch :approve
+          patch :reject
+        end
+      end
+    end
+
+    namespace :portal, module: :member_portal, as: :member_portal do
+      resource :profile, only: %i[show]
+      resources :profile_change_requests, only: %i[new create]
     end
   end
 

@@ -103,6 +103,10 @@ es:
       created: "Habilidad registrada."
       removed: "Habilidad eliminada."
       updated: "Habilidad actualizada."
+    profile_change_requests:
+      approved: "Solicitud aprobada y cambios aplicados al perfil."
+      not_pending: "Esta solicitud ya fue revisada."
+      rejected: "Solicitud rechazada."
   devise:
     failure:
       already_authenticated: "Ya iniciaste sesion."
@@ -236,6 +240,15 @@ es:
     statuses:
       active: "Activa"
       inactive: "Inactiva"
+  member_portal:
+    no_profile: "Aun no tienes un perfil de miembro asociado en esta iglesia."
+    profile_change_requests:
+      created: "Solicitud de cambio enviada. Sera revisada por la administracion de la iglesia."
+  profile_change_requests:
+    statuses:
+      approved: "Aprobada"
+      pending: "Pendiente"
+      rejected: "Rechazada"
   platform:
     church_memberships:
       owner_assigned: "Administrador owner asignado correctamente."

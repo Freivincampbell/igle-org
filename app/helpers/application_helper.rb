@@ -98,4 +98,8 @@ module ApplicationHelper
   def board_status_label(status)
     t("boards.statuses.#{status}", default: status.to_s.humanize)
   end
+
+  def profile_change_request_status_label(status)
+    t("profile_change_requests.statuses.#{status}", default: status.to_s.humanize)
+  end
 end

@@ -58,6 +58,10 @@
           <% if ServiceDirectoryPolicy.new(current_user, nil).index? %>
             <%= link_to "Directorio", church_admin_service_directory_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% end %>
+          <% if policy(ProfileChangeRequest).index? %>
+            <%= link_to "Solicitudes", church_admin_profile_change_requests_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <%= link_to "Mi perfil", church_member_portal_profile_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% if church_setting_visible?(current_church) %>
             <%= link_to "Configuracion", church_admin_settings_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% end %>

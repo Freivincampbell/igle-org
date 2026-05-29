@@ -29,6 +29,7 @@ class Permission < ApplicationRecord
     occupations
     skills
     service_directory
+    profile_change_requests
   ].freeze
 
   has_many :role_permissions, dependent: :destroy

@@ -1,0 +1,28 @@
+<section class="mx-auto w-full max-w-3xl px-6 py-10">
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Solicitar cambio de perfil</h1>
+    <p class="text-sm text-slate-500">Solo los cambios diferentes a tu perfil actual se enviaran a revision.</p>
+  </div>
+
+  <% if @change_request.errors.any? %>
+    <div class="mt-4 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+      <ul class="list-inside list-disc space-y-1">
+        <% @change_request.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form_with url: church_member_portal_profile_change_requests_path(@church), method: :post, scope: :profile_change_request, class: "mt-8 rounded-lg border border-slate-200 bg-white p-6 space-y-4" do |form| %>
+    <% ProfileChangeRequest::ALLOWED_ATTRIBUTES.each do |attr| %>
+      <div>
+        <%= label_tag "profile_change_request_#{attr}", attr.humanize, class: "block text-sm font-medium text-slate-700" %>
+        <%= text_field_tag "profile_change_request[#{attr}]", @member.public_send(attr), id: "profile_change_request_#{attr}", class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      </div>
+    <% end %>
+    <div class="flex justify-end gap-3">
+      <%= link_to "Cancelar", church_member_portal_profile_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <%= submit_tag "Enviar solicitud", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    </div>
+  <% end %>
+</section>

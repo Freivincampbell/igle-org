@@ -13,6 +13,7 @@ class Member < ApplicationRecord
   has_many :occupations, through: :member_occupations
   has_many :member_skills, dependent: :destroy
   has_many :skills, through: :member_skills
+  has_many :profile_change_requests, dependent: :destroy
 
   enum :gender, { male: "male", female: "female", not_specified: "not_specified" }, validate: true
   enum :marital_status, {
