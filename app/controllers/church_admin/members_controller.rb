@@ -99,7 +99,8 @@ module ChurchAdmin
         :country,
         :emergency_contact_name,
         :emergency_contact_phone,
-        :notes
+        :notes,
+        :photo
       )
     end
 
