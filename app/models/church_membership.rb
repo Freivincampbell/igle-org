@@ -36,7 +36,7 @@ class ChurchMembership < ApplicationRecord
 
   def roles_belong_to_membership_church
     roles.each do |role|
-      errors.add(:roles, "must belong to the same church") if role.church_id != church_id
+      errors.add(:roles, :must_belong_to_church) if role.church_id != church_id
     end
   end
 end

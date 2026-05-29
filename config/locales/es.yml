@@ -8,8 +8,11 @@ es:
         invalid_content_type: "tiene un tipo de archivo no permitido"
         too_large: "es demasiado grande"
         must_be_after_starts_at: "debe ser posterior a la hora de inicio"
+        must_belong_to_church: "debe pertenecer a la misma iglesia"
+        contains_disallowed_keys: "contiene campos no permitidos"
     attributes:
       member:
+        church: "Iglesia"
         first_name: "Nombre"
         middle_name: "Segundo nombre"
         last_name: "Apellido"
@@ -58,10 +61,12 @@ es:
         secondary_color: "Color secundario"
         logo: "Logo"
       ministry:
+        church: "Iglesia"
         name: "Nombre"
         description: "Descripción"
         leader_id: "Líder"
       event:
+        church: "Iglesia"
         title: "Título"
         description: "Descripción"
         starts_at: "Fecha y hora de inicio"
@@ -73,17 +78,21 @@ es:
         recurrence_frequency: "Recurrencia"
         recurrence_until: "Repetir hasta"
       family:
+        church: "Iglesia"
         name: "Nombre"
         notes: "Notas"
       board:
+        church: "Iglesia"
         name: "Nombre"
         description: "Descripción"
         period_start: "Inicio del período"
         period_end: "Fin del período"
       role:
+        church: "Iglesia"
         name: "Nombre"
         description: "Descripción"
       church_service_time:
+        church: "Iglesia"
         day_of_week: "Día de la semana"
         starts_at: "Hora de inicio"
         ends_at: "Hora de fin"
@@ -96,6 +105,36 @@ es:
         content: "Contenido"
         note_type: "Tipo de nota"
         member_id: "Miembro"
+      church_membership:
+        church: "Iglesia"
+        user: "Usuario"
+        user_id: "Usuario"
+        status: "Estado"
+        roles: "Roles"
+      member_skill:
+        church: "Iglesia"
+        member: "Miembro"
+        member_id: "Miembro"
+        skill: "Habilidad"
+        skill_id: "Habilidad"
+        level: "Nivel"
+      member_occupation:
+        church: "Iglesia"
+        member: "Miembro"
+        member_id: "Miembro"
+        occupation: "Ocupación"
+        occupation_id: "Ocupación"
+        employment_status: "Situación laboral"
+        work_type: "Tipo de trabajo"
+        company_name: "Empresa"
+        job_title: "Cargo"
+        professional_contact: "Contacto profesional"
+        profile_url: "Perfil / URL"
+      profile_change_request:
+        church: "Iglesia"
+        member: "Miembro"
+        changes_payload: "Cambios solicitados"
+        status: "Estado"
   authorization:
     not_authorized: "No tienes permisos para realizar esta accion."
   date:
@@ -219,6 +258,7 @@ es:
     messages:
       already_confirmed: "ya fue confirmado, intenta iniciar sesion"
       blank: "no puede estar en blanco"
+      required: "es obligatorio"
       confirmation_period_expired: "debe confirmarse dentro de %{period}, solicita uno nuevo"
       expired: "expiro, solicita uno nuevo"
       inclusion: "no esta incluido en la lista"
