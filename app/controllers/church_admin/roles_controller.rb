@@ -83,6 +83,7 @@ module ChurchAdmin
 
     def set_permissions
       @permissions = Permission.assignable.ordered.to_a
+      @permissions = @permissions.reject { |p| p.module_key == "pastoral_notes" } unless @role.pastoral?
       @selected_permission_public_ids = @role.permissions.pluck(:public_id)
     end
 

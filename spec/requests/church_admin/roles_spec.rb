@@ -111,8 +111,8 @@ RSpec.describe "Church admin roles" do
     it "rejects permissions outside the active church admin matrix" do
       church = create(:church)
       membership = create(:church_membership, :owner, church:)
-      role = create(:role, church:, pastoral: true)
-      permission = permission_for("pastoral_notes", "read")
+      role = create(:role, church:)
+      permission = permission_for("reports", "read")
 
       sign_in membership.user
 

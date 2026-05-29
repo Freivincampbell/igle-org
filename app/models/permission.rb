@@ -30,6 +30,7 @@ class Permission < ApplicationRecord
     skills
     service_directory
     profile_change_requests
+    pastoral_notes
   ].freeze
 
   has_many :role_permissions, dependent: :destroy

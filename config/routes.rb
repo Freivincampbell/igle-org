@@ -116,6 +116,10 @@ Rails.application.routes.draw do
       resource :profile, only: %i[show]
       resources :profile_change_requests, only: %i[new create]
     end
+
+    namespace :pastor, module: :pastor, as: :pastor do
+      resources :pastoral_notes, param: :public_id
+    end
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

@@ -102,4 +102,8 @@ module ApplicationHelper
   def profile_change_request_status_label(status)
     t("profile_change_requests.statuses.#{status}", default: status.to_s.humanize)
   end
+
+  def pastoral_note_type_label(type)
+    t("pastoral_notes.note_types.#{type}", default: type.to_s.humanize)
+  end
 end
