@@ -38,15 +38,18 @@ RSpec.describe "Church admin events" do
     it "renders the responsible tag search using public_id, not the internal id" do
       church = create(:church)
       membership = create(:church_membership, :owner, church:)
-      create(:member, church:, first_name: "Ana", last_name: "Lopez", second_last_name: "Diaz")
+      member = create(:member, church:, first_name: "Ana", last_name: "Rojas")
+      event = create(:event, church:)
+      event.update!(responsible_member: member)
 
       sign_in membership.user
 
-      get new_church_admin_event_path(church)
+      get edit_church_admin_event_path(church, event)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("member-results-responsible")
-      expect(response.body).to include(search_church_admin_members_path(church))
+      expect(response.body).to include(%(name="event[responsible_member_public_id]" value="#{member.public_id}"))
+      expect(response.body).not_to match(/value="#{member.id}"/)
     end
   end
 
