@@ -1,4 +1,21 @@
 module ApplicationHelper
+  AVATAR_COLORS = %w[
+    bg-blue-500 bg-emerald-500 bg-amber-500 bg-violet-500
+    bg-rose-500 bg-cyan-500 bg-indigo-500 bg-teal-500
+  ].freeze
+
+  def member_initials(member)
+    [ member.first_name, member.last_name ]
+      .compact_blank
+      .map { |n| n.first&.upcase }
+      .join
+      .presence || "?"
+  end
+
+  def member_avatar_color(public_id)
+    AVATAR_COLORS[public_id.to_s.bytes.sum % AVATAR_COLORS.size]
+  end
+
   def permission_module_label(module_key)
     t("permissions.modules.#{module_key}", default: module_key.to_s.humanize)
   end

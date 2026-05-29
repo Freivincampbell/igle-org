@@ -36,6 +36,9 @@ Rails.application.routes.draw do
         end
       end
       resources :members, param: :public_id, only: %i[index show new create edit update] do
+        collection do
+          get :search
+        end
         member do
           patch :activate
           patch :deactivate
