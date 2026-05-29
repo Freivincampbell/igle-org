@@ -3,6 +3,10 @@ class MemberPolicy < ApplicationPolicy
     super_admin? || permission?("members", "read")
   end
 
+  def search?
+    index?
+  end
+
   def show?
     super_admin? || (same_church? && permission?("members", "read"))
   end

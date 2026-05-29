@@ -44,7 +44,44 @@
     </div>
     <div>
       <%= form.label :responsible_member_public_id, "Responsable (opcional)", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :responsible_member_public_id, @member_options, { include_blank: "-" }, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <% current_responsible = @church.members.active.find_by(public_id: event.responsible_member_public_id) %>
+      <div class="mt-1" data-controller="member-search"
+           data-member-search-url-value="<%= search_church_admin_members_path(@church) %>"
+           data-member-search-max-selections-value="1">
+
+        <input type="hidden" name="event[responsible_member_public_id]" value="">
+
+        <div data-member-search-target="tagsZone" class="flex flex-wrap gap-2">
+          <% if current_responsible %>
+            <%= render "shared/member_tag",
+                  public_id: current_responsible.public_id,
+                  name: current_responsible.full_name,
+                  initials: member_initials(current_responsible),
+                  avatar_color: member_avatar_color(current_responsible.public_id),
+                  ids_field: "event[responsible_member_public_id]",
+                  meta_field: nil, meta_options: nil, meta_selected: nil,
+                  primary_field: nil, primary_checked: false %>
+          <% end %>
+        </div>
+
+        <template data-member-search-target="template">
+          <%= render "shared/member_tag",
+                public_id: "__ID__", name: "", initials: "", avatar_color: "bg-slate-400",
+                ids_field: "event[responsible_member_public_id]",
+                meta_field: nil, meta_options: nil, meta_selected: nil,
+                primary_field: nil, primary_checked: false %>
+        </template>
+
+        <div data-member-search-target="searchArea" class="relative"<%= " hidden" if current_responsible %>>
+          <input type="text" placeholder="Buscar responsable..."
+                 autocomplete="off"
+                 data-member-search-target="input"
+                 data-action="input->member-search#search keydown->member-search#keydown"
+                 class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:ring-violet-500">
+          <turbo-frame id="member-results-responsible" data-member-search-target="results"
+                       class="absolute z-10 mt-1 block w-full rounded-md border border-slate-200 bg-white shadow-lg empty:hidden"></turbo-frame>
+        </div>
+      </div>
     </div>
     <div>
       <%= form.label :status, "Estado", class: "block text-sm font-medium text-slate-700" %>

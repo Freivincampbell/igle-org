@@ -78,7 +78,6 @@ module ChurchAdmin
     end
 
     def set_member_options
-      @active_member_options = @church.members.active.ordered.map { |m| [ m.full_name, m.public_id ] }
       @current_positions = @board.board_members.includes(:member).index_by(&:position)
     end
 

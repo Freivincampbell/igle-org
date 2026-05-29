@@ -5,29 +5,48 @@
     <p class="mt-1 text-sm text-slate-500">Marca los miembros que asistieron al evento.</p>
   </div>
 
-  <%= form_with url: attendance_church_admin_event_path(@church, @event), method: :patch, class: "mt-6" do %>
-    <div class="rounded-lg border border-slate-200 bg-white">
-      <table class="min-w-full divide-y divide-slate-200 text-sm">
-        <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
-          <tr>
-            <th class="px-4 py-3 w-12">Asistio</th>
-            <th class="px-4 py-3">Miembro</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200">
-          <% if @members.any? %>
-            <% @members.each do |member| %>
-              <% checked = @attendances_by_member[member.id]&.attended %>
-              <tr>
-                <td class="px-4 py-2"><%= check_box_tag "attendance[member_ids][]", member.public_id, checked, id: "attendance_member_#{member.public_id}" %></td>
-                <td class="px-4 py-2"><label for="attendance_member_<%= member.public_id %>"><%= member.full_name %></label></td>
-              </tr>
+  <%= form_with url: attendance_church_admin_event_path(@church, @event), method: :patch, class: "mt-6",
+        data: { controller: "attendance-filter" } do %>
+
+    <div class="mb-4 flex items-center gap-3">
+      <div class="relative flex-1">
+        <input type="text" placeholder="Filtrar por nombre..."
+               autocomplete="off"
+               data-attendance-filter-target="input"
+               data-action="input->attendance-filter#filter"
+               class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:ring-violet-500">
+      </div>
+      <span class="shrink-0 rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
+        <span data-attendance-filter-target="count">0</span> ✓ / <%= @members.size %>
+      </span>
+    </div>
+
+    <% confirmed, others = @members.partition { |m| @confirmed_member_ids.include?(m.id) } %>
+
+    <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <% if @members.any? %>
+        <% if confirmed.any? %>
+          <div data-attendance-filter-target="section">
+            <div class="bg-emerald-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-emerald-700">
+              Confirmaron asistencia (<%= confirmed.size %>)
+            </div>
+            <% confirmed.each do |member| %>
+              <%= render "church_admin/events/attendance_row", member:, attendances_by_member: @attendances_by_member, default_checked: true %>
             <% end %>
-          <% else %>
-            <tr><td colspan="2" class="px-4 py-8 text-center text-slate-500">No hay miembros activos.</td></tr>
+          </div>
+        <% end %>
+
+        <div data-attendance-filter-target="section">
+          <div class="bg-slate-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Otros miembros (<%= others.size %>)
+          </div>
+          <% others.each do |member| %>
+            <%= render "church_admin/events/attendance_row", member:, attendances_by_member: @attendances_by_member, default_checked: false %>
           <% end %>
-        </tbody>
-      </table>
+        </div>
+      <% else %>
+        <p class="px-4 py-8 text-center text-slate-500">No hay miembros activos.</p>
+      <% end %>
     </div>
 
     <div class="mt-6 flex justify-end gap-3">
