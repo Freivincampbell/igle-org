@@ -37,6 +37,18 @@ es:
       short: "%d/%b %H:%M"
       time: "%H:%M"
   church_admin:
+    boards:
+      activated: "Junta activada correctamente."
+      created: "Junta creada correctamente."
+      deactivated: "Junta desactivada correctamente."
+      positions_updated: "Cargos de la junta actualizados correctamente."
+      updated: "Junta actualizada correctamente."
+    families:
+      activated: "Familia activada correctamente."
+      created: "Familia creada correctamente."
+      deactivated: "Familia desactivada correctamente."
+      members_updated: "Miembros de la familia actualizados correctamente."
+      updated: "Familia actualizada correctamente."
     events:
       attendance_updated: "Asistencia actualizada correctamente."
       cancelled: "Evento cancelado correctamente."
@@ -126,6 +138,30 @@ es:
         other: "%{count} errores impidieron guardar este %{resource}:"
       taken: "ya esta en uso"
   hello: "Hola mundo"
+  boards:
+    positions:
+      fiscal: "Fiscal"
+      president: "Presidente"
+      secretary: "Secretario"
+      treasurer: "Tesorero"
+      vice_president: "Vicepresidente"
+      vocal_1: "Vocal 1"
+      vocal_2: "Vocal 2"
+      vocal_3: "Vocal 3"
+    statuses:
+      active: "Activa"
+      inactive: "Inactiva"
+  families:
+    relationships:
+      child: "Hijo/a"
+      guardian: "Encargado"
+      other: "Otro"
+      parent: "Padre/Madre"
+      sibling: "Hermano/a"
+      spouse: "Esposo/a"
+    statuses:
+      active: "Activa"
+      inactive: "Inactiva"
   events:
     event_types:
       baptism: "Bautismo"

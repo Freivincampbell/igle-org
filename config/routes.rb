@@ -58,12 +58,28 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :families, param: :public_id, only: %i[index show new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+          patch :members, action: :update_members
+        end
+      end
+
       resources :events, param: :public_id, only: %i[index show new create edit update] do
         member do
           patch :cancel
           patch :reschedule
           get :attendance
           patch :attendance, action: :update_attendance
+        end
+      end
+
+      resources :boards, param: :public_id, only: %i[index show new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+          patch :positions, action: :update_positions
         end
       end
 

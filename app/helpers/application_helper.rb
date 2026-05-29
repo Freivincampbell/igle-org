@@ -45,6 +45,14 @@ module ApplicationHelper
     t("ministries.statuses.#{status}", default: status.to_s.humanize)
   end
 
+  def family_relationship_label(relationship)
+    t("families.relationships.#{relationship}", default: relationship.to_s.humanize)
+  end
+
+  def family_status_label(status)
+    t("families.statuses.#{status}", default: status.to_s.humanize)
+  end
+
   def event_type_label(event_type)
     t("events.event_types.#{event_type}", default: event_type.to_s.humanize)
   end
@@ -81,5 +89,13 @@ module ApplicationHelper
     return "" if work_type.blank?
 
     t("member_occupations.work_types.#{work_type}", default: work_type.to_s.humanize)
+  end
+
+  def board_position_label(position)
+    t("boards.positions.#{position}", default: position.to_s.humanize)
+  end
+
+  def board_status_label(status)
+    t("boards.statuses.#{status}", default: status.to_s.humanize)
   end
 end

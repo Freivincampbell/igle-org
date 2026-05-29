@@ -22,6 +22,8 @@ class Permission < ApplicationRecord
     roles
     members
     ministries
+    families
+    boards
     events
     church_settings
     occupations
