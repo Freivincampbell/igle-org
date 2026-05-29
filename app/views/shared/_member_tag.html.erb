@@ -1,0 +1,45 @@
+<%#
+  Locals:
+    public_id       String  — real o "__ID__" (template)
+    name            String
+    initials        String
+    avatar_color    String  — clase tailwind bg-*
+    ids_field       String  — name del hidden que lleva el public_id (array o key simple)
+    meta_field      String  — name del select de metadata (con "__ID__" si template), o nil
+    meta_options    Array    — [[label, value], ...] o nil
+    meta_selected   String  — valor seleccionado, o nil
+    primary_field   String  — name del radio de contacto principal, o nil
+    primary_checked Boolean
+%>
+<span data-member-tag
+      class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 py-1 pl-1 pr-2 text-sm">
+  <span data-tag-avatar
+        class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white <%= avatar_color %>">
+    <span data-tag-initials><%= initials %></span>
+  </span>
+  <span data-tag-name class="font-medium text-slate-800"><%= name %></span>
+
+  <input type="hidden" data-tag-id-input name="<%= ids_field %>" value="<%= public_id == "__ID__" ? "" : public_id %>">
+
+  <% if meta_field.present? %>
+    <select data-tag-meta name="<%= meta_field %>"
+            class="border-0 bg-transparent py-0 pl-1 pr-5 text-xs font-medium text-slate-500 focus:ring-0">
+      <% Array(meta_options).each do |label, value| %>
+        <option value="<%= value %>" <%= "selected" if value == meta_selected %>><%= label %></option>
+      <% end %>
+    </select>
+  <% end %>
+
+  <% if primary_field.present? %>
+    <label class="flex items-center gap-1 text-xs text-slate-500">
+      <input type="radio" data-tag-primary name="<%= primary_field %>"
+             value="<%= public_id == "__ID__" ? "" : public_id %>" <%= "checked" if primary_checked %>>
+      contacto
+    </label>
+  <% end %>
+
+  <button type="button" data-action="member-search#removeTag"
+          class="ml-1 text-slate-400 hover:text-rose-500" aria-label="Quitar">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  </button>
+</span>
