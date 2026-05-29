@@ -35,18 +35,18 @@ RSpec.describe "Church admin events" do
   end
 
   describe "GET new" do
-    it "renders member options using public_id, not the internal id" do
+    it "renders the responsible tag search using public_id, not the internal id" do
       church = create(:church)
       membership = create(:church_membership, :owner, church:)
-      member = create(:member, church:, first_name: "Ana", last_name: "Lopez", second_last_name: "Diaz")
+      create(:member, church:, first_name: "Ana", last_name: "Lopez", second_last_name: "Diaz")
 
       sign_in membership.user
 
       get new_church_admin_event_path(church)
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(%(<option value="#{member.public_id}">#{member.full_name}</option>))
-      expect(response.body).not_to include(%(<option value="#{member.id}">#{member.full_name}</option>))
+      expect(response.body).to include("member-results-responsible")
+      expect(response.body).to include(search_church_admin_members_path(church))
     end
   end
 
