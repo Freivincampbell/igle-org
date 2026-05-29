@@ -10,7 +10,7 @@ permission_labels = {
   "occupations" => "Ocupaciones",
   "skills" => "Habilidades",
   "service_directory" => "Directorio de servicios",
-  "profile_change_requests" => "Solicitudes de cambio"
+  "profile_change_requests" => "Solicitudes de cambio",
   "pastoral_notes" => "Notas pastorales"
 }
 
