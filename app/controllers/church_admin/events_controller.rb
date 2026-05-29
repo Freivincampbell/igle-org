@@ -106,6 +106,7 @@ module ChurchAdmin
 
     def set_form_options
       @ministry_options = @church.ministries.where(status: "active").order(:name).pluck(:name, :id)
+      @member_options = @church.members.active.ordered.map { |m| [ m.full_name, m.public_id ] }
     end
 
     def resolve_responsible_member
