@@ -10,11 +10,32 @@ class ApplicationController < ActionController::Base
   before_action :set_current_context, unless: :devise_controller?
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+  # Defensa en profundidad: toda acción (salvo index) debe autorizar explícitamente
+  # con Pundit, y todo index debe pasar por policy_scope. Si una acción nueva olvida
+  # hacerlo, Pundit levanta un error en vez de exponer datos silenciosamente.
+  #
+  # Se usan condiciones lambda (no `only:`/`except:`) porque Rails 8 valida que la
+  # acción exista en cada subcontrolador, lo que rompería controladores Devise que
+  # no tienen acción `index`.
+  after_action :verify_authorized, unless: :pundit_authorization_skipped?
+  after_action :verify_policy_scoped, if: :pundit_scope_required?
+
   helper_method :current_church, :current_church_membership
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   private
+
+  # verify_authorized cubre toda acción salvo index (que se valida con policy_scope).
+  # Devise no usa Pundit.
+  def pundit_authorization_skipped?
+    devise_controller? || action_name == "index"
+  end
+
+  # verify_policy_scoped solo aplica a la acción index de controladores no-Devise.
+  def pundit_scope_required?
+    !devise_controller? && action_name == "index"
+  end
 
   def set_current_context
     Current.user = current_user
