@@ -96,6 +96,34 @@ class ApplicationPolicy
     current_church.present? && record_church == current_church
   end
 
+  def ministry_leader_of?(ministry)
+    return false unless active_church_member?
+
+    current_member = Member.find_by(user:, church: current_church)
+    return false unless current_member
+
+    MinistryMembership.exists?(
+      ministry: ministry,
+      member: current_member,
+      ministry_role: %w[leader co_leader],
+      status: "active"
+    )
+  end
+
+  def user_led_ministries
+    current_member = Member.find_by(user:, church: current_church)
+    return Ministry.none unless current_member
+
+    Ministry.joins(:ministry_memberships)
+            .where(
+              ministry_memberships: {
+                member: current_member,
+                ministry_role: %w[leader co_leader],
+                status: "active"
+              }
+            )
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user
@@ -122,6 +150,52 @@ class ApplicationPolicy
       return if user.blank? || current_church.blank?
 
       user.active_membership_for(current_church)
+    end
+
+    def owner?
+      current_membership&.owner?
+    end
+
+    def permission?(module_key, action_key)
+      return false unless current_membership&.active?
+
+      Permissions::PermissionChecker.allow?(
+        user_context: Permissions::UserContext.new(
+          user:,
+          current_church:,
+          church_membership: current_membership
+        ),
+        module_key:,
+        action: action_key
+      )
+    end
+
+    def ministry_leader_of?(ministry)
+      return false unless current_membership&.active?
+
+      current_member = Member.find_by(user:, church: current_church)
+      return false unless current_member
+
+      MinistryMembership.exists?(
+        ministry: ministry,
+        member: current_member,
+        ministry_role: %w[leader co_leader],
+        status: "active"
+      )
+    end
+
+    def user_led_ministries
+      current_member = Member.find_by(user:, church: current_church)
+      return Ministry.none unless current_member
+
+      Ministry.joins(:ministry_memberships)
+              .where(
+                ministry_memberships: {
+                  member: current_member,
+                  ministry_role: %w[leader co_leader],
+                  status: "active"
+                }
+              )
     end
   end
 end
