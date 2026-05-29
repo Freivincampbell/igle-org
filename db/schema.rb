@@ -43,6 +43,61 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "addresses", force: :cascade do |t|
+    t.bigint "addressable_id", null: false
+    t.string "addressable_type", null: false
+    t.bigint "church_id", null: false
+    t.string "city"
+    t.string "country"
+    t.datetime "created_at", null: false
+    t.string "line_1"
+    t.string "line_2"
+    t.string "postal_code"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.text "reference"
+    t.string "state"
+    t.datetime "updated_at", null: false
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_compound"
+    t.index ["church_id"], name: "index_addresses_on_church_id"
+    t.index ["public_id"], name: "index_addresses_on_public_id", unique: true
+  end
+
+  create_table "board_members", force: :cascade do |t|
+    t.bigint "board_id", null: false
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.date "ends_on"
+    t.bigint "member_id", null: false
+    t.string "position", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.date "starts_on"
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id", "member_id"], name: "index_board_members_on_board_id_and_member_id", unique: true
+    t.index ["board_id", "position", "status"], name: "index_board_members_unique_active_position", unique: true, where: "((status)::text = 'active'::text)"
+    t.index ["board_id"], name: "index_board_members_on_board_id"
+    t.index ["church_id"], name: "index_board_members_on_church_id"
+    t.index ["member_id"], name: "index_board_members_on_member_id"
+    t.index ["public_id"], name: "index_board_members_on_public_id", unique: true
+  end
+
+  create_table "boards", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.date "ends_on"
+    t.string "name", null: false
+    t.text "notes"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.date "starts_on", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "starts_on"], name: "index_boards_on_church_id_and_starts_on"
+    t.index ["church_id", "status"], name: "index_boards_on_church_id_and_status"
+    t.index ["church_id"], name: "index_boards_on_church_id"
+    t.index ["public_id"], name: "index_boards_on_public_id", unique: true
+  end
+
   create_table "church_memberships", force: :cascade do |t|
     t.bigint "church_id", null: false
     t.datetime "created_at", null: false
@@ -184,6 +239,80 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
     t.index ["responsible_member_id"], name: "index_events_on_responsible_member_id"
   end
 
+  create_table "families", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.text "notes"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "name"], name: "index_families_on_church_id_and_name"
+    t.index ["church_id", "status"], name: "index_families_on_church_id_and_status"
+    t.index ["church_id"], name: "index_families_on_church_id"
+    t.index ["public_id"], name: "index_families_on_public_id", unique: true
+  end
+
+  create_table "family_members", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "family_id", null: false
+    t.bigint "member_id", null: false
+    t.boolean "primary_contact", default: false, null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "relationship", default: "other", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id"], name: "index_family_members_on_church_id"
+    t.index ["family_id", "member_id"], name: "index_family_members_on_family_id_and_member_id", unique: true
+    t.index ["family_id"], name: "index_family_members_on_family_id"
+    t.index ["member_id"], name: "index_family_members_on_member_id"
+    t.index ["public_id"], name: "index_family_members_on_public_id", unique: true
+  end
+
+  create_table "member_occupations", force: :cascade do |t|
+    t.boolean "available_for_projects", default: false, null: false
+    t.bigint "church_id", null: false
+    t.string "company_name"
+    t.datetime "created_at", null: false
+    t.boolean "current", default: true, null: false
+    t.text "description"
+    t.string "employment_status", default: "employed", null: false
+    t.string "job_title"
+    t.boolean "looking_for_work", default: false, null: false
+    t.bigint "member_id", null: false
+    t.bigint "occupation_id"
+    t.boolean "offers_services", default: false, null: false
+    t.string "professional_contact"
+    t.string "profile_url"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.boolean "public_in_directory", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.string "work_type"
+    t.integer "years_of_experience"
+    t.index ["church_id", "looking_for_work"], name: "index_member_occupations_on_church_id_and_looking_for_work"
+    t.index ["church_id", "offers_services"], name: "index_member_occupations_on_church_id_and_offers_services"
+    t.index ["church_id"], name: "index_member_occupations_on_church_id"
+    t.index ["member_id"], name: "index_member_occupations_on_member_id"
+    t.index ["occupation_id"], name: "index_member_occupations_on_occupation_id"
+    t.index ["public_id"], name: "index_member_occupations_on_public_id", unique: true
+  end
+
+  create_table "member_skills", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.string "level", default: "basic", null: false
+    t.bigint "member_id", null: false
+    t.text "notes"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.bigint "skill_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id"], name: "index_member_skills_on_church_id"
+    t.index ["member_id", "skill_id"], name: "index_member_skills_on_member_id_and_skill_id", unique: true
+    t.index ["member_id"], name: "index_member_skills_on_member_id"
+    t.index ["public_id"], name: "index_member_skills_on_public_id", unique: true
+    t.index ["skill_id"], name: "index_member_skills_on_skill_id"
+  end
+
   create_table "members", force: :cascade do |t|
     t.string "address_line_1"
     t.string "address_line_2"
@@ -281,6 +410,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
     t.index ["public_id"], name: "index_pastoral_notes_on_public_id", unique: true
   end
 
+  create_table "occupations", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "name"], name: "index_occupations_on_church_id_and_name", unique: true
+    t.index ["church_id"], name: "index_occupations_on_church_id"
+    t.index ["public_id"], name: "index_occupations_on_public_id", unique: true
+  end
+
   create_table "permissions", force: :cascade do |t|
     t.string "action_key", null: false
     t.datetime "created_at", null: false
@@ -293,6 +435,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
     t.index ["module_key", "action_key"], name: "index_permissions_on_module_key_and_action_key", unique: true
     t.index ["position"], name: "index_permissions_on_position"
     t.index ["public_id"], name: "index_permissions_on_public_id", unique: true
+  end
+
+  create_table "profile_change_requests", force: :cascade do |t|
+    t.jsonb "changes_payload", default: {}, null: false
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "member_id", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.bigint "requested_by_id"
+    t.text "review_notes"
+    t.datetime "reviewed_at"
+    t.bigint "reviewed_by_id"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "status"], name: "index_profile_change_requests_on_church_id_and_status"
+    t.index ["church_id"], name: "index_profile_change_requests_on_church_id"
+    t.index ["member_id", "status"], name: "index_profile_change_requests_on_member_id_and_status"
+    t.index ["member_id"], name: "index_profile_change_requests_on_member_id"
+    t.index ["public_id"], name: "index_profile_change_requests_on_public_id", unique: true
+    t.index ["requested_by_id"], name: "index_profile_change_requests_on_requested_by_id"
+    t.index ["reviewed_by_id"], name: "index_profile_change_requests_on_reviewed_by_id"
   end
 
   create_table "role_permissions", force: :cascade do |t|
@@ -321,6 +484,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
     t.index ["church_id"], name: "index_roles_on_church_id"
     t.index ["public_id"], name: "index_roles_on_public_id", unique: true
     t.index ["status"], name: "index_roles_on_status"
+  end
+
+  create_table "skills", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "name"], name: "index_skills_on_church_id_and_name", unique: true
+    t.index ["church_id"], name: "index_skills_on_church_id"
+    t.index ["public_id"], name: "index_skills_on_public_id", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -357,6 +533,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "addresses", "churches"
+  add_foreign_key "board_members", "boards"
+  add_foreign_key "board_members", "churches"
+  add_foreign_key "board_members", "members"
+  add_foreign_key "boards", "churches"
   add_foreign_key "church_memberships", "churches"
   add_foreign_key "church_memberships", "users"
   add_foreign_key "church_service_times", "churches"
@@ -371,6 +552,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
   add_foreign_key "events", "members", column: "responsible_member_id"
   add_foreign_key "events", "ministries"
   add_foreign_key "events", "users", column: "created_by_id"
+  add_foreign_key "families", "churches"
+  add_foreign_key "family_members", "churches"
+  add_foreign_key "family_members", "families"
+  add_foreign_key "family_members", "members"
+  add_foreign_key "member_occupations", "churches"
+  add_foreign_key "member_occupations", "members"
+  add_foreign_key "member_occupations", "occupations"
+  add_foreign_key "member_skills", "churches"
+  add_foreign_key "member_skills", "members"
+  add_foreign_key "member_skills", "skills"
   add_foreign_key "members", "churches"
   add_foreign_key "members", "users"
   add_foreign_key "membership_roles", "church_memberships"
@@ -381,7 +572,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
   add_foreign_key "pastoral_notes", "churches"
   add_foreign_key "pastoral_notes", "members"
   add_foreign_key "pastoral_notes", "users", column: "pastor_id"
+  add_foreign_key "profile_change_requests", "churches"
+  add_foreign_key "profile_change_requests", "members"
+  add_foreign_key "profile_change_requests", "users", column: "requested_by_id"
+  add_foreign_key "profile_change_requests", "users", column: "reviewed_by_id"
+  add_foreign_key "occupations", "churches"
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"
   add_foreign_key "roles", "churches"
+  add_foreign_key "skills", "churches"
 end

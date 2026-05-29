@@ -1,0 +1,25 @@
+<% if member_skill.errors.any? %>
+  <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+    <ul class="list-inside list-disc space-y-1">
+      <% member_skill.errors.full_messages.each { |m| %><li><%= m %></li><% } %>
+    </ul>
+  </div>
+<% end %>
+<%= form_with model: member_skill, url: url, method: method, class: "space-y-4" do |form| %>
+  <div>
+    <%= form.label :skill_id, "Habilidad", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.select :skill_id, @church.skills.where(status: "active").order(:name).pluck(:name, :id), {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+  <div>
+    <%= form.label :level, "Nivel", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.select :level, MemberSkill::LEVELS.map { |l| [ skill_level_label(l), l ] }, {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+  <div>
+    <%= form.label :notes, "Notas", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.text_area :notes, rows: 3, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+  <div class="flex justify-end gap-3">
+    <%= link_to "Cancelar", church_admin_member_path(@church, @member), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+    <%= form.submit "Guardar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+  </div>
+<% end %>

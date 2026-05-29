@@ -37,12 +37,31 @@
           <% if policy(Ministry).index? %>
             <%= link_to "Ministerios", church_admin_ministries_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% end %>
+          <% if policy(Family).index? %>
+            <%= link_to "Familias", church_admin_families_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <% if policy(Board).index? %>
+            <%= link_to "Junta directiva", church_admin_boards_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
           <% if policy(Event).index? %>
             <%= link_to "Eventos", church_admin_events_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% end %>
           <% if policy(ChurchServiceTime).index? %>
             <%= link_to "Horarios", church_admin_service_times_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% end %>
+          <% if policy(Occupation).index? %>
+            <%= link_to "Ocupaciones", church_admin_occupations_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <% if policy(Skill).index? %>
+            <%= link_to "Habilidades", church_admin_skills_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <% if ServiceDirectoryPolicy.new(current_user, nil).index? %>
+            <%= link_to "Directorio", church_admin_service_directory_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <% if policy(ProfileChangeRequest).index? %>
+            <%= link_to "Solicitudes", church_admin_profile_change_requests_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <%= link_to "Mi perfil", church_member_portal_profile_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% if policy(PastoralNote).index? %>
             <%= link_to "Notas pastorales", church_pastor_pastoral_notes_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% end %>

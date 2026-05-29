@@ -45,6 +45,14 @@ module ApplicationHelper
     t("ministries.statuses.#{status}", default: status.to_s.humanize)
   end
 
+  def family_relationship_label(relationship)
+    t("families.relationships.#{relationship}", default: relationship.to_s.humanize)
+  end
+
+  def family_status_label(status)
+    t("families.statuses.#{status}", default: status.to_s.humanize)
+  end
+
   def event_type_label(event_type)
     t("events.event_types.#{event_type}", default: event_type.to_s.humanize)
   end
@@ -59,6 +67,40 @@ module ApplicationHelper
 
   def event_recurrence_label(recurrence)
     t("events.recurrence_frequencies.#{recurrence}", default: recurrence.to_s.humanize)
+  end
+
+  def occupation_status_label(status)
+    t("occupations.statuses.#{status}", default: status.to_s.humanize)
+  end
+
+  def skill_status_label(status)
+    t("skills.statuses.#{status}", default: status.to_s.humanize)
+  end
+
+  def skill_level_label(level)
+    t("skills.levels.#{level}", default: level.to_s.humanize)
+  end
+
+  def employment_status_label(status)
+    t("member_occupations.employment_statuses.#{status}", default: status.to_s.humanize)
+  end
+
+  def work_type_label(work_type)
+    return "" if work_type.blank?
+
+    t("member_occupations.work_types.#{work_type}", default: work_type.to_s.humanize)
+  end
+
+  def board_position_label(position)
+    t("boards.positions.#{position}", default: position.to_s.humanize)
+  end
+
+  def board_status_label(status)
+    t("boards.statuses.#{status}", default: status.to_s.humanize)
+  end
+
+  def profile_change_request_status_label(status)
+    t("profile_change_requests.statuses.#{status}", default: status.to_s.humanize)
   end
 
   def pastoral_note_type_label(type)

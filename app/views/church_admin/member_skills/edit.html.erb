@@ -1,0 +1,6 @@
+<section class="mx-auto w-full max-w-3xl px-6 py-10">
+  <h1 class="text-3xl font-semibold text-slate-950">Editar habilidad</h1>
+  <div class="mt-8 rounded-lg border border-slate-200 bg-white p-6">
+    <%= render "form", member_skill: @member_skill, url: church_admin_member_skill_path(@church, @member, @member_skill), method: :patch %>
+  </div>
+</section>

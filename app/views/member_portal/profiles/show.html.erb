@@ -1,0 +1,23 @@
+<section class="mx-auto w-full max-w-3xl px-6 py-10">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Mi perfil</h1>
+    </div>
+    <%= link_to "Solicitar cambio", new_church_member_portal_profile_change_request_path(@church), class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+  </div>
+
+  <% if @pending_request %>
+    <div class="mt-6 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+      Ya tienes una solicitud pendiente de aprobacion.
+    </div>
+  <% end %>
+
+  <dl class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div><dt class="text-xs font-medium uppercase text-slate-500">Nombre</dt><dd class="text-slate-900"><%= @member.full_name %></dd></div>
+    <div><dt class="text-xs font-medium uppercase text-slate-500">Email</dt><dd class="text-slate-900"><%= @member.email %></dd></div>
+    <div><dt class="text-xs font-medium uppercase text-slate-500">Telefono</dt><dd class="text-slate-900"><%= @member.phone %></dd></div>
+    <div><dt class="text-xs font-medium uppercase text-slate-500">Estado civil</dt><dd class="text-slate-900"><%= member_marital_status_label(@member.marital_status) %></dd></div>
+    <div><dt class="text-xs font-medium uppercase text-slate-500">Direccion</dt><dd class="text-slate-900"><%= [ @member.address_line_1, @member.city ].compact_blank.join(", ") %></dd></div>
+  </dl>
+</section>

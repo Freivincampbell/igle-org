@@ -1,0 +1,48 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950">Junta directiva</h1>
+      <p class="text-sm text-slate-500">Historial de juntas administrativas y sus integrantes.</p>
+    </div>
+    <% if policy(Board).new? %>
+      <%= link_to "Nueva junta", new_church_admin_board_path(@church), class: "inline-flex items-center justify-center rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <% end %>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3">Nombre</th>
+          <th class="px-4 py-3">Periodo</th>
+          <th class="px-4 py-3">Cargos llenos</th>
+          <th class="px-4 py-3">Estado</th>
+          <th class="px-4 py-3 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @boards.any? %>
+          <% @boards.each do |board| %>
+            <tr>
+              <td class="px-4 py-4 font-medium text-slate-950"><%= board.name %></td>
+              <td class="px-4 py-4 text-slate-600"><%= l(board.starts_on) %><% if board.ends_on %> — <%= l(board.ends_on) %><% end %></td>
+              <td class="px-4 py-4 text-slate-600"><%= board.board_members.size %> / <%= BoardMember::POSITIONS.size %></td>
+              <td class="px-4 py-4 text-slate-600"><%= board_status_label(board.status) %></td>
+              <td class="px-4 py-4 text-right">
+                <% if policy(board).show? %>
+                  <%= link_to "Ver", church_admin_board_path(@church, board), class: "font-medium text-slate-600 hover:text-slate-950" %>
+                <% end %>
+                <% if policy(board).edit? %>
+                  <%= link_to "Editar", edit_church_admin_board_path(@church, board), class: "ml-3 font-medium text-slate-600 hover:text-slate-950" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">No hay juntas registradas.</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>
