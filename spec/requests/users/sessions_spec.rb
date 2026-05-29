@@ -5,7 +5,7 @@ RSpec.describe "User sessions" do
     get new_user_session_path
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).to include("Iniciar sesion")
+    expect(response.body).to include("Iniciar sesión")
   end
 
   it "logs an active user in" do
