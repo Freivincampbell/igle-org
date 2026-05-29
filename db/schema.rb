@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_140003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -184,6 +184,50 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
     t.index ["responsible_member_id"], name: "index_events_on_responsible_member_id"
   end
 
+  create_table "member_occupations", force: :cascade do |t|
+    t.boolean "available_for_projects", default: false, null: false
+    t.bigint "church_id", null: false
+    t.string "company_name"
+    t.datetime "created_at", null: false
+    t.boolean "current", default: true, null: false
+    t.text "description"
+    t.string "employment_status", default: "employed", null: false
+    t.string "job_title"
+    t.boolean "looking_for_work", default: false, null: false
+    t.bigint "member_id", null: false
+    t.bigint "occupation_id"
+    t.boolean "offers_services", default: false, null: false
+    t.string "professional_contact"
+    t.string "profile_url"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.boolean "public_in_directory", default: false, null: false
+    t.datetime "updated_at", null: false
+    t.string "work_type"
+    t.integer "years_of_experience"
+    t.index ["church_id", "looking_for_work"], name: "index_member_occupations_on_church_id_and_looking_for_work"
+    t.index ["church_id", "offers_services"], name: "index_member_occupations_on_church_id_and_offers_services"
+    t.index ["church_id"], name: "index_member_occupations_on_church_id"
+    t.index ["member_id"], name: "index_member_occupations_on_member_id"
+    t.index ["occupation_id"], name: "index_member_occupations_on_occupation_id"
+    t.index ["public_id"], name: "index_member_occupations_on_public_id", unique: true
+  end
+
+  create_table "member_skills", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.string "level", default: "basic", null: false
+    t.bigint "member_id", null: false
+    t.text "notes"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.bigint "skill_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id"], name: "index_member_skills_on_church_id"
+    t.index ["member_id", "skill_id"], name: "index_member_skills_on_member_id_and_skill_id", unique: true
+    t.index ["member_id"], name: "index_member_skills_on_member_id"
+    t.index ["public_id"], name: "index_member_skills_on_public_id", unique: true
+    t.index ["skill_id"], name: "index_member_skills_on_skill_id"
+  end
+
   create_table "members", force: :cascade do |t|
     t.string "address_line_1"
     t.string "address_line_2"
@@ -263,6 +307,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
     t.index ["public_id"], name: "index_ministry_memberships_on_public_id", unique: true
   end
 
+  create_table "occupations", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "name"], name: "index_occupations_on_church_id_and_name", unique: true
+    t.index ["church_id"], name: "index_occupations_on_church_id"
+    t.index ["public_id"], name: "index_occupations_on_public_id", unique: true
+  end
+
   create_table "permissions", force: :cascade do |t|
     t.string "action_key", null: false
     t.datetime "created_at", null: false
@@ -303,6 +360,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
     t.index ["church_id"], name: "index_roles_on_church_id"
     t.index ["public_id"], name: "index_roles_on_public_id", unique: true
     t.index ["status"], name: "index_roles_on_status"
+  end
+
+  create_table "skills", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "name"], name: "index_skills_on_church_id_and_name", unique: true
+    t.index ["church_id"], name: "index_skills_on_church_id"
+    t.index ["public_id"], name: "index_skills_on_public_id", unique: true
   end
 
   create_table "users", force: :cascade do |t|
@@ -353,6 +423,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
   add_foreign_key "events", "members", column: "responsible_member_id"
   add_foreign_key "events", "ministries"
   add_foreign_key "events", "users", column: "created_by_id"
+  add_foreign_key "member_occupations", "churches"
+  add_foreign_key "member_occupations", "members"
+  add_foreign_key "member_occupations", "occupations"
+  add_foreign_key "member_skills", "churches"
+  add_foreign_key "member_skills", "members"
+  add_foreign_key "member_skills", "skills"
   add_foreign_key "members", "churches"
   add_foreign_key "members", "users"
   add_foreign_key "membership_roles", "church_memberships"
@@ -360,7 +436,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
   add_foreign_key "ministries", "churches"
   add_foreign_key "ministry_memberships", "members"
   add_foreign_key "ministry_memberships", "ministries"
+  add_foreign_key "occupations", "churches"
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"
   add_foreign_key "roles", "churches"
+  add_foreign_key "skills", "churches"
 end
