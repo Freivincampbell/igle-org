@@ -7,6 +7,9 @@ Thumbs.db
 *.swp
 *.swo
 
+# Brainstorming scratch (visual companion mockups)
+.superpowers/
+
 # Ruby and local tooling
 *.rbc
 .byebug_history
