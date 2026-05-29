@@ -1,6 +1,7 @@
 class Member < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  has_paper_trail skip: %i[updated_at]
 
   belongs_to :user, optional: true
   has_many :ministry_memberships, dependent: :destroy

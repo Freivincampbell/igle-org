@@ -1,5 +1,6 @@
 class RolePermission < ApplicationRecord
   include PublicIdentifiable
+  has_paper_trail skip: %i[updated_at]
 
   belongs_to :role
   belongs_to :permission

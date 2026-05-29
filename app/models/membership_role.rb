@@ -1,5 +1,6 @@
 class MembershipRole < ApplicationRecord
   include PublicIdentifiable
+  has_paper_trail skip: %i[updated_at]
 
   belongs_to :church_membership
   belongs_to :role

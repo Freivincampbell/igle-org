@@ -1,6 +1,7 @@
 class BoardMember < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  has_paper_trail skip: %i[updated_at]
 
   POSITIONS = %w[president vice_president secretary treasurer vocal_1 vocal_2 vocal_3 fiscal].freeze
 

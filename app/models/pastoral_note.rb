@@ -1,6 +1,7 @@
 class PastoralNote < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  has_paper_trail skip: %i[updated_at]
 
   NOTE_TYPES = %w[general counseling follow_up prayer].freeze
 
@@ -15,6 +16,10 @@ class PastoralNote < ApplicationRecord
   validate :member_in_same_church
 
   scope :ordered, -> { order(created_at: :desc) }
+
+  def member_public_id
+    member&.public_id
+  end
 
   private
 
