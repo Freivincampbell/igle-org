@@ -26,6 +26,9 @@ class Permission < ApplicationRecord
     boards
     events
     church_settings
+    occupations
+    skills
+    service_directory
   ].freeze
 
   has_many :role_permissions, dependent: :destroy

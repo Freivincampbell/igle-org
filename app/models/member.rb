@@ -9,6 +9,10 @@ class Member < ApplicationRecord
   has_many :families, through: :family_members
   has_many :event_rsvps, dependent: :destroy
   has_many :event_attendances, dependent: :destroy
+  has_many :member_occupations, dependent: :destroy
+  has_many :occupations, through: :member_occupations
+  has_many :member_skills, dependent: :destroy
+  has_many :skills, through: :member_skills
 
   enum :gender, { male: "male", female: "female", not_specified: "not_specified" }, validate: true
   enum :marital_status, {

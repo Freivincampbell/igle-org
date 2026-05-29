@@ -1,0 +1,67 @@
+<section class="mx-auto w-full max-w-6xl px-6 py-10">
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Directorio de servicios</h1>
+    <p class="text-sm text-slate-500">Encuentra miembros que ofrecen servicios o estan buscando trabajo.</p>
+  </div>
+
+  <%= form_with url: church_admin_service_directory_path(@church), method: :get, local: true, class: "mt-6 flex flex-wrap items-end gap-3" do %>
+    <div>
+      <label class="block text-xs font-medium text-slate-500">Vista</label>
+      <select name="filter" class="mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm">
+        <option value="offers" <%= "selected" if @filter == "offers" %>>Ofrecen servicios</option>
+        <option value="looking_for_work" <%= "selected" if @filter == "looking_for_work" %>>Buscando trabajo</option>
+        <option value="all" <%= "selected" if @filter == "all" %>>Todos</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-slate-500">Ocupacion</label>
+      <%= select_tag :occupation_id, options_for_select([ [ "Cualquiera", "" ] ] + @occupation_options, params[:occupation_id]), class: "mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-slate-500">Habilidad</label>
+      <%= select_tag :skill_id, options_for_select([ [ "Cualquiera", "" ] ] + @skill_options, params[:skill_id]), class: "mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <button type="submit" class="rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Filtrar</button>
+  <% end %>
+
+  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3">Miembro</th>
+          <th class="px-4 py-3">Ocupacion</th>
+          <th class="px-4 py-3">Estado</th>
+          <th class="px-4 py-3">Contacto</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @entries.any? %>
+          <% @entries.each do |entry| %>
+            <tr>
+              <td class="px-4 py-3 font-medium text-slate-950">
+                <%= entry.member.full_name %>
+                <% if entry.job_title.present? %><div class="text-xs text-slate-500"><%= entry.job_title %></div><% end %>
+              </td>
+              <td class="px-4 py-3 text-slate-600"><%= entry.occupation&.name %></td>
+              <td class="px-4 py-3 text-slate-600">
+                <% if entry.looking_for_work %>Buscando trabajo<% end %>
+                <% if entry.offers_services %>Ofrece servicios<% end %>
+              </td>
+              <td class="px-4 py-3 text-slate-600">
+                <% contact_enabled = @church.respond_to?(:member_work_contact_enabled) ? @church.member_work_contact_enabled : true %>
+                <% if contact_enabled %>
+                  <%= entry.professional_contact || entry.member.email || entry.member.phone %>
+                <% else %>
+                  <span class="text-xs italic text-slate-400">Contacto deshabilitado por la iglesia</span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="4" class="px-4 py-8 text-center text-slate-500">No hay registros en el directorio.</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

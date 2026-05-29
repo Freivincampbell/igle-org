@@ -49,6 +49,15 @@
           <% if policy(ChurchServiceTime).index? %>
             <%= link_to "Horarios", church_admin_service_times_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% end %>
+          <% if policy(Occupation).index? %>
+            <%= link_to "Ocupaciones", church_admin_occupations_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <% if policy(Skill).index? %>
+            <%= link_to "Habilidades", church_admin_skills_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
+          <% if ServiceDirectoryPolicy.new(current_user, nil).index? %>
+            <%= link_to "Directorio", church_admin_service_directory_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
           <% if church_setting_visible?(current_church) %>
             <%= link_to "Configuracion", church_admin_settings_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% end %>

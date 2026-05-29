@@ -82,6 +82,27 @@ Rails.application.routes.draw do
           patch :positions, action: :update_positions
         end
       end
+
+      resources :occupations, param: :public_id, only: %i[index new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+        end
+      end
+
+      resources :skills, param: :public_id, only: %i[index new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+        end
+      end
+
+      resources :members, param: :public_id, only: [] do
+        resources :occupations, param: :public_id, only: %i[new create edit update destroy], controller: "member_occupations"
+        resources :skills, param: :public_id, only: %i[new create edit update destroy], controller: "member_skills"
+      end
+
+      get "service_directory" => "service_directory#index", as: :service_directory
     end
   end
 
