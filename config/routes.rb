@@ -129,6 +129,11 @@ Rails.application.routes.draw do
     namespace :pastor, module: :pastor, as: :pastor do
       resources :pastoral_notes, param: :public_id
     end
+
+    namespace :ministry_leader, module: :ministry_leader, as: :ministry_leader do
+      resources :ministries, param: :public_id, only: %i[index show]
+      resources :events, param: :public_id, only: %i[index show]
+    end
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
