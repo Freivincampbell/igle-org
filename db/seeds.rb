@@ -4,6 +4,7 @@ permission_labels = {
   "members" => "Miembros",
   "ministries" => "Ministerios",
   "families" => "Familias",
+  "boards" => "Junta directiva",
   "events" => "Eventos",
   "church_settings" => "Configuracion de iglesia"
 }
