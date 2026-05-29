@@ -119,6 +119,11 @@ Rails.application.routes.draw do
     namespace :portal, module: :member_portal, as: :member_portal do
       resource :profile, only: %i[show]
       resources :profile_change_requests, only: %i[new create]
+      resources :events, param: :public_id, only: %i[index show] do
+        member do
+          post :rsvp
+        end
+      end
     end
 
     namespace :pastor, module: :pastor, as: :pastor do
