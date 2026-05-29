@@ -1,0 +1,38 @@
+<section class="mx-auto w-full max-w-3xl px-6 py-10">
+  <div class="mb-6">
+    <%= link_to "← Volver a eventos", church_member_portal_events_path(@church), class: "text-sm text-slate-600 hover:text-slate-950" %>
+  </div>
+
+  <h1 class="text-3xl font-semibold text-slate-950"><%= @event.title %></h1>
+  <p class="mt-2 text-sm text-slate-500">
+    <%= l(@event.starts_at, format: :default) %>
+    <% if @event.ends_at %> – <%= l(@event.ends_at, format: :default) %><% end %>
+    <% if @event.location.present? %> · <%= @event.location %><% end %>
+  </p>
+
+  <% if @event.description.present? %>
+    <p class="mt-6 text-sm text-slate-700 whitespace-pre-line"><%= @event.description %></p>
+  <% end %>
+
+  <% if current_member && @event.scheduled? %>
+    <div class="mt-8 rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-base font-semibold text-slate-950">¿Asistirás a este evento?</h2>
+
+      <%= form_with url: rsvp_church_member_portal_event_path(@church, @event), method: :post, local: true, class: "mt-4 space-y-4" do |form| %>
+        <div>
+          <%= form.label :status, "Tu respuesta", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.select :status,
+                [["Sí, asistiré", "attending"], ["No asistiré", "not_attending"], ["Tal vez", "maybe"]],
+                { selected: @rsvp&.status },
+                class: "mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <div>
+          <%= form.label :guests_count, "Acompañantes adicionales", class: "block text-sm font-medium text-slate-700" %>
+          <%= form.number_field :guests_count, value: @rsvp&.guests_count || 0, min: 0,
+                class: "mt-1 block w-32 rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+        </div>
+        <%= form.submit "Confirmar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 cursor-pointer" %>
+      <% end %>
+    </div>
+  <% end %>
+</section>

@@ -1,0 +1,35 @@
+<section class="mx-auto w-full max-w-5xl px-6 py-10">
+  <div class="mb-6">
+    <%= link_to "← Mis ministerios", church_ministry_leader_ministries_path(@church), class: "text-sm text-slate-600 hover:text-slate-950" %>
+  </div>
+
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950"><%= @ministry.name %></h1>
+    <% if @ministry.description.present? %>
+      <p class="mt-2 text-sm text-slate-500"><%= @ministry.description %></p>
+    <% end %>
+  </div>
+
+  <div class="mt-8">
+    <h2 class="text-lg font-semibold text-slate-950">Miembros activos (<%= @members.count %>)</h2>
+    <div class="mt-4 overflow-hidden rounded-lg border border-slate-200 bg-white">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+          <tr>
+            <th class="px-4 py-3">Nombre</th>
+            <th class="px-4 py-3">Rol</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% @members.each do |mm| %>
+            <tr>
+              <td class="px-4 py-3 font-medium text-slate-950"><%= mm.member.full_name %></td>
+              <td class="px-4 py-3 text-slate-600 capitalize"><%= mm.ministry_role %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

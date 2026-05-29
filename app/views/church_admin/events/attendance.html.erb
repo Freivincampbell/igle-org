@@ -19,8 +19,8 @@
             <% @members.each do |member| %>
               <% checked = @attendances_by_member[member.id]&.attended %>
               <tr>
-                <td class="px-4 py-2"><%= check_box_tag "attendance[member_ids][]", member.id, checked, id: "attendance_member_#{member.id}" %></td>
-                <td class="px-4 py-2"><label for="attendance_member_<%= member.id %>"><%= member.full_name %></label></td>
+                <td class="px-4 py-2"><%= check_box_tag "attendance[member_ids][]", member.public_id, checked, id: "attendance_member_#{member.public_id}" %></td>
+                <td class="px-4 py-2"><label for="attendance_member_<%= member.public_id %>"><%= member.full_name %></label></td>
               </tr>
             <% end %>
           <% else %>

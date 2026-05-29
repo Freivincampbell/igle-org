@@ -10,6 +10,24 @@
     </div>
   <% end %>
 
+  <section class="mb-6">
+    <h2 class="text-lg font-semibold text-slate-950">Foto</h2>
+    <div class="mt-4 flex items-center gap-6">
+      <% if member.photo.attached? %>
+        <%= image_tag member.photo.variant(resize_to_fill: [96, 96]).processed,
+              class: "h-24 w-24 rounded-full object-cover border border-slate-200" %>
+      <% else %>
+        <div class="flex h-24 w-24 items-center justify-center rounded-full bg-slate-100 text-slate-400 text-3xl font-semibold">
+          <%= member.first_name&.first&.upcase %>
+        </div>
+      <% end %>
+      <div>
+        <%= form.label :photo, "Foto de perfil", class: "block text-sm font-medium text-slate-700" %>
+        <%= form.file_field :photo, accept: "image/*", class: "mt-2 block text-sm text-slate-600 file:mr-4 file:rounded-md file:border-0 file:bg-slate-950 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-800" %>
+      </div>
+    </div>
+  </section>
+
   <section>
     <h2 class="text-lg font-semibold text-slate-950">Datos personales</h2>
     <div class="mt-4 grid gap-5 sm:grid-cols-2">

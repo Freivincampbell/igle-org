@@ -19,7 +19,7 @@ Rails.application.routes.draw do
 
   resources :churches, param: :public_id, only: %i[index show] do
     namespace :admin, module: :church_admin, as: :admin do
-      root "roles#index"
+      root "dashboard#index"
 
       resources :roles, param: :public_id, only: %i[index show new create edit update] do
         member do
@@ -119,10 +119,21 @@ Rails.application.routes.draw do
     namespace :portal, module: :member_portal, as: :member_portal do
       resource :profile, only: %i[show]
       resources :profile_change_requests, only: %i[new create]
+      resources :events, param: :public_id, only: %i[index show] do
+        member do
+          post :rsvp
+        end
+      end
     end
 
     namespace :pastor, module: :pastor, as: :pastor do
       resources :pastoral_notes, param: :public_id
+      resources :members, param: :public_id, only: %i[index show]
+    end
+
+    namespace :ministry_leader, module: :ministry_leader, as: :ministry_leader do
+      resources :ministries, param: :public_id, only: %i[index show]
+      resources :events, param: :public_id, only: %i[index show]
     end
   end
 

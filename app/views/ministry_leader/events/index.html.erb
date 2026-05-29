@@ -1,0 +1,44 @@
+<section class="mx-auto w-full max-w-5xl px-6 py-10">
+  <div>
+    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Eventos de mis ministerios</h1>
+  </div>
+
+  <div class="mt-6 flex gap-2 text-sm">
+    <% { "upcoming" => "Próximos", "past" => "Pasados", "all" => "Todos" }.each do |filter, label| %>
+      <%= link_to label, church_ministry_leader_events_path(@church, filter: filter),
+            class: "rounded-md border px-3 py-2 font-medium #{@filter == filter ? 'border-slate-950 bg-slate-950 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}" %>
+    <% end %>
+  </div>
+
+  <div class="mt-6 overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <table class="min-w-full divide-y divide-slate-200 text-sm">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+        <tr>
+          <th class="px-4 py-3">Título</th>
+          <th class="px-4 py-3">Ministerio</th>
+          <th class="px-4 py-3">Inicio</th>
+          <th class="px-4 py-3">Estado</th>
+          <th class="px-4 py-3 text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-200">
+        <% if @events.any? %>
+          <% @events.each do |event| %>
+            <tr>
+              <td class="px-4 py-4 font-medium text-slate-950"><%= event.title %></td>
+              <td class="px-4 py-4 text-slate-600"><%= event.ministry&.name %></td>
+              <td class="px-4 py-4 text-slate-600"><%= l(event.starts_at, format: :default) %></td>
+              <td class="px-4 py-4 text-slate-600"><%= event.status %></td>
+              <td class="px-4 py-4 text-right">
+                <%= link_to "Ver", church_ministry_leader_event_path(@church, event), class: "font-medium text-slate-600 hover:text-slate-950" %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">No hay eventos.</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

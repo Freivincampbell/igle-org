@@ -32,6 +32,10 @@ class Event < ApplicationRecord
   scope :upcoming, -> { where(starts_at: Time.current..).order(:starts_at) }
   scope :past, -> { where(starts_at: ...Time.current).order(starts_at: :desc) }
 
+  def responsible_member_public_id
+    responsible_member&.public_id
+  end
+
   def recurring?
     self[:recurring] && recurrence_frequency.present? && recurrence_frequency != "none"
   end

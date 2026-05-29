@@ -30,6 +30,7 @@ module ChurchAdmin
     def create
       @event = @church.events.new(event_params)
       @event.created_by = current_user
+      @event.responsible_member = resolve_responsible_member
       authorize @event
 
       if @event.save
@@ -46,7 +47,10 @@ module ChurchAdmin
     def update
       authorize @event
 
-      if @event.update(event_params)
+      @event.assign_attributes(event_params)
+      @event.responsible_member = resolve_responsible_member
+
+      if @event.save
         redirect_to church_admin_event_path(@church, @event), notice: t("church_admin.events.updated")
       else
         render :edit, status: :unprocessable_content
@@ -74,12 +78,12 @@ module ChurchAdmin
     def update_attendance
       authorize @event, :update?
 
-      attended_member_ids = Array(params.dig(:attendance, :member_ids)).map(&:to_i)
+      attended_public_ids = Array(params.dig(:attendance, :member_ids)).map(&:to_s)
 
       Event.transaction do
         @church.members.active.find_each do |member|
           attendance = @event.event_attendances.find_or_initialize_by(member:, church: @church)
-          if attended_member_ids.include?(member.id)
+          if attended_public_ids.include?(member.public_id)
             attendance.attended = true
             attendance.checked_in_at ||= Time.current
             attendance.checked_in_by ||= current_user
@@ -101,7 +105,14 @@ module ChurchAdmin
 
     def set_form_options
       @ministry_options = @church.ministries.where(status: "active").order(:name).pluck(:name, :id)
-      @member_options = @church.members.active.ordered.map { |m| [ m.full_name, m.id ] }
+      @member_options = @church.members.active.ordered.map { |m| [ m.full_name, m.public_id ] }
+    end
+
+    def resolve_responsible_member
+      public_id = params.dig(:event, :responsible_member_public_id)
+      return nil if public_id.blank?
+
+      @church.members.find_by_public_id!(public_id)
     end
 
     def event_params
@@ -115,7 +126,6 @@ module ChurchAdmin
         :visibility,
         :status,
         :ministry_id,
-        :responsible_member_id,
         :recurring,
         :recurrence_frequency,
         :recurrence_until,

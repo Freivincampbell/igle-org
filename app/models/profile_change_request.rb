@@ -1,6 +1,7 @@
 class ProfileChangeRequest < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  has_paper_trail skip: %i[updated_at]
 
   ALLOWED_ATTRIBUTES = %w[
     first_name middle_name last_name second_last_name

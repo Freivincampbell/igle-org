@@ -22,7 +22,20 @@ RSpec.describe "Pastor pastoral notes" do
     expect(response).to redirect_to(root_path)
   end
 
-  it "allows pastor to create a note" do
+  it "renders member options using public_id, not the internal id" do
+    church = create(:church)
+    member = create(:member, church:, first_name: "Ana", last_name: "Lopez", second_last_name: "Diaz")
+    pastoral_membership = grant_pastoral(church)
+    sign_in pastoral_membership.user
+
+    get new_church_pastor_pastoral_note_path(church)
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include(%(<option value="#{member.public_id}">#{member.full_name}</option>))
+    expect(response.body).not_to include(%(<option value="#{member.id}">#{member.full_name}</option>))
+  end
+
+  it "allows pastor to create a note resolving the member by public_id" do
     church = create(:church)
     member = create(:member, church:)
     pastoral_membership = grant_pastoral(church)
@@ -30,9 +43,26 @@ RSpec.describe "Pastor pastoral notes" do
 
     expect do
       post church_pastor_pastoral_notes_path(church), params: {
-        pastoral_note: { member_id: member.id, title: "Visita", body: "Conversamos", note_type: "general" }
+        pastoral_note: { member_public_id: member.public_id, title: "Visita", body: "Conversamos", note_type: "general" }
       }
     end.to change(PastoralNote, :count).by(1)
+
+    expect(PastoralNote.last.member).to eq(member)
+  end
+
+  it "allows pastor to update the member by public_id" do
+    church = create(:church)
+    member_a = create(:member, church:)
+    member_b = create(:member, church:)
+    pastoral_membership = grant_pastoral(church)
+    note = create(:pastoral_note, church:, member: member_a, pastor: pastoral_membership.user)
+    sign_in pastoral_membership.user
+
+    patch church_pastor_pastoral_note_path(church, note), params: {
+      pastoral_note: { member_public_id: member_b.public_id, title: "Visita", body: "Conversamos", note_type: "general" }
+    }
+
+    expect(note.reload.member).to eq(member_b)
   end
 
   it "isolates notes per church" do

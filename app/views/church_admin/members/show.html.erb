@@ -4,8 +4,20 @@
   <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div>
       <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
-      <h1 class="mt-2 text-3xl font-semibold text-slate-950"><%= @member.full_name %></h1>
-      <p class="mt-2 text-sm text-slate-500"><%= @member.public_id %></p>
+      <div class="flex items-center gap-6">
+        <% if @member.photo.attached? %>
+          <%= image_tag @member.photo.variant(resize_to_fill: [80, 80]).processed,
+                class: "h-20 w-20 rounded-full object-cover border border-slate-200" %>
+        <% else %>
+          <div class="flex h-20 w-20 items-center justify-center rounded-full bg-slate-100 text-slate-400 text-2xl font-semibold">
+            <%= @member.first_name&.first&.upcase %>
+          </div>
+        <% end %>
+        <div>
+          <h1 class="text-3xl font-semibold text-slate-950"><%= @member.full_name %></h1>
+          <p class="mt-1 text-sm text-slate-500"><%= @member.public_id %></p>
+        </div>
+      </div>
     </div>
 
     <div class="flex flex-wrap gap-3">
