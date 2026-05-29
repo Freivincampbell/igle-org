@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_120002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -41,6 +41,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "addresses", force: :cascade do |t|
+    t.bigint "addressable_id", null: false
+    t.string "addressable_type", null: false
+    t.bigint "church_id", null: false
+    t.string "city"
+    t.string "country"
+    t.datetime "created_at", null: false
+    t.string "line_1"
+    t.string "line_2"
+    t.string "postal_code"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.text "reference"
+    t.string "state"
+    t.datetime "updated_at", null: false
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_compound"
+    t.index ["church_id"], name: "index_addresses_on_church_id"
+    t.index ["public_id"], name: "index_addresses_on_public_id", unique: true
   end
 
   create_table "church_memberships", force: :cascade do |t|
@@ -182,6 +202,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
     t.index ["ministry_id"], name: "index_events_on_ministry_id"
     t.index ["public_id"], name: "index_events_on_public_id", unique: true
     t.index ["responsible_member_id"], name: "index_events_on_responsible_member_id"
+  end
+
+  create_table "families", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.text "notes"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "name"], name: "index_families_on_church_id_and_name"
+    t.index ["church_id", "status"], name: "index_families_on_church_id_and_status"
+    t.index ["church_id"], name: "index_families_on_church_id"
+    t.index ["public_id"], name: "index_families_on_public_id", unique: true
+  end
+
+  create_table "family_members", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "family_id", null: false
+    t.bigint "member_id", null: false
+    t.boolean "primary_contact", default: false, null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "relationship", default: "other", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id"], name: "index_family_members_on_church_id"
+    t.index ["family_id", "member_id"], name: "index_family_members_on_family_id_and_member_id", unique: true
+    t.index ["family_id"], name: "index_family_members_on_family_id"
+    t.index ["member_id"], name: "index_family_members_on_member_id"
+    t.index ["public_id"], name: "index_family_members_on_public_id", unique: true
   end
 
   create_table "members", force: :cascade do |t|
@@ -339,6 +389,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "addresses", "churches"
   add_foreign_key "church_memberships", "churches"
   add_foreign_key "church_memberships", "users"
   add_foreign_key "church_service_times", "churches"
@@ -353,6 +404,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_110002) do
   add_foreign_key "events", "members", column: "responsible_member_id"
   add_foreign_key "events", "ministries"
   add_foreign_key "events", "users", column: "created_by_id"
+  add_foreign_key "families", "churches"
+  add_foreign_key "family_members", "churches"
+  add_foreign_key "family_members", "families"
+  add_foreign_key "family_members", "members"
   add_foreign_key "members", "churches"
   add_foreign_key "members", "users"
   add_foreign_key "membership_roles", "church_memberships"

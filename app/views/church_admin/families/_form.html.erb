@@ -1,0 +1,31 @@
+<% if family.errors.any? %>
+  <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+    <ul class="list-inside list-disc space-y-1">
+      <% family.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: family, url: url, method: method, class: "space-y-6" do |form| %>
+  <div>
+    <%= form.label :name, "Nombre de la familia", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.text_field :name, required: true, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+
+  <div>
+    <%= form.label :status, "Estado", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.select :status, [ [ "Activa", "active" ], [ "Inactiva", "inactive" ] ], {}, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+
+  <div>
+    <%= form.label :notes, "Notas", class: "block text-sm font-medium text-slate-700" %>
+    <%= form.text_area :notes, rows: 3, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+
+  <div class="flex justify-end gap-3">
+    <%= link_to "Cancelar", church_admin_families_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+    <%= form.submit "Guardar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+  </div>
+<% end %>

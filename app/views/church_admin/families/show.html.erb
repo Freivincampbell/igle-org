@@ -1,0 +1,58 @@
+<section class="mx-auto w-full max-w-4xl px-6 py-10">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
+      <h1 class="mt-2 text-3xl font-semibold text-slate-950"><%= @family.name %></h1>
+      <p class="mt-1 text-sm text-slate-500">Estado: <%= family_status_label(@family.status) %></p>
+    </div>
+    <div class="flex gap-2">
+      <% if policy(@family).edit? %>
+        <%= link_to "Editar", edit_church_admin_family_path(@church, @family), class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <% end %>
+      <% if @family.active? && policy(@family).deactivate? %>
+        <%= button_to "Desactivar", deactivate_church_admin_family_path(@church, @family), method: :patch, form_class: "inline-flex", class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <% elsif @family.inactive? && policy(@family).activate? %>
+        <%= button_to "Activar", activate_church_admin_family_path(@church, @family), method: :patch, form_class: "inline-flex", class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @family.notes.present? %>
+    <div class="mt-6 rounded-lg border border-slate-200 bg-white p-6">
+      <h2 class="text-sm font-semibold uppercase text-slate-500">Notas</h2>
+      <p class="mt-2 whitespace-pre-line text-sm text-slate-700"><%= @family.notes %></p>
+    </div>
+  <% end %>
+
+  <div class="mt-6 rounded-lg border border-slate-200 bg-white">
+    <div class="border-b border-slate-200 px-6 py-4">
+      <h2 class="text-lg font-semibold text-slate-950">Miembros de la familia</h2>
+      <p class="text-sm text-slate-500">Asigna miembros activos de la iglesia y define su relacion.</p>
+    </div>
+    <%= form_with url: members_church_admin_family_path(@church, @family), method: :patch, class: "p-6 space-y-4" do %>
+      <% @assignable_members.each do |member| %>
+        <% existing = @current_family_members[member.public_id] %>
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-4 items-center border-b border-slate-100 pb-3">
+          <label class="flex items-center gap-2 text-sm">
+            <%= check_box_tag "family[member_public_ids][]", member.public_id, existing.present?, id: "family_member_#{member.public_id}" %>
+            <span><%= member.full_name %></span>
+          </label>
+          <div>
+            <%= select_tag "family[member_relationships][#{member.public_id}]",
+                  options_for_select(FamilyMember::RELATIONSHIPS.map { |r| [ family_relationship_label(r), r ] }, existing&.relationship || "other"),
+                  class: "w-full rounded-md border border-slate-300 px-2 py-1 text-sm" %>
+          </div>
+          <label class="flex items-center gap-2 text-sm">
+            <%= radio_button_tag "family[primary_contact_public_id]", member.public_id, existing&.primary_contact %>
+            <span>Contacto principal</span>
+          </label>
+        </div>
+      <% end %>
+      <% if policy(@family).update? %>
+        <div class="flex justify-end">
+          <%= submit_tag "Guardar miembros", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</section>
