@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_120002) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_28_130001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -61,6 +61,41 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_120002) do
     t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_compound"
     t.index ["church_id"], name: "index_addresses_on_church_id"
     t.index ["public_id"], name: "index_addresses_on_public_id", unique: true
+  end
+
+  create_table "board_members", force: :cascade do |t|
+    t.bigint "board_id", null: false
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.date "ends_on"
+    t.bigint "member_id", null: false
+    t.string "position", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.date "starts_on"
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id", "member_id"], name: "index_board_members_on_board_id_and_member_id", unique: true
+    t.index ["board_id", "position", "status"], name: "index_board_members_unique_active_position", unique: true, where: "((status)::text = 'active'::text)"
+    t.index ["board_id"], name: "index_board_members_on_board_id"
+    t.index ["church_id"], name: "index_board_members_on_church_id"
+    t.index ["member_id"], name: "index_board_members_on_member_id"
+    t.index ["public_id"], name: "index_board_members_on_public_id", unique: true
+  end
+
+  create_table "boards", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.date "ends_on"
+    t.string "name", null: false
+    t.text "notes"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.date "starts_on", null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "starts_on"], name: "index_boards_on_church_id_and_starts_on"
+    t.index ["church_id", "status"], name: "index_boards_on_church_id_and_status"
+    t.index ["church_id"], name: "index_boards_on_church_id"
+    t.index ["public_id"], name: "index_boards_on_public_id", unique: true
   end
 
   create_table "church_memberships", force: :cascade do |t|
@@ -390,6 +425,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_120002) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "addresses", "churches"
+  add_foreign_key "board_members", "boards"
+  add_foreign_key "board_members", "churches"
+  add_foreign_key "board_members", "members"
+  add_foreign_key "boards", "churches"
   add_foreign_key "church_memberships", "churches"
   add_foreign_key "church_memberships", "users"
   add_foreign_key "church_service_times", "churches"
