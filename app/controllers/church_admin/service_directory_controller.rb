@@ -1,5 +1,9 @@
 module ChurchAdmin
   class ServiceDirectoryController < BaseController
+    # El directorio no es un modelo con policy_scope; se filtra manualmente por
+    # @church y se autoriza con ServiceDirectoryPolicy.
+    skip_after_action :verify_policy_scoped, only: :index
+
     def index
       authorize ServiceDirectoryPolicy, :index?, policy_class: ServiceDirectoryPolicy
 

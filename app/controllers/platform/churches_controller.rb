@@ -3,10 +3,12 @@ module Platform
     before_action :set_church, only: %i[show edit update activate deactivate]
 
     def index
-      @churches = Church.order(:name)
+      authorize Church
+      @churches = policy_scope(Church).order(:name)
     end
 
     def show
+      authorize @church
       @owner_memberships = @church.church_memberships
         .joins(:user)
         .includes(:user)
@@ -16,10 +18,12 @@ module Platform
 
     def new
       @church = Church.new(default_church_attributes)
+      authorize @church
     end
 
     def create
       @church = Church.new(church_params)
+      authorize @church
 
       if @church.save
         redirect_to platform_church_path(@church), notice: t("platform.churches.created")
@@ -29,9 +33,12 @@ module Platform
     end
 
     def edit
+      authorize @church
     end
 
     def update
+      authorize @church
+
       if @church.update(church_params)
         redirect_to platform_church_path(@church), notice: t("platform.churches.updated")
       else
@@ -40,11 +47,13 @@ module Platform
     end
 
     def activate
+      authorize @church
       @church.active!
       redirect_to platform_church_path(@church), notice: t("platform.churches.activated")
     end
 
     def deactivate
+      authorize @church
       @church.inactive!
       redirect_to platform_church_path(@church), notice: t("platform.churches.deactivated")
     end

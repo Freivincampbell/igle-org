@@ -3,10 +3,12 @@ module Platform
     before_action :set_church
 
     def new
+      authorize ChurchMembership
       @owner_assignment = OwnerAssignment.new(church: @church)
     end
 
     def create
+      authorize ChurchMembership
       @owner_assignment = OwnerAssignment.new(owner_assignment_params.merge(church: @church))
 
       if @owner_assignment.save
