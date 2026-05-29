@@ -1,10 +1,10 @@
 class MinistryPolicy < ApplicationPolicy
   def index?
-    super_admin? || permission?("ministries", "read")
+    super_admin? || permission?("ministries", "read") || user_led_ministries.any?
   end
 
   def show?
-    super_admin? || (same_church? && permission?("ministries", "read"))
+    super_admin? || (same_church? && (permission?("ministries", "read") || ministry_leader_of?(record)))
   end
 
   def create?
@@ -12,15 +12,15 @@ class MinistryPolicy < ApplicationPolicy
   end
 
   def update?
-    super_admin? || (same_church? && permission?("ministries", "update"))
+    super_admin? || (same_church? && (permission?("ministries", "update") || ministry_leader_of?(record)))
   end
 
   def activate?
-    super_admin? || (same_church? && permission?("ministries", "activate"))
+    super_admin? || (same_church? && (permission?("ministries", "activate") || ministry_leader_of?(record)))
   end
 
   def deactivate?
-    super_admin? || (same_church? && permission?("ministries", "deactivate"))
+    super_admin? || (same_church? && (permission?("ministries", "deactivate") || ministry_leader_of?(record)))
   end
 
   class Scope < ApplicationPolicy::Scope
@@ -29,7 +29,10 @@ class MinistryPolicy < ApplicationPolicy
       return scope.none if current_church.blank?
       return scope.none unless current_membership&.active?
 
-      scope.where(church: current_church)
+      return scope.where(church: current_church) if owner? || permission?("ministries", "read")
+
+      led = user_led_ministries
+      led.any? ? led : scope.none
     end
   end
 end
