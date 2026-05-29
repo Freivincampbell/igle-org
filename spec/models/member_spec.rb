@@ -69,5 +69,17 @@ RSpec.describe Member do
 
       expect(church.members.search_by_name("ANA")).to include(ana)
     end
+
+    it "respeta aislamiento multi-tenant" do
+      church_a = create(:church)
+      church_b = create(:church)
+      ana_a = create(:member, church: church_a, first_name: "Ana", last_name: "Rojas")
+      _ana_b = create(:member, church: church_b, first_name: "Ana", last_name: "Rojas")
+
+      results_a = church_a.members.search_by_name("ana")
+
+      expect(results_a).to include(ana_a)
+      expect(results_a).not_to include(_ana_b)
+    end
   end
 end
