@@ -39,6 +39,7 @@
           <% end %>
           <% if policy(Family).index? %>
             <%= link_to "Familias", church_admin_families_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
+          <% end %>
           <% if policy(Event).index? %>
             <%= link_to "Eventos", church_admin_events_path(current_church), class: "rounded-md px-3 py-2 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-950" %>
           <% end %>
