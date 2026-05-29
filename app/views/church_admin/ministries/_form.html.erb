@@ -1,6 +1,6 @@
-<%= form_with model: [ @church, :admin, ministry ], class: "mt-8 rounded-lg border border-slate-200 bg-white p-6" do |form| %>
+<%= form_with model: [ @church, :admin, ministry ], class: "mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-card" do |form| %>
   <% if ministry.errors.any? %>
-    <div class="mb-6 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+    <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
       <p class="font-medium">No se pudo guardar el ministerio.</p>
       <ul class="mt-2 list-disc pl-5">
         <% ministry.errors.full_messages.each do |message| %>
@@ -13,22 +13,22 @@
   <div class="grid gap-5">
     <div>
       <%= form.label :name, "Nombre", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.text_field :name, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      <%= form.text_field :name, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
 
     <div>
       <%= form.label :description, "Descripcion", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.text_area :description, rows: 4, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      <%= form.text_area :description, rows: 4, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
 
     <div>
       <%= form.label :status, "Estado", class: "block text-sm font-medium text-slate-700" %>
-      <%= form.select :status, Ministry.statuses.keys.map { |status| [ ministry_status_label(status), status ] }, {}, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500" %>
+      <%= form.select :status, Ministry.statuses.keys.map { |status| [ ministry_status_label(status), status ] }, {}, class: "mt-2 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
   </div>
 
   <div class="mt-8 flex justify-end gap-3 border-t border-slate-200 pt-6">
-    <%= link_to "Cancelar", ministry.persisted? ? church_admin_ministry_path(@church, ministry) : church_admin_ministries_path(@church), class: "rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
-    <%= form.submit "Guardar", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <%= link_to "Cancelar", ministry.persisted? ? church_admin_ministry_path(@church, ministry) : church_admin_ministries_path(@church), class: "rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
+    <%= form.submit "Guardar", class: "rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
   </div>
 <% end %>

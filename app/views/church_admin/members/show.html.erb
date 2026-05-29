@@ -1,20 +1,27 @@
-<section class="mx-auto w-full max-w-6xl px-6 py-10">
+<section class="mx-auto w-full max-w-7xl px-6 py-8">
   <%= render "church_admin/shared/nav", church: @church %>
 
   <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div>
-      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
-      <div class="flex items-center gap-6">
+      <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
+      <div class="mt-2 flex items-center gap-6">
         <% if @member.photo.attached? %>
-          <%= image_tag @member.photo.variant(resize_to_fill: [80, 80]).processed,
-                class: "h-20 w-20 rounded-full object-cover border border-slate-200" %>
+          <%= image_tag @member.photo.variant(resize_to_fill: [88, 88]).processed,
+                class: "h-22 w-22 rounded-full object-cover border border-slate-200" %>
         <% else %>
-          <div class="flex h-20 w-20 items-center justify-center rounded-full bg-slate-100 text-slate-400 text-2xl font-semibold">
+          <div class="flex h-22 w-22 items-center justify-center rounded-full bg-violet-100 text-violet-700 text-2xl font-semibold">
             <%= @member.first_name&.first&.upcase %>
           </div>
         <% end %>
         <div>
-          <h1 class="text-3xl font-semibold text-slate-950"><%= @member.full_name %></h1>
+          <div class="flex items-center gap-3">
+            <h1 class="text-2xl font-bold text-slate-900"><%= @member.full_name %></h1>
+            <% if @member.active? %>
+              <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 border border-emerald-200">Activo</span>
+            <% else %>
+              <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500 border border-slate-200">Inactivo</span>
+            <% end %>
+          </div>
           <p class="mt-1 text-sm text-slate-500"><%= @member.public_id %></p>
         </div>
       </div>
@@ -22,20 +29,20 @@
 
     <div class="flex flex-wrap gap-3">
       <% if policy(@member).edit? %>
-        <%= link_to "Editar", edit_church_admin_member_path(@church, @member), class: "inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+        <%= link_to "Editar", edit_church_admin_member_path(@church, @member), class: "inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
       <% end %>
       <% if @member.active? && policy(@member).deactivate? %>
-        <%= button_to "Desactivar", deactivate_church_admin_member_path(@church, @member), method: :patch, class: "rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100" %>
+        <%= button_to "Desactivar", deactivate_church_admin_member_path(@church, @member), method: :patch, class: "inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 transition-colors" %>
       <% elsif @member.inactive? && policy(@member).activate? %>
-        <%= button_to "Activar", activate_church_admin_member_path(@church, @member), method: :patch, class: "rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100" %>
+        <%= button_to "Activar", activate_church_admin_member_path(@church, @member), method: :patch, class: "inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100 transition-colors" %>
       <% end %>
     </div>
   </div>
 
   <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_20rem]">
     <div class="space-y-6">
-      <section class="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 class="text-lg font-semibold text-slate-950">Datos personales</h2>
+      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+        <h2 class="text-base font-semibold text-slate-900">Datos personales</h2>
         <dl class="mt-5 grid gap-4 sm:grid-cols-2">
           <div>
             <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Fecha de nacimiento</dt>
@@ -56,8 +63,8 @@
         </dl>
       </section>
 
-      <section class="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 class="text-lg font-semibold text-slate-950">Contacto</h2>
+      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+        <h2 class="text-base font-semibold text-slate-900">Contacto</h2>
         <dl class="mt-5 grid gap-4 sm:grid-cols-2">
           <div>
             <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Telefono</dt>
@@ -78,8 +85,8 @@
         </dl>
       </section>
 
-      <section class="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 class="text-lg font-semibold text-slate-950">Direccion</h2>
+      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+        <h2 class="text-base font-semibold text-slate-900">Direccion</h2>
         <dl class="mt-5 grid gap-4 sm:grid-cols-2">
           <div class="sm:col-span-2">
             <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Direccion</dt>
@@ -102,8 +109,8 @@
     </div>
 
     <aside class="space-y-6">
-      <section class="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 class="text-lg font-semibold text-slate-950">Iglesia</h2>
+      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+        <h2 class="text-base font-semibold text-slate-900">Iglesia</h2>
         <dl class="mt-5 space-y-4">
           <div>
             <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Estado</dt>
@@ -120,8 +127,8 @@
         </dl>
       </section>
 
-      <section class="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 class="text-lg font-semibold text-slate-950">Emergencia</h2>
+      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+        <h2 class="text-base font-semibold text-slate-900">Emergencia</h2>
         <dl class="mt-5 space-y-4">
           <div>
             <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Contacto</dt>

@@ -1,33 +1,33 @@
-<section class="mx-auto w-full max-w-4xl px-6 py-10">
+<section class="mx-auto w-full max-w-7xl px-6 py-8">
   <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div>
-      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
-      <h1 class="mt-2 text-3xl font-semibold text-slate-950"><%= @board.name %></h1>
-      <p class="text-sm text-slate-500">Periodo <%= l(@board.starts_on) %><% if @board.ends_on %> — <%= l(@board.ends_on) %><% end %> · <%= board_status_label(@board.status) %></p>
+      <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
+      <h1 class="mt-1 text-2xl font-bold text-slate-900"><%= @board.name %></h1>
+      <p class="mt-1 text-sm text-slate-500">Periodo <%= l(@board.starts_on) %><% if @board.ends_on %> — <%= l(@board.ends_on) %><% end %> · <%= board_status_label(@board.status) %></p>
     </div>
     <div class="flex gap-2">
       <% if policy(@board).edit? %>
-        <%= link_to "Editar", edit_church_admin_board_path(@church, @board), class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+        <%= link_to "Editar", edit_church_admin_board_path(@church, @board), class: "inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
       <% end %>
       <% if @board.active? && policy(@board).deactivate? %>
-        <%= button_to "Desactivar", deactivate_church_admin_board_path(@church, @board), method: :patch, form_class: "inline-flex", class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+        <%= button_to "Desactivar", deactivate_church_admin_board_path(@church, @board), method: :patch, form_class: "inline-flex", class: "inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
       <% elsif @board.inactive? && policy(@board).activate? %>
-        <%= button_to "Activar", activate_church_admin_board_path(@church, @board), method: :patch, form_class: "inline-flex", class: "rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+        <%= button_to "Activar", activate_church_admin_board_path(@church, @board), method: :patch, form_class: "inline-flex", class: "inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
       <% end %>
     </div>
   </div>
 
   <% if @board.notes.present? %>
-    <div class="mt-6 rounded-lg border border-slate-200 bg-white p-6">
-      <h2 class="text-sm font-semibold uppercase text-slate-500">Notas</h2>
+    <div class="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+      <h2 class="text-base font-semibold text-slate-900">Notas</h2>
       <p class="mt-2 whitespace-pre-line text-sm text-slate-700"><%= @board.notes %></p>
     </div>
   <% end %>
 
-  <div class="mt-6 rounded-lg border border-slate-200 bg-white">
+  <div class="mt-6 rounded-xl border border-slate-200 bg-white shadow-card">
     <div class="border-b border-slate-200 px-6 py-4">
-      <h2 class="text-lg font-semibold text-slate-950">Cargos</h2>
-      <p class="text-sm text-slate-500">Cada cargo se asigna a un miembro activo de la iglesia.</p>
+      <h2 class="text-base font-semibold text-slate-900">Cargos</h2>
+      <p class="mt-0.5 text-sm text-slate-500">Cada cargo se asigna a un miembro activo de la iglesia.</p>
     </div>
     <%= form_with url: positions_church_admin_board_path(@church, @board), method: :patch, class: "p-6 space-y-3" do %>
       <% BoardMember::POSITIONS.each do |position| %>
@@ -58,7 +58,7 @@
 
               <template data-member-search-target="template">
                 <%= render "shared/member_tag",
-                      public_id: "__ID__", name: "", initials: "", avatar_color: "bg-slate-400",
+                      public_id: "__ID__", name: "", initials: "", avatar_color: "bg-violet-100 text-violet-700",
                       ids_field: field,
                       meta_field: nil, meta_options: nil, meta_selected: nil,
                       primary_field: nil, primary_checked: false %>
@@ -69,7 +69,7 @@
                        autocomplete="off"
                        data-member-search-target="input"
                        data-action="input->member-search#search keydown->member-search#keydown"
-                       class="w-full rounded-md border border-dashed border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:ring-violet-500">
+                       class="w-full rounded-lg border border-dashed border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
                 <turbo-frame id="<%= frame %>" data-member-search-target="results"
                              class="absolute z-10 mt-1 block w-full rounded-md border border-slate-200 bg-white shadow-lg empty:hidden"></turbo-frame>
               </div>
@@ -79,7 +79,7 @@
       <% end %>
       <% if policy(@board).update? %>
         <div class="flex justify-end pt-2">
-          <%= submit_tag "Guardar cargos", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+          <%= submit_tag "Guardar cargos", class: "rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
         </div>
       <% end %>
     <% end %>

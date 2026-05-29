@@ -1,14 +1,14 @@
-<section class="mx-auto w-full max-w-6xl px-6 py-10">
+<section class="mx-auto w-full max-w-7xl px-6 py-8">
   <div>
-    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
-    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Directorio de servicios</h1>
-    <p class="text-sm text-slate-500">Encuentra miembros que ofrecen servicios o estan buscando trabajo.</p>
+    <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
+    <h1 class="mt-1 text-2xl font-bold text-slate-900">Directorio de servicios</h1>
+    <p class="mt-1 text-sm text-slate-500">Encuentra miembros que ofrecen servicios o estan buscando trabajo.</p>
   </div>
 
   <%= form_with url: church_admin_service_directory_path(@church), method: :get, local: true, class: "mt-6 flex flex-wrap items-end gap-3" do %>
     <div>
       <label class="block text-xs font-medium text-slate-500">Vista</label>
-      <select name="filter" class="mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm">
+      <select name="filter" class="mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
         <option value="offers" <%= "selected" if @filter == "offers" %>>Ofrecen servicios</option>
         <option value="looking_for_work" <%= "selected" if @filter == "looking_for_work" %>>Buscando trabajo</option>
         <option value="all" <%= "selected" if @filter == "all" %>>Todos</option>
@@ -16,39 +16,46 @@
     </div>
     <div>
       <label class="block text-xs font-medium text-slate-500">Ocupacion</label>
-      <%= select_tag :occupation_id, options_for_select([ [ "Cualquiera", "" ] ] + @occupation_options, params[:occupation_id]), class: "mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= select_tag :occupation_id, options_for_select([ [ "Cualquiera", "" ] ] + @occupation_options, params[:occupation_id]), class: "mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
     <div>
       <label class="block text-xs font-medium text-slate-500">Habilidad</label>
-      <%= select_tag :skill_id, options_for_select([ [ "Cualquiera", "" ] ] + @skill_options, params[:skill_id]), class: "mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+      <%= select_tag :skill_id, options_for_select([ [ "Cualquiera", "" ] ] + @skill_options, params[:skill_id]), class: "mt-1 rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
     </div>
-    <button type="submit" class="rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">Filtrar</button>
+    <button type="submit" class="rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer">Filtrar</button>
   <% end %>
 
-  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+  <div class="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
     <table class="min-w-full divide-y divide-slate-200 text-sm">
-      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+      <thead>
         <tr>
-          <th class="px-4 py-3">Miembro</th>
-          <th class="px-4 py-3">Ocupacion</th>
-          <th class="px-4 py-3">Estado</th>
-          <th class="px-4 py-3">Contacto</th>
+          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Miembro</th>
+          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ocupacion</th>
+          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Estado</th>
+          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Contacto</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-200">
         <% if @entries.any? %>
           <% @entries.each do |entry| %>
-            <tr>
-              <td class="px-4 py-3 font-medium text-slate-950">
-                <%= entry.member.full_name %>
-                <% if entry.job_title.present? %><div class="text-xs text-slate-500"><%= entry.job_title %></div><% end %>
+            <tr class="group hover:bg-slate-50/80 transition-colors">
+              <td class="px-5 py-3 font-medium text-slate-900">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-xs font-semibold text-violet-700">
+                    <%= entry.member.full_name.split.map(&:first).first(2).join.upcase %>
+                  </div>
+                  <div>
+                    <%= entry.member.full_name %>
+                    <% if entry.job_title.present? %><div class="text-xs text-slate-500"><%= entry.job_title %></div><% end %>
+                  </div>
+                </div>
               </td>
-              <td class="px-4 py-3 text-slate-600"><%= entry.occupation&.name %></td>
-              <td class="px-4 py-3 text-slate-600">
+              <td class="px-5 py-3 text-slate-600"><%= entry.occupation&.name %></td>
+              <td class="px-5 py-3 text-slate-600">
                 <% if entry.looking_for_work %>Buscando trabajo<% end %>
                 <% if entry.offers_services %>Ofrece servicios<% end %>
               </td>
-              <td class="px-4 py-3 text-slate-600">
+              <td class="px-5 py-3 text-slate-600">
                 <% contact_enabled = @church.respond_to?(:member_work_contact_enabled) ? @church.member_work_contact_enabled : true %>
                 <% if contact_enabled %>
                   <%= entry.professional_contact || entry.member.email || entry.member.phone %>
@@ -59,7 +66,7 @@
             </tr>
           <% end %>
         <% else %>
-          <tr><td colspan="4" class="px-4 py-8 text-center text-slate-500">No hay registros en el directorio.</td></tr>
+          <tr><td colspan="4" class="px-5 py-8 text-center text-slate-500">No hay registros en el directorio.</td></tr>
         <% end %>
       </tbody>
     </table>

@@ -1,6 +1,10 @@
-<section class="mx-auto w-full max-w-4xl px-6 py-10">
-  <%= link_to "Volver a iglesia", platform_church_path(@church), class: "text-sm font-medium text-slate-600 hover:text-slate-950" %>
-  <h1 class="mt-5 text-3xl font-semibold text-slate-950">Editar iglesia</h1>
+<section class="mx-auto w-full max-w-4xl px-6 py-8">
+  <%= link_to "← Volver a iglesia", platform_church_path(@church), class: "text-sm font-medium text-slate-600 hover:text-slate-950" %>
+
+  <div class="mt-5">
+    <p class="text-xs font-semibold uppercase tracking-widest text-violet-500">Plataforma · <%= @church.name %></p>
+    <h1 class="mt-1 text-2xl font-bold text-slate-900">Editar iglesia</h1>
+  </div>
 
   <div class="mt-8">
     <%= render "form", church: @church %>

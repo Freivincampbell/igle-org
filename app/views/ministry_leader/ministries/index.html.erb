@@ -1,21 +1,21 @@
-<section class="mx-auto w-full max-w-5xl px-6 py-10">
+<section class="mx-auto w-full max-w-7xl px-6 py-8">
   <div>
-    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
-    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Mis ministerios</h1>
+    <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
+    <h1 class="mt-1 text-2xl font-bold text-slate-900">Mis ministerios</h1>
   </div>
 
   <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <% @ministries.each do |ministry| %>
-      <article class="rounded-lg border border-slate-200 bg-white p-5">
-        <h2 class="font-semibold text-slate-950">
-          <%= link_to ministry.name, church_ministry_leader_ministry_path(@church, ministry), class: "hover:underline" %>
+      <article class="rounded-xl border border-slate-200 bg-white p-5 shadow-card">
+        <h2 class="text-base font-semibold text-slate-900">
+          <%= link_to ministry.name, church_ministry_leader_ministry_path(@church, ministry), class: "hover:text-violet-600 transition-colors" %>
         </h2>
         <% if ministry.description.present? %>
           <p class="mt-2 text-sm text-slate-500 line-clamp-2"><%= ministry.description %></p>
         <% end %>
         <div class="mt-4 flex gap-3 text-sm">
-          <%= link_to "Ministerio", church_ministry_leader_ministry_path(@church, ministry), class: "font-medium text-slate-600 hover:text-slate-950" %>
-          <%= link_to "Eventos", church_ministry_leader_events_path(@church), class: "font-medium text-slate-600 hover:text-slate-950" %>
+          <%= link_to "Ministerio", church_ministry_leader_ministry_path(@church, ministry), class: "inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
+          <%= link_to "Eventos", church_ministry_leader_events_path(@church), class: "inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
         </div>
       </article>
     <% end %>

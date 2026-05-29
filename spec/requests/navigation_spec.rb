@@ -11,7 +11,7 @@ RSpec.describe "Navigation" do
     expect(response).to have_http_status(:ok)
     expect(response.body).to include("Plataforma")
     expect(response.body).to include("Mis iglesias")
-    expect(response.body).to include("Cerrar sesion")
+    expect(response.body).to include("Salir")
   end
 
   it "shows church admin navigation to church owners" do
@@ -28,14 +28,14 @@ RSpec.describe "Navigation" do
     expect(response.body).to include("Usuarios")
     expect(response.body).to include("Miembros")
     expect(response.body).to include("Ministerios")
-    expect(response.body).to include("Cerrar sesion")
+    expect(response.body).to include("Salir")
   end
 
   it "does not show logout to guests" do
     get root_path
 
     expect(response).to have_http_status(:ok)
-    expect(response.body).not_to include("Cerrar sesion")
+    expect(response.body).not_to include("Salir")
   end
 
   it "logs users out from the navigation action" do

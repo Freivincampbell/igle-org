@@ -14,7 +14,7 @@
 <span data-member-tag
       class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 py-1 pl-1 pr-2 text-sm">
   <span data-tag-avatar
-        class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white <%= avatar_color %>">
+        class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-violet-100 text-[10px] font-bold text-violet-700">
     <span data-tag-initials><%= initials %></span>
   </span>
   <span data-tag-name class="font-medium text-slate-800"><%= name %></span>
@@ -39,7 +39,7 @@
   <% end %>
 
   <button type="button" data-action="member-search#removeTag"
-          class="ml-1 text-slate-400 hover:text-rose-500" aria-label="Quitar">
+          class="ml-1 text-slate-400 hover:text-rose-500 transition-colors" aria-label="Quitar">
     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
   </button>
 </span>

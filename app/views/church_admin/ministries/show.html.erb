@@ -1,27 +1,27 @@
-<section class="mx-auto w-full max-w-6xl px-6 py-10">
+<section class="mx-auto w-full max-w-7xl px-6 py-8">
   <%= render "church_admin/shared/nav", church: @church %>
 
   <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div>
-      <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
-      <h1 class="mt-2 text-3xl font-semibold text-slate-950"><%= @ministry.name %></h1>
-      <p class="mt-2 text-sm text-slate-500"><%= @ministry.public_id %></p>
+      <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
+      <h1 class="mt-1 text-2xl font-bold text-slate-900"><%= @ministry.name %></h1>
+      <p class="mt-1 text-xs text-slate-400"><%= @ministry.public_id %></p>
     </div>
 
     <div class="flex flex-wrap gap-3">
       <% if policy(@ministry).edit? %>
-        <%= link_to "Editar", edit_church_admin_ministry_path(@church, @ministry), class: "inline-flex items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50" %>
+        <%= link_to "Editar", edit_church_admin_ministry_path(@church, @ministry), class: "rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
       <% end %>
       <% if @ministry.active? && policy(@ministry).deactivate? %>
-        <%= button_to "Desactivar", deactivate_church_admin_ministry_path(@church, @ministry), method: :patch, class: "rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100" %>
+        <%= button_to "Desactivar", deactivate_church_admin_ministry_path(@church, @ministry), method: :patch, class: "rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 transition-colors cursor-pointer" %>
       <% elsif @ministry.inactive? && policy(@ministry).activate? %>
-        <%= button_to "Activar", activate_church_admin_ministry_path(@church, @ministry), method: :patch, class: "rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100" %>
+        <%= button_to "Activar", activate_church_admin_ministry_path(@church, @ministry), method: :patch, class: "rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100 transition-colors cursor-pointer" %>
       <% end %>
     </div>
   </div>
 
   <% if @ministry.errors.any? %>
-    <div class="mt-8 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+    <div class="mt-8 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
       <p class="font-medium">No se pudo actualizar el ministerio.</p>
       <ul class="mt-2 list-disc pl-5">
         <% @ministry.errors.full_messages.each do |message| %>
@@ -33,12 +33,18 @@
 
   <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_20rem]">
     <div class="space-y-6">
-      <section class="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 class="text-lg font-semibold text-slate-950">Detalle</h2>
+      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+        <h2 class="text-base font-semibold text-slate-900">Detalle</h2>
         <dl class="mt-5 grid gap-4 sm:grid-cols-2">
           <div>
             <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Estado</dt>
-            <dd class="mt-1 text-sm text-slate-900"><%= ministry_status_label(@ministry.status) %></dd>
+            <dd class="mt-1 text-sm text-slate-900">
+              <% if @ministry.active? %>
+                <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200"><%= ministry_status_label(@ministry.status) %></span>
+              <% else %>
+                <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 ring-1 ring-slate-200"><%= ministry_status_label(@ministry.status) %></span>
+              <% end %>
+            </dd>
           </div>
           <div>
             <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Miembros activos</dt>
@@ -51,31 +57,38 @@
         </dl>
       </section>
 
-      <section class="rounded-lg border border-slate-200 bg-white p-6">
+      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
         <div class="flex items-center justify-between gap-4">
-          <h2 class="text-lg font-semibold text-slate-950">Miembros asignados</h2>
+          <h2 class="text-base font-semibold text-slate-900">Miembros asignados</h2>
         </div>
 
-        <div class="mt-5 overflow-hidden rounded-lg border border-slate-200">
+        <div class="mt-5 overflow-hidden rounded-xl border border-slate-200">
           <table class="min-w-full divide-y divide-slate-200 text-sm">
-            <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+            <thead>
               <tr>
-                <th class="px-4 py-3">Nombre</th>
-                <th class="px-4 py-3">Rol</th>
+                <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nombre</th>
+                <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Rol</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200">
               <% active_memberships = @ministry.active_ministry_memberships.ordered %>
               <% if active_memberships.any? %>
                 <% active_memberships.each do |membership| %>
-                  <tr>
-                    <td class="px-4 py-4 font-medium text-slate-950"><%= membership.member.full_name %></td>
-                    <td class="px-4 py-4 text-slate-600"><%= ministry_role_label(membership.ministry_role) %></td>
+                  <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-5 py-4">
+                      <div class="flex items-center gap-3">
+                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-xs font-semibold text-violet-700">
+                          <%= member_initials(membership.member) %>
+                        </div>
+                        <span class="font-medium text-slate-900"><%= membership.member.full_name %></span>
+                      </div>
+                    </td>
+                    <td class="px-5 py-4 text-slate-600"><%= ministry_role_label(membership.ministry_role) %></td>
                   </tr>
                 <% end %>
               <% else %>
                 <tr>
-                  <td colspan="2" class="px-4 py-8 text-center text-slate-500">No hay miembros asignados.</td>
+                  <td colspan="2" class="px-5 py-8 text-center text-slate-500">No hay miembros asignados.</td>
                 </tr>
               <% end %>
             </tbody>
@@ -85,8 +98,8 @@
     </div>
 
     <aside>
-      <section class="rounded-lg border border-slate-200 bg-white p-6">
-        <h2 class="text-lg font-semibold text-slate-950">Asignacion</h2>
+      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+        <h2 class="text-base font-semibold text-slate-900">Asignacion</h2>
 
         <%= form_with url: members_church_admin_ministry_path(@church, @ministry), method: :patch, class: "mt-5" do |form| %>
           <% role_options = MinistryMembership.ministry_roles.keys.map { |r| [ ministry_role_label(r), r ] } %>
@@ -123,7 +136,7 @@
                      autocomplete="off"
                      data-member-search-target="input"
                      data-action="input->member-search#search keydown->member-search#keydown"
-                     class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:ring-violet-500">
+                     class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
               <turbo-frame id="member-results-ministry" data-member-search-target="results"
                            class="absolute z-10 mt-1 block w-full rounded-md border border-slate-200 bg-white shadow-lg empty:hidden"></turbo-frame>
             </div>
@@ -131,7 +144,7 @@
 
           <% if policy(@ministry).edit? %>
             <div class="mt-5 flex justify-end border-t border-slate-200 pt-4">
-              <%= form.submit "Guardar asignacion", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+              <%= form.submit "Guardar asignacion", class: "rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
             </div>
           <% end %>
         <% end %>

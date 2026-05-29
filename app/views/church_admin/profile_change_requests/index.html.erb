@@ -1,34 +1,34 @@
-<section class="mx-auto w-full max-w-6xl px-6 py-10">
+<section class="mx-auto w-full max-w-7xl px-6 py-8">
   <div>
-    <p class="text-sm font-medium text-slate-500"><%= @church.name %></p>
-    <h1 class="mt-2 text-3xl font-semibold text-slate-950">Solicitudes de cambio</h1>
-    <p class="text-sm text-slate-500">Cambios propuestos por miembros pendientes de aprobacion.</p>
+    <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
+    <h1 class="mt-1 text-2xl font-bold text-slate-900">Solicitudes de cambio</h1>
+    <p class="mt-1 text-sm text-slate-500">Cambios propuestos por miembros pendientes de aprobacion.</p>
   </div>
 
-  <div class="mt-8 overflow-hidden rounded-lg border border-slate-200 bg-white">
+  <div class="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
     <table class="min-w-full divide-y divide-slate-200 text-sm">
-      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase text-slate-500">
+      <thead>
         <tr>
-          <th class="px-4 py-3">Miembro</th>
-          <th class="px-4 py-3">Solicitada</th>
-          <th class="px-4 py-3">Estado</th>
-          <th class="px-4 py-3 text-right">Acciones</th>
+          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Miembro</th>
+          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Solicitada</th>
+          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Estado</th>
+          <th class="bg-slate-50 px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Acciones</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-slate-200">
         <% if @requests.any? %>
           <% @requests.each do |req| %>
-            <tr>
-              <td class="px-4 py-3 font-medium text-slate-950"><%= req.member.full_name %></td>
-              <td class="px-4 py-3 text-slate-600"><%= l(req.created_at) %></td>
-              <td class="px-4 py-3 text-slate-600"><%= profile_change_request_status_label(req.status) %></td>
-              <td class="px-4 py-3 text-right">
-                <%= link_to "Revisar", church_admin_profile_change_request_path(@church, req), class: "font-medium text-slate-600 hover:text-slate-950" %>
+            <tr class="group hover:bg-slate-50/80 transition-colors">
+              <td class="px-5 py-3 font-medium text-slate-900"><%= req.member.full_name %></td>
+              <td class="px-5 py-3 text-slate-600"><%= l(req.created_at) %></td>
+              <td class="px-5 py-3 text-slate-600"><%= profile_change_request_status_label(req.status) %></td>
+              <td class="px-5 py-3 text-right">
+                <%= link_to "Revisar", church_admin_profile_change_request_path(@church, req), class: "rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
               </td>
             </tr>
           <% end %>
         <% else %>
-          <tr><td colspan="4" class="px-4 py-8 text-center text-slate-500">No hay solicitudes registradas.</td></tr>
+          <tr><td colspan="4" class="px-5 py-8 text-center text-slate-500">No hay solicitudes registradas.</td></tr>
         <% end %>
       </tbody>
     </table>

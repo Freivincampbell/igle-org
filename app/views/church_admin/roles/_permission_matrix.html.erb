@@ -3,31 +3,31 @@
     <section class="border-t border-slate-200 py-5" data-controller="permission-matrix" data-permission-module="<%= module_key %>">
       <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h3 class="text-base font-semibold text-slate-950"><%= permission_module_label(module_key) %></h3>
+          <h3 class="text-base font-semibold text-slate-900"><%= permission_module_label(module_key) %></h3>
           <% if module_key == "pastoral_notes" && !role.pastoral? %>
             <p class="mt-1 text-sm text-slate-500">Disponible solo para roles pastorales.</p>
           <% end %>
         </div>
 
         <div class="flex flex-wrap gap-2">
-          <button type="button" data-action="permission-matrix#apply" data-permission-actions="" class="rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50">Sin acceso</button>
-          <button type="button" data-action="permission-matrix#apply" data-permission-actions="read" class="rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50">Solo lectura</button>
-          <button type="button" data-action="permission-matrix#apply" data-permission-actions="read,create" class="rounded-md border border-slate-300 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50">Crear/editar</button>
-          <button type="button" data-action="permission-matrix#apply" data-permission-actions="<%= Permission::ACTION_KEYS.join(",") %>" class="rounded-md bg-slate-950 px-3 py-2 text-xs font-medium text-white hover:bg-slate-800">Administrar</button>
+          <button type="button" data-action="permission-matrix#apply" data-permission-actions="" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors border border-slate-300 text-slate-700 hover:bg-slate-50">Sin acceso</button>
+          <button type="button" data-action="permission-matrix#apply" data-permission-actions="read" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors border border-slate-300 text-slate-700 hover:bg-slate-50">Solo lectura</button>
+          <button type="button" data-action="permission-matrix#apply" data-permission-actions="read,create" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors border border-slate-300 text-slate-700 hover:bg-slate-50">Crear/editar</button>
+          <button type="button" data-action="permission-matrix#apply" data-permission-actions="<%= Permission::ACTION_KEYS.join(",") %>" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors bg-violet-600 text-white hover:bg-violet-700">Administrar</button>
         </div>
       </div>
 
       <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <% module_permissions.sort_by { |permission| Permission::ACTION_KEYS.index(permission.action_key) || 99 }.each do |permission| %>
           <% disabled = module_key == "pastoral_notes" && !role.pastoral? %>
-          <label class="flex min-h-11 items-center gap-3 rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700 <%= "bg-slate-50 text-slate-400" if disabled %>">
+          <label class="flex min-h-11 items-center gap-3 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 <%= "bg-slate-50 text-slate-400" if disabled %>">
             <%= check_box_tag(
                   "role[permission_public_ids][]",
                   permission.public_id,
                   selected_permission_public_ids.include?(permission.public_id),
                   disabled: disabled,
                   data: { permission_action_key: permission.action_key },
-                  class: "h-4 w-4 rounded border-slate-300 text-slate-950 focus:ring-slate-500"
+                  class: "h-4 w-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
                 ) %>
             <%= permission_action_label(permission.action_key) %>
           </label>
@@ -37,6 +37,6 @@
   <% end %>
 
   <div class="mt-6 flex justify-end">
-    <%= form.submit "Guardar permisos", class: "rounded-md bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" %>
+    <%= form.submit "Guardar permisos", class: "rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
   </div>
 <% end %>
