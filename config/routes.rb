@@ -128,6 +128,7 @@ Rails.application.routes.draw do
 
     namespace :pastor, module: :pastor, as: :pastor do
       resources :pastoral_notes, param: :public_id
+      resources :members, param: :public_id, only: %i[index show]
     end
 
     namespace :ministry_leader, module: :ministry_leader, as: :ministry_leader do
