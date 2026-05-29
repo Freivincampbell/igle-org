@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   devise_for :users
 
   root "home#index"
+  get "/c/:slug", to: "public/churches#show", as: :public_church
 
   namespace :platform do
     root "churches#index"
