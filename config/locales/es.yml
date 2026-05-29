@@ -37,6 +37,18 @@ es:
       short: "%d/%b %H:%M"
       time: "%H:%M"
   church_admin:
+    boards:
+      activated: "Junta activada correctamente."
+      created: "Junta creada correctamente."
+      deactivated: "Junta desactivada correctamente."
+      positions_updated: "Cargos de la junta actualizados correctamente."
+      updated: "Junta actualizada correctamente."
+    families:
+      activated: "Familia activada correctamente."
+      created: "Familia creada correctamente."
+      deactivated: "Familia desactivada correctamente."
+      members_updated: "Miembros de la familia actualizados correctamente."
+      updated: "Familia actualizada correctamente."
     events:
       attendance_updated: "Asistencia actualizada correctamente."
       cancelled: "Evento cancelado correctamente."
@@ -73,6 +85,24 @@ es:
       updated: "Horario actualizado correctamente."
     settings:
       updated: "Configuracion de iglesia actualizada correctamente."
+    occupations:
+      activated: "Ocupacion activada."
+      created: "Ocupacion creada."
+      deactivated: "Ocupacion desactivada."
+      updated: "Ocupacion actualizada."
+    skills:
+      activated: "Habilidad activada."
+      created: "Habilidad creada."
+      deactivated: "Habilidad desactivada."
+      updated: "Habilidad actualizada."
+    member_occupations:
+      created: "Ocupacion del miembro registrada."
+      removed: "Ocupacion eliminada."
+      updated: "Ocupacion actualizada."
+    member_skills:
+      created: "Habilidad registrada."
+      removed: "Habilidad eliminada."
+      updated: "Habilidad actualizada."
     profile_change_requests:
       approved: "Solicitud aprobada y cambios aplicados al perfil."
       not_pending: "Esta solicitud ya fue revisada."
@@ -112,6 +142,30 @@ es:
         other: "%{count} errores impidieron guardar este %{resource}:"
       taken: "ya esta en uso"
   hello: "Hola mundo"
+  boards:
+    positions:
+      fiscal: "Fiscal"
+      president: "Presidente"
+      secretary: "Secretario"
+      treasurer: "Tesorero"
+      vice_president: "Vicepresidente"
+      vocal_1: "Vocal 1"
+      vocal_2: "Vocal 2"
+      vocal_3: "Vocal 3"
+    statuses:
+      active: "Activa"
+      inactive: "Inactiva"
+  families:
+    relationships:
+      child: "Hijo/a"
+      guardian: "Encargado"
+      other: "Otro"
+      parent: "Padre/Madre"
+      sibling: "Hermano/a"
+      spouse: "Esposo/a"
+    statuses:
+      active: "Activa"
+      inactive: "Inactiva"
   events:
     event_types:
       baptism: "Bautismo"
@@ -135,6 +189,21 @@ es:
       members_only: "Solo miembros"
       private: "Privado"
       public: "Publico"
+  member_occupations:
+    employment_statuses:
+      employed: "Empleado"
+      homemaker: "Ama/o de casa"
+      looking_for_work: "Buscando trabajo"
+      retired: "Jubilado"
+      self_employed: "Independiente"
+      student: "Estudiante"
+      unemployed: "Desempleado"
+    work_types:
+      freelance: "Freelance"
+      full_time: "Tiempo completo"
+      part_time: "Medio tiempo"
+      temporary: "Temporal"
+      volunteer: "Voluntario"
   members:
     genders:
       female: "Femenino"
@@ -158,6 +227,19 @@ es:
     statuses:
       active: "Activo"
       inactive: "Inactivo"
+  occupations:
+    statuses:
+      active: "Activa"
+      inactive: "Inactiva"
+  skills:
+    levels:
+      advanced: "Avanzado"
+      basic: "Basico"
+      intermediate: "Intermedio"
+      professional: "Profesional"
+    statuses:
+      active: "Activa"
+      inactive: "Inactiva"
   member_portal:
     no_profile: "Aun no tienes un perfil de miembro asociado en esta iglesia."
     profile_change_requests:
@@ -196,4 +278,5 @@ es:
       profile_change_requests: "Solicitudes de cambio"
       reports: "Reportes"
       roles: "Roles"
+      service_directory: "Directorio de servicios"
       skills: "Habilidades"

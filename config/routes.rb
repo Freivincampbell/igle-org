@@ -58,6 +58,14 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :families, param: :public_id, only: %i[index show new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+          patch :members, action: :update_members
+        end
+      end
+
       resources :events, param: :public_id, only: %i[index show new create edit update] do
         member do
           patch :cancel
@@ -66,6 +74,35 @@ Rails.application.routes.draw do
           patch :attendance, action: :update_attendance
         end
       end
+
+      resources :boards, param: :public_id, only: %i[index show new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+          patch :positions, action: :update_positions
+        end
+      end
+
+      resources :occupations, param: :public_id, only: %i[index new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+        end
+      end
+
+      resources :skills, param: :public_id, only: %i[index new create edit update] do
+        member do
+          patch :activate
+          patch :deactivate
+        end
+      end
+
+      resources :members, param: :public_id, only: [] do
+        resources :occupations, param: :public_id, only: %i[new create edit update destroy], controller: "member_occupations"
+        resources :skills, param: :public_id, only: %i[new create edit update destroy], controller: "member_skills"
+      end
+
+      get "service_directory" => "service_directory#index", as: :service_directory
 
       resources :profile_change_requests, param: :public_id, only: %i[index show] do
         member do

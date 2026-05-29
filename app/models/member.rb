@@ -5,8 +5,14 @@ class Member < ApplicationRecord
   belongs_to :user, optional: true
   has_many :ministry_memberships, dependent: :destroy
   has_many :ministries, through: :ministry_memberships
+  has_many :family_members, dependent: :destroy
+  has_many :families, through: :family_members
   has_many :event_rsvps, dependent: :destroy
   has_many :event_attendances, dependent: :destroy
+  has_many :member_occupations, dependent: :destroy
+  has_many :occupations, through: :member_occupations
+  has_many :member_skills, dependent: :destroy
+  has_many :skills, through: :member_skills
   has_many :profile_change_requests, dependent: :destroy
 
   enum :gender, { male: "male", female: "female", not_specified: "not_specified" }, validate: true

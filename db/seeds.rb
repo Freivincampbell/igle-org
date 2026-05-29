@@ -3,7 +3,13 @@ permission_labels = {
   "roles" => "Roles",
   "members" => "Miembros",
   "ministries" => "Ministerios",
+  "families" => "Familias",
+  "boards" => "Junta directiva",
   "events" => "Eventos",
+  "church_settings" => "Configuracion de iglesia",
+  "occupations" => "Ocupaciones",
+  "skills" => "Habilidades",
+  "service_directory" => "Directorio de servicios"
   "church_settings" => "Configuracion de iglesia",
   "profile_change_requests" => "Solicitudes de cambio"
 }
