@@ -73,6 +73,7 @@ module ChurchAdmin
       authorize @event, :update?
       @members = @church.members.active.ordered
       @attendances_by_member = @event.event_attendances.includes(:member).index_by(&:member_id)
+      @confirmed_member_ids = @event.event_rsvps.where(status: "attending").pluck(:member_id).to_set
     end
 
     def update_attendance
