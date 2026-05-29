@@ -25,6 +25,8 @@ class Church < ApplicationRecord
 
   enum :status, { active: "active", inactive: "inactive" }, validate: true
 
+  scope :publicly_visible, -> { where(public_page_enabled: true, status: "active") }
+
   normalizes :slug, with: ->(value) { value.to_s.strip.downcase.presence }
   normalizes :primary_color, :secondary_color, with: ->(value) { value.to_s.strip.presence }
 
