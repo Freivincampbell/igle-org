@@ -2,6 +2,7 @@ module ChurchAdmin
   class MembersController < BaseController
     before_action :set_member, only: %i[show edit update activate deactivate]
     before_action :set_user_options, only: %i[new create edit update]
+    before_action :set_form_catalog, only: %i[edit update]
 
     def index
       authorize Member
@@ -42,6 +43,18 @@ module ChurchAdmin
         .joins(:ministry)
         .where(ministries: { church_id: @church.id })
         .order("ministries.name")
+
+      @member_occupations = @member.member_occupations
+        .includes(:occupation)
+        .joins(:occupation)
+        .where(occupations: { church_id: @church.id })
+        .order("occupations.name")
+
+      @member_skills = @member.member_skills
+        .includes(:skill)
+        .joins(:skill)
+        .where(skills: { church_id: @church.id })
+        .order("skills.name")
     end
 
     def new
@@ -54,10 +67,14 @@ module ChurchAdmin
       authorize @member
 
       if @member.save
+        assign_catalog_items(@member)
         redirect_to church_admin_member_path(@church, @member), notice: t("church_admin.members.created")
       else
         render :new, status: :unprocessable_content
       end
+    rescue ActiveRecord::RecordNotFound
+      redirect_to church_admin_member_path(@church, @member),
+        alert: t("church_admin.member_ministries.invalid_ministry")
     end
 
     def edit
@@ -68,10 +85,14 @@ module ChurchAdmin
       authorize @member
 
       if @member.update(member_params)
+        assign_catalog_items(@member)
         redirect_to church_admin_member_path(@church, @member), notice: t("church_admin.members.updated")
       else
         render :edit, status: :unprocessable_content
       end
+    rescue ActiveRecord::RecordNotFound
+      redirect_to church_admin_member_path(@church, @member),
+        alert: t("church_admin.member_ministries.invalid_ministry")
     end
 
     def activate
@@ -139,6 +160,72 @@ module ChurchAdmin
         children_count: 0,
         country: @church.country
       }
+    end
+
+    def set_form_catalog
+      @form_occupations = @member.member_occupations
+        .includes(:occupation).joins(:occupation)
+        .where(occupations: { church_id: @church.id }).order("occupations.name")
+      @form_skills = @member.member_skills
+        .includes(:skill).joins(:skill)
+        .where(skills: { church_id: @church.id }).order("skills.name")
+      @form_ministries = @member.ministry_memberships
+        .active.includes(:ministry).joins(:ministry)
+        .where(ministries: { church_id: @church.id }).order("ministries.name")
+    end
+
+    def assign_catalog_items(member)
+      # Ocupaciones
+      if params[:occupation_section_submitted] == "1"
+        occ_names     = Array(params[:occupation_names]).map(&:strip).reject(&:blank?).uniq
+        offers_names  = Array(params[:offers_services])
+        looking_names = Array(params[:looking_for_work])
+        kept_ids = occ_names.map { |n| @church.occupations.find_or_create_by!(name: n) { |o| o.status = "active" }.id }
+        member.member_occupations.where.not(occupation_id: kept_ids).destroy_all
+        occ_names.each do |name|
+          occ = @church.occupations.find_or_create_by!(name: name) { |o| o.status = "active" }
+          mo  = member.member_occupations.find_or_initialize_by(occupation: occ, church: @church)
+          mo.employment_status = "employed" if mo.new_record?
+          mo.offers_services   = offers_names.include?(name)
+          mo.looking_for_work  = looking_names.include?(name)
+          mo.save!
+        end
+      end
+
+      # Habilidades
+      if params[:skill_section_submitted] == "1"
+        skill_data = Array(params[:skills])
+          .map { |s| { name: s[:name].to_s.strip, level: s[:level].to_s.presence || "basic", offers_service: s[:offers_service] == "1" } }
+          .reject { |s| s[:name].blank? }.uniq { |s| s[:name] }
+        kept_ids = skill_data.map { |s| @church.skills.find_or_create_by!(name: s[:name]) { |sk| sk.status = "active" }.id }
+        member.member_skills.where.not(skill_id: kept_ids).destroy_all
+        skill_data.each do |s|
+          sk = @church.skills.find_or_create_by!(name: s[:name]) { |sk| sk.status = "active" }
+          ms = member.member_skills.find_or_initialize_by(skill: sk, church: @church)
+          ms.level = s[:level]
+          ms.offers_service = s[:offers_service]
+          ms.save!
+        end
+      end
+
+      # Ministerios
+      return unless params[:ministry_memberships_submitted] == "1"
+
+      raw = params.key?(:ministry_memberships) ? params[:ministry_memberships].to_unsafe_h : {}
+      entries = raw.map { |pub_id, attrs|
+        { public_id: pub_id.to_s, role: (attrs["role"].presence || "member").to_s }
+      }.reject { |e| e[:public_id].blank? }.uniq { |e| e[:public_id] }
+      ministries = entries.map { |e| @church.ministries.active.find_by!(public_id: e[:public_id]) }
+      member.ministry_memberships.active
+        .where.not(ministry_id: ministries.map(&:id))
+        .find_each(&:inactive!)
+      entries.each do |e|
+        ministry = ministries.find { |m| m.public_id == e[:public_id] }
+        mm = member.ministry_memberships.find_or_initialize_by(ministry:)
+        mm.ministry_role = e[:role]
+        mm.status = "active"
+        mm.save!
+      end
     end
   end
 end
