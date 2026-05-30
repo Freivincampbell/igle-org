@@ -17,7 +17,18 @@
     <% end %>
   </div>
 
-  <div class="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+  <%= render "shared/table_toolbar",
+        url: church_admin_ministries_path(@church),
+        frame_id: "table-ministries",
+        label: "ministerios",
+        q: params[:q],
+        filters: [
+          { param: :status, label: "Estado",
+            options: [["Activo", "active"], ["Inactivo", "inactive"]],
+            value: params[:status] }
+        ] %>
+  <turbo-frame id="table-ministries" data-turbo-action="advance" target="_top" class="mt-3 block">
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
     <table class="min-w-full divide-y divide-slate-200 text-sm">
       <thead>
         <tr>
@@ -62,5 +73,7 @@
         <% end %>
       </tbody>
     </table>
+    <%= render "shared/table_pagination", pagy: @pagy %>
   </div>
+  </turbo-frame>
 </section>

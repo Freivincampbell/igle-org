@@ -1,6 +1,11 @@
 class Family < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  include PgSearch::Model
+
+  pg_search_scope :search_by_name,
+    against: :name,
+    using: { tsearch: { prefix: true } }
 
   has_many :family_members, dependent: :destroy
   has_many :members, through: :family_members

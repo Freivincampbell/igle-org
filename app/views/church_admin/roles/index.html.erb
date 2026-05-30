@@ -12,7 +12,19 @@
     <% end %>
   </div>
 
-  <div class="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+  <%= render "shared/table_toolbar",
+        url: church_admin_roles_path(@church),
+        frame_id: "table-roles",
+        label: "roles",
+        q: params[:q],
+        filters: [
+          { param: :pastoral, label: "Tipo",
+            options: [["Pastoral", "true"], ["General", "false"]],
+            blank_label: "Todos los tipos",
+            value: params[:pastoral] }
+        ] %>
+  <turbo-frame id="table-roles" data-turbo-action="advance" target="_top" class="mt-3 block">
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
     <table class="min-w-full divide-y divide-slate-200 text-sm">
       <thead>
         <tr>
@@ -57,5 +69,7 @@
         <% end %>
       </tbody>
     </table>
+    <%= render "shared/table_pagination", pagy: @pagy %>
   </div>
+  </turbo-frame>
 </section>

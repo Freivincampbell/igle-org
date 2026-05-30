@@ -6,11 +6,12 @@ module ChurchAdmin
     def index
       authorize ChurchMembership
 
-      @church_memberships = policy_scope(ChurchMembership)
-        .where(church: @church)
-        .joins(:user)
-        .includes(:user, :roles)
-        .order("users.email")
+      base = policy_scope(ChurchMembership).where(church: @church)
+               .joins(:user).includes(:user, :roles)
+      base = base.where("users.email ILIKE ?", "%#{params[:q].strip}%") if params[:q].present?
+      base = base.where(status: params[:status]) if params[:status].present?
+
+      @pagy, @church_memberships = pagy(base.order("users.email"), limit: 25)
     end
 
     def new

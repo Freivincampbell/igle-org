@@ -1,27 +1,41 @@
 <%= turbo_frame_tag @frame_id do %>
   <% if @results.any? %>
-    <ul class="max-h-64 overflow-auto divide-y divide-slate-100">
+    <ul class="divide-y divide-slate-50 py-1">
       <% @results.each do |member| %>
         <li>
           <button type="button"
-                  class="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-violet-50"
+                  class="group/result flex w-full items-center gap-3 px-4 py-2.5 text-left hover:bg-violet-50 transition-colors"
                   data-action="click->member-search#addMember"
                   data-public-id="<%= member.public_id %>"
                   data-name="<%= member.full_name %>"
                   data-initials="<%= member_initials(member) %>"
                   data-color="<%= member_avatar_color(member.public_id) %>">
-            <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white <%= member_avatar_color(member.public_id) %>">
+            <%# Avatar %>
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white <%= member_avatar_color(member.public_id) %>">
               <%= member_initials(member) %>
             </span>
+            <%# Info %>
             <span class="min-w-0 flex-1">
-              <span class="block truncate text-sm font-medium text-slate-900"><%= member.full_name %></span>
-              <span class="block truncate text-xs text-slate-400"><%= member.email.presence || member.phone %></span>
+              <span class="block truncate text-sm font-semibold text-slate-900"><%= member.full_name %></span>
+              <span class="block truncate text-xs text-slate-400"><%= member.email.presence || member.phone.presence || "Sin contacto" %></span>
+            </span>
+            <%# Add indicator %>
+            <span class="flex shrink-0 items-center gap-1 rounded-full bg-violet-100 px-2.5 py-1 text-[11px] font-semibold text-violet-700 opacity-0 transition-opacity group-hover/result:opacity-100">
+              <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Agregar
             </span>
           </button>
         </li>
       <% end %>
     </ul>
   <% elsif params[:q].to_s.strip.length >= 2 %>
-    <p class="px-3 py-4 text-center text-sm text-slate-400">Sin resultados para «<%= params[:q] %>»</p>
+    <div class="flex flex-col items-center py-6 text-center">
+      <svg class="h-8 w-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+      </svg>
+      <p class="mt-2 text-sm text-slate-400">Sin resultados para <span class="font-medium text-slate-600">«<%= params[:q] %>»</span></p>
+    </div>
   <% end %>
 <% end %>

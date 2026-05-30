@@ -4,7 +4,12 @@ module Platform
 
     def index
       authorize Church
-      @churches = policy_scope(Church).order(:name)
+
+      base = policy_scope(Church)
+      base = base.search_by_name(params[:q]) if params[:q].present?
+      base = base.where(status: params[:status]) if params[:status].present?
+
+      @pagy, @churches = pagy(base.order(:name), limit: 25)
     end
 
     def show

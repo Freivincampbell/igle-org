@@ -6,9 +6,11 @@ module ChurchAdmin
     def index
       authorize Member
 
-      @members = policy_scope(Member)
-        .where(church: @church)
-        .ordered
+      base = policy_scope(Member).where(church: @church)
+      base = base.search_by_name(params[:q]) if params[:q].present?
+      base = base.where(member_status: params[:status]) if params[:status].present?
+
+      @pagy, @members = pagy(base.ordered, limit: 25)
     end
 
     def search
@@ -33,6 +35,13 @@ module ChurchAdmin
 
     def show
       authorize @member
+
+      @ministry_memberships = @member.ministry_memberships
+        .active
+        .includes(:ministry)
+        .joins(:ministry)
+        .where(ministries: { church_id: @church.id })
+        .order("ministries.name")
     end
 
     def new

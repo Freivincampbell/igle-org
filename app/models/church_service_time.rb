@@ -1,6 +1,11 @@
 class ChurchServiceTime < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  include PgSearch::Model
+
+  pg_search_scope :search_by_name,
+    against: :name,
+    using: { tsearch: { prefix: true } }
 
   DAYS_OF_WEEK = (0..6).to_a.freeze
 

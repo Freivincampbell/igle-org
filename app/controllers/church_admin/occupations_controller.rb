@@ -5,7 +5,11 @@ module ChurchAdmin
     def index
       authorize Occupation
 
-      @occupations = policy_scope(Occupation).where(church: @church).ordered
+      base = policy_scope(Occupation).where(church: @church)
+      base = base.where("LOWER(name) LIKE ?", "%#{params[:q].downcase.strip}%") if params[:q].present?
+      base = base.where(status: params[:status]) if params[:status].present?
+
+      @pagy, @occupations = pagy(base.ordered, limit: 25)
     end
 
     def new

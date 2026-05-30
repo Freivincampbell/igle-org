@@ -6,7 +6,11 @@ module ChurchAdmin
     def index
       authorize Board
 
-      @boards = policy_scope(Board).where(church: @church).ordered.includes(:board_members)
+      base = policy_scope(Board).where(church: @church).includes(:board_members)
+      base = base.search_by_name(params[:q]) if params[:q].present?
+      base = base.where(status: params[:status]) if params[:status].present?
+
+      @pagy, @boards = pagy(base.ordered, limit: 25)
     end
 
     def show

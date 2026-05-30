@@ -6,9 +6,11 @@ module ChurchAdmin
     def index
       authorize Ministry
 
-      @ministries = policy_scope(Ministry)
-        .where(church: @church)
-        .ordered
+      base = policy_scope(Ministry).where(church: @church)
+      base = base.search_by_name(params[:q]) if params[:q].present?
+      base = base.where(status: params[:status]) if params[:status].present?
+
+      @pagy, @ministries = pagy(base.ordered, limit: 25)
     end
 
     def show

@@ -1,6 +1,11 @@
 class Event < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  include PgSearch::Model
+
+  pg_search_scope :search_by_name,
+    against: :title,
+    using: { tsearch: { prefix: true } }
 
   EVENT_TYPES = %w[service ministry_meeting wedding baptism retreat special class other].freeze
   VISIBILITIES = %w[public members_only private].freeze

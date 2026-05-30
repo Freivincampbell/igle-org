@@ -158,6 +158,34 @@ es:
       - "Jueves"
       - "Viernes"
       - "Sabado"
+    abbr_month_names:
+      - ~
+      - "Ene"
+      - "Feb"
+      - "Mar"
+      - "Abr"
+      - "May"
+      - "Jun"
+      - "Jul"
+      - "Ago"
+      - "Sep"
+      - "Oct"
+      - "Nov"
+      - "Dic"
+    month_names:
+      - ~
+      - "Enero"
+      - "Febrero"
+      - "Marzo"
+      - "Abril"
+      - "Mayo"
+      - "Junio"
+      - "Julio"
+      - "Agosto"
+      - "Septiembre"
+      - "Octubre"
+      - "Noviembre"
+      - "Diciembre"
   time:
     formats:
       default: "%d/%m/%Y %H:%M"

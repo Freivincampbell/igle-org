@@ -6,39 +6,49 @@
 
   <div class="mt-6 flex gap-2 text-sm">
     <% { "upcoming" => "Próximos", "past" => "Pasados", "all" => "Todos" }.each do |filter, label| %>
-      <%= link_to label, church_ministry_leader_events_path(@church, filter: filter),
+      <%= link_to label, church_ministry_leader_events_path(@church, filter: filter, q: params[:q]),
             class: "rounded-lg border px-3 py-2 font-medium transition-colors #{@filter == filter ? 'border-violet-600 bg-violet-600 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}" %>
     <% end %>
   </div>
 
-  <div class="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
-    <table class="min-w-full divide-y divide-slate-200 text-sm">
-      <thead>
-        <tr>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Título</th>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ministerio</th>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Inicio</th>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Estado</th>
-          <th class="bg-slate-50 px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-slate-200">
-        <% if @events.any? %>
-          <% @events.each do |event| %>
-            <tr class="group hover:bg-slate-50/80 transition-colors">
-              <td class="px-5 py-3 font-medium text-slate-900"><%= event.title %></td>
-              <td class="px-5 py-3 text-slate-600"><%= event.ministry&.name %></td>
-              <td class="px-5 py-3 text-slate-600"><%= l(event.starts_at, format: :default) %></td>
-              <td class="px-5 py-3 text-slate-600"><%= event.status %></td>
-              <td class="px-5 py-3 text-right">
-                <%= link_to "Ver", church_ministry_leader_event_path(@church, event), class: "rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
-              </td>
-            </tr>
+  <%= render "shared/table_toolbar",
+        url: church_ministry_leader_events_path(@church, filter: @filter),
+        frame_id: "table-ml-events",
+        label: "eventos",
+        q: params[:q],
+        filters: [] %>
+
+  <turbo-frame id="table-ml-events" data-turbo-action="advance" target="_top" class="mt-3 block">
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead>
+          <tr>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Título</th>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ministerio</th>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Inicio</th>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Estado</th>
+            <th class="bg-slate-50 px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% if @events.any? %>
+            <% @events.each do |event| %>
+              <tr class="group hover:bg-slate-50/80 transition-colors">
+                <td class="px-5 py-3 font-medium text-slate-900"><%= event.title %></td>
+                <td class="px-5 py-3 text-slate-600"><%= event.ministry&.name %></td>
+                <td class="px-5 py-3 text-slate-600"><%= l(event.starts_at, format: :default) %></td>
+                <td class="px-5 py-3 text-slate-600"><%= event.status %></td>
+                <td class="px-5 py-3 text-right">
+                  <%= link_to "Ver", church_ministry_leader_event_path(@church, event), class: "rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr><td colspan="5" class="px-5 py-8 text-center text-slate-500">No hay eventos.</td></tr>
           <% end %>
-        <% else %>
-          <tr><td colspan="5" class="px-5 py-8 text-center text-slate-500">No hay eventos.</td></tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+        </tbody>
+      </table>
+      <%= render "shared/table_pagination", pagy: @pagy %>
+    </div>
+  </turbo-frame>
 </section>

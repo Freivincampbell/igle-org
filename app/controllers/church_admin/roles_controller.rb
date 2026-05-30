@@ -6,9 +6,11 @@ module ChurchAdmin
     def index
       authorize Role
 
-      @roles = policy_scope(Role)
-        .where(church: @church)
-        .order(:name)
+      base = policy_scope(Role).where(church: @church)
+      base = base.search_by_name(params[:q]) if params[:q].present?
+      base = base.where(pastoral: params[:pastoral] == "true") if params[:pastoral].present?
+
+      @pagy, @roles = pagy(base.order(:name), limit: 25)
     end
 
     def show

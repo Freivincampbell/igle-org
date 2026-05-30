@@ -5,7 +5,14 @@ module Pastor
 
     def index
       authorize PastoralNote
-      @notes = policy_scope(PastoralNote).where(church: @church).includes(:member, :pastor).ordered
+      base = policy_scope(PastoralNote).where(church: @church).includes(:member, :pastor)
+      if params[:q].present?
+        base = base.joins(:member)
+                   .where("(members.first_name || ' ' || members.last_name) ILIKE ?", "%#{params[:q].strip}%")
+      end
+      base = base.where(note_type: params[:note_type]) if params[:note_type].present?
+
+      @pagy, @notes = pagy(base.ordered, limit: 25)
     end
 
     def show

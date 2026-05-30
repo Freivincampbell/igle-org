@@ -7,10 +7,10 @@ module Pastor
     def index
       skip_authorization
       skip_policy_scope
-      @pagy, @members = pagy(
-        @church.members.active.ordered.includes(:ministries),
-        limit: 30
-      )
+      base = @church.members.active.includes(:ministries)
+      base = base.search_by_name(params[:q]) if params[:q].present?
+
+      @pagy, @members = pagy(base.ordered, limit: 30)
     end
 
     def show

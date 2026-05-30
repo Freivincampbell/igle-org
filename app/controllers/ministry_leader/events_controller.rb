@@ -6,16 +6,17 @@ module MinistryLeader
     before_action :set_event, only: %i[show]
 
     def index
-      base = @church.events
-        .where(ministry: led_ministries)
-        .includes(:ministry)
+      base = @church.events.where(ministry: led_ministries).includes(:ministry)
+      base = base.search_by_name(params[:q]) if params[:q].present?
 
       @filter = params[:filter].presence || "upcoming"
-      @events = case @filter
-      when "past" then base.past
-      when "all"  then base.ordered
-      else             base.upcoming
-      end
+      filtered = case @filter
+                 when "past" then base.past
+                 when "all"  then base.ordered
+                 else             base.upcoming
+                 end
+
+      @pagy, @events = pagy(filtered, limit: 25)
     end
 
     def show

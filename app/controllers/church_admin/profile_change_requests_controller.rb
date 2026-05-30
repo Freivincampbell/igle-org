@@ -5,10 +5,15 @@ module ChurchAdmin
     def index
       authorize ProfileChangeRequest
 
-      @requests = policy_scope(ProfileChangeRequest)
-        .where(church: @church)
-        .includes(:member, :requested_by)
-        .ordered
+      base = policy_scope(ProfileChangeRequest).where(church: @church)
+               .includes(:member, :requested_by)
+      if params[:q].present?
+        base = base.joins(:member)
+                   .where("(members.first_name || ' ' || members.last_name) ILIKE ?", "%#{params[:q].strip}%")
+      end
+      base = base.where(status: params[:status]) if params[:status].present?
+
+      @pagy, @requests = pagy(base.ordered, limit: 25)
     end
 
     def show

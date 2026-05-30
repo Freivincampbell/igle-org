@@ -1,6 +1,11 @@
 class Ministry < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  include PgSearch::Model
+
+  pg_search_scope :search_by_name,
+    against: :name,
+    using: { tsearch: { prefix: true } }
 
   has_many :ministry_memberships, dependent: :destroy
   has_many :members, through: :ministry_memberships
