@@ -123,4 +123,13 @@ module ApplicationHelper
   def pastoral_note_type_label(type)
     t("pastoral_notes.note_types.#{type}", default: type.to_s.humanize)
   end
+
+  def sidebar_item_class(active)
+    base = "flex items-center gap-2.5 px-4 py-[7px] text-sm border-r-2 transition-colors w-full"
+    if active
+      "#{base} font-semibold text-violet-700 bg-violet-50 border-violet-600"
+    else
+      "#{base} font-medium text-slate-600 border-transparent hover:bg-slate-50 hover:text-slate-900"
+    end
+  end
 end
