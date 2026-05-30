@@ -17,13 +17,15 @@
            name="ministry_memberships[<%= field_id %>][public_id]"
            value="<%= ministry_public_id.to_s %>">
 
-    <button type="button"
-            data-action="ministry-picker#removeTag"
-            class="shrink-0 rounded-md p-1 text-slate-300 transition-all hover:bg-rose-50 hover:text-rose-500 <%= always_show_remove ? '' : 'opacity-0 group-hover/row:opacity-100' %>">
-      <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-      </svg>
-    </button>
+    <% if always_show_remove %>
+      <button type="button"
+              data-action="ministry-picker#removeTag"
+              class="shrink-0 rounded-md p-1 text-slate-300 transition-all hover:bg-rose-50 hover:text-rose-500">
+        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    <% end %>
   </div>
 
   <%# Fila 2: selector de rol %>
