@@ -128,58 +128,229 @@
       </section>
 
       <%# ── Ministerios ── %>
-      <section class="rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 class="text-base font-semibold text-slate-900">Ministerios</h2>
-          <% if @ministry_memberships.any? %>
-            <span class="rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">
-              <%= @ministry_memberships.size %>
-            </span>
-          <% end %>
-        </div>
-
-        <% if @ministry_memberships.any? %>
-          <ul class="divide-y divide-slate-50">
-            <% @ministry_memberships.each do |mm| %>
-              <li class="flex items-center gap-3 px-6 py-3">
-                <%# Ícono del ministerio %>
-                <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
-                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
-                  </svg>
-                </div>
-
-                <div class="min-w-0 flex-1">
-                  <%= link_to mm.ministry.name,
-                        church_admin_ministry_path(@church, mm.ministry),
-                        class: "block truncate text-sm font-semibold text-slate-900 hover:text-violet-700 transition-colors" %>
-                </div>
-
-                <%# Badge de rol %>
-                <%
-                  role_badge = case mm.ministry_role
-                    when "leader"    then "bg-violet-50 text-violet-700 ring-violet-200"
-                    when "co_leader" then "bg-sky-50 text-sky-700 ring-sky-200"
-                    else                  "bg-slate-100 text-slate-600 ring-slate-200"
-                  end
-                %>
-                <span class="shrink-0 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 <%= role_badge %>">
-                  <%= ministry_role_label(mm.ministry_role) %>
-                </span>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <div class="flex flex-col items-center py-8 text-center">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100">
-              <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
-              </svg>
+      <% if policy(@member).edit? %>
+        <turbo-frame id="member-ministries-<%= @member.public_id.first(8) %>" class="block">
+          <section class="rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+              <h2 class="text-sm font-semibold text-slate-900">Ministerios</h2>
+              <span class="text-xs font-medium text-slate-400"><%= @ministry_memberships.size %></span>
             </div>
-            <p class="mt-2 text-sm text-slate-500">Sin ministerios asignados</p>
+
+            <%= form_with url: assign_ministries_church_admin_member_path(@church, @member), method: :patch do %>
+              <div data-controller="ministry-picker"
+                   data-ministry-picker-url-value="<%= search_church_admin_ministries_path(@church) %>">
+
+                <div class="border-b border-slate-100 px-5 py-3">
+                  <div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 focus-within:border-violet-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-violet-200 transition-colors">
+                    <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                    <input type="text"
+                           placeholder="Buscar ministerio..."
+                           autocomplete="off"
+                           data-ministry-picker-target="input"
+                           data-action="input->ministry-picker#search keydown->ministry-picker#keydown"
+                           class="w-full bg-transparent py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none">
+                  </div>
+                  <div class="relative">
+                    <turbo-frame id="ministry-results-<%= @member.public_id.first(8) %>"
+                                 data-ministry-picker-target="results"
+                                 class="absolute left-0 right-0 z-20 mt-1 block max-h-52 overflow-auto rounded-xl border border-slate-200 bg-white shadow-card empty:hidden">
+                    </turbo-frame>
+                  </div>
+                </div>
+
+                <div class="px-5 py-2">
+                  <div data-ministry-picker-target="emptyState"
+                       class="<%= @ministry_memberships.any? ? 'hidden' : '' %> py-4 text-center">
+                    <p class="text-xs text-slate-400">Sin ministerios. Busca arriba para agregar.</p>
+                  </div>
+                  <div data-ministry-picker-target="tagsZone" class="divide-y divide-slate-50">
+                    <% @ministry_memberships.each do |mm| %>
+                      <%= render "church_admin/members/ministry_tag",
+                            name: mm.ministry.name,
+                            role: mm.ministry_role,
+                            ministry_public_id: mm.ministry.public_id %>
+                    <% end %>
+                  </div>
+                </div>
+
+                <template data-ministry-picker-target="template">
+                  <%= render "church_admin/members/ministry_tag",
+                        name: "",
+                        role: "member",
+                        ministry_public_id: nil %>
+                </template>
+              </div>
+            <% end %>
+          </section>
+        </turbo-frame>
+
+      <% else %>
+        <section class="rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
+          <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+            <h2 class="text-base font-semibold text-slate-900">Ministerios</h2>
+            <% if @ministry_memberships.any? %>
+              <span class="rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-violet-200">
+                <%= @ministry_memberships.size %>
+              </span>
+            <% end %>
           </div>
-        <% end %>
-      </section>
+
+          <% if @ministry_memberships.any? %>
+            <ul class="divide-y divide-slate-50">
+              <% @ministry_memberships.each do |mm| %>
+                <li class="flex items-center gap-3 px-6 py-3">
+                  <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
+                    </svg>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <%= link_to mm.ministry.name,
+                          church_admin_ministry_path(@church, mm.ministry),
+                          class: "block truncate text-sm font-semibold text-slate-900 hover:text-violet-700 transition-colors" %>
+                  </div>
+                  <%
+                    role_badge = case mm.ministry_role
+                      when "leader"    then "bg-violet-50 text-violet-700 ring-violet-200"
+                      when "co_leader" then "bg-sky-50 text-sky-700 ring-sky-200"
+                      else                  "bg-slate-100 text-slate-600 ring-slate-200"
+                    end
+                  %>
+                  <span class="shrink-0 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 <%= role_badge %>">
+                    <%= ministry_role_label(mm.ministry_role) %>
+                  </span>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <div class="flex flex-col items-center py-8 text-center">
+              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100">
+                <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
+                </svg>
+              </div>
+              <p class="mt-2 text-sm text-slate-500">Sin ministerios asignados</p>
+            </div>
+          <% end %>
+        </section>
+      <% end %>
+
+      <%# ── Ocupaciones ── %>
+      <% if policy(@member).edit? %>
+        <turbo-frame id="member-occupations-<%= @member.public_id.first(8) %>" class="block">
+          <section class="rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+              <h2 class="text-sm font-semibold text-slate-900">Ocupaciones</h2>
+              <span class="text-xs font-medium text-slate-400"><%= @member_occupations.size %></span>
+            </div>
+
+            <%= form_with url: assign_occupations_church_admin_member_path(@church, @member), method: :patch do %>
+              <div data-controller="catalog-search"
+                   data-catalog-search-url-value="<%= search_church_admin_occupations_path(@church) %>"
+                   data-catalog-search-suffix-value="occ-<%= @member.public_id.first(8) %>">
+
+                <div class="border-b border-slate-100 px-5 py-3">
+                  <div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 focus-within:border-violet-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-violet-200 transition-colors">
+                    <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                    <input type="text" placeholder="Buscar o crear ocupación..."
+                           autocomplete="off"
+                           data-catalog-search-target="input"
+                           data-action="input->catalog-search#search keydown->catalog-search#keydown"
+                           class="w-full bg-transparent py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none">
+                  </div>
+                  <div class="relative">
+                    <turbo-frame id="occupation-results-occ-<%= @member.public_id.first(8) %>"
+                                 data-catalog-search-target="results"
+                                 class="absolute left-0 right-0 z-20 mt-1 block max-h-52 overflow-auto rounded-xl border border-slate-200 bg-white shadow-card empty:hidden">
+                    </turbo-frame>
+                  </div>
+                </div>
+
+                <div class="px-5 py-2">
+                  <div data-catalog-search-target="emptyState"
+                       class="<%= @member_occupations.any? ? 'hidden' : '' %> py-4 text-center">
+                    <p class="text-xs text-slate-400">Sin ocupaciones. Busca arriba para agregar.</p>
+                  </div>
+                  <div data-catalog-search-target="tagsZone" class="divide-y divide-slate-50">
+                    <% @member_occupations.each do |mo| %>
+                      <%= render "church_admin/members/occupation_tag",
+                            name: mo.occupation.name,
+                            offers_services: mo.offers_services,
+                            looking_for_work: mo.looking_for_work %>
+                    <% end %>
+                  </div>
+                </div>
+
+                <template data-catalog-search-target="template">
+                  <%= render "church_admin/members/occupation_tag", name: "", offers_services: false, looking_for_work: false %>
+                </template>
+              </div>
+            <% end %>
+          </section>
+        </turbo-frame>
+      <% end %>
+
+      <%# ── Habilidades ── %>
+      <% if policy(@member).edit? %>
+        <turbo-frame id="member-skills-<%= @member.public_id.first(8) %>" class="block">
+          <section class="rounded-xl border border-slate-200 bg-white shadow-card overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+              <h2 class="text-sm font-semibold text-slate-900">Habilidades</h2>
+              <span class="text-xs font-medium text-slate-400"><%= @member_skills.size %></span>
+            </div>
+
+            <%= form_with url: assign_skills_church_admin_member_path(@church, @member), method: :patch do %>
+              <div data-controller="catalog-search"
+                   data-catalog-search-url-value="<%= search_church_admin_skills_path(@church) %>"
+                   data-catalog-search-suffix-value="sk-<%= @member.public_id.first(8) %>">
+
+                <div class="border-b border-slate-100 px-5 py-3">
+                  <div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 focus-within:border-violet-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-violet-200 transition-colors">
+                    <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                    <input type="text" placeholder="Buscar o crear habilidad..."
+                           autocomplete="off"
+                           data-catalog-search-target="input"
+                           data-action="input->catalog-search#search keydown->catalog-search#keydown"
+                           class="w-full bg-transparent py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none">
+                  </div>
+                  <div class="relative">
+                    <turbo-frame id="skill-results-sk-<%= @member.public_id.first(8) %>"
+                                 data-catalog-search-target="results"
+                                 class="absolute left-0 right-0 z-20 mt-1 block max-h-52 overflow-auto rounded-xl border border-slate-200 bg-white shadow-card empty:hidden">
+                    </turbo-frame>
+                  </div>
+                </div>
+
+                <div class="px-5 py-2">
+                  <div data-catalog-search-target="emptyState"
+                       class="<%= @member_skills.any? ? 'hidden' : '' %> py-4 text-center">
+                    <p class="text-xs text-slate-400">Sin habilidades. Busca arriba para agregar.</p>
+                  </div>
+                  <div data-catalog-search-target="tagsZone" class="divide-y divide-slate-50">
+                    <% @member_skills.each_with_index do |ms, i| %>
+                      <%= render "church_admin/members/skill_tag",
+                            name: ms.skill.name,
+                            level: ms.level,
+                            offers_service: ms.offers_service,
+                            idx: i %>
+                    <% end %>
+                  </div>
+                </div>
+
+                <template data-catalog-search-target="template">
+                  <%= render "church_admin/members/skill_tag", name: "", level: "basic", idx: nil %>
+                </template>
+              </div>
+            <% end %>
+          </section>
+        </turbo-frame>
+      <% end %>
 
       <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
         <h2 class="text-base font-semibold text-slate-900">Emergencia</h2>
