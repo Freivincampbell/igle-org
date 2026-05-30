@@ -13,11 +13,19 @@
   <div class="mt-6 flex gap-2 text-sm">
     <% %w[upcoming past all].each do |filter| %>
       <% label = { "upcoming" => "Proximos", "past" => "Pasados", "all" => "Todos" }[filter] %>
-      <%= link_to label, church_admin_events_path(@church, filter:), class: "rounded-md border px-3 py-2 font-medium #{@filter == filter ? 'border-violet-600 bg-violet-600 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}" %>
+      <%= link_to label, church_admin_events_path(@church, filter:, q: params[:q]),
+            class: "rounded-md border px-3 py-2 font-medium #{@filter == filter ? 'border-violet-600 bg-violet-600 text-white' : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'}" %>
     <% end %>
   </div>
 
-  <div class="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+  <%= render "shared/table_toolbar",
+        url: church_admin_events_path(@church, filter: @filter),
+        frame_id: "table-events",
+        label: "eventos",
+        q: params[:q],
+        filters: [] %>
+  <turbo-frame id="table-events" data-turbo-action="advance" target="_top" class="mt-3 block">
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
     <table class="min-w-full divide-y divide-slate-200 text-sm">
       <thead>
         <tr>
@@ -60,5 +68,7 @@
         <% end %>
       </tbody>
     </table>
+    <%= render "shared/table_pagination", pagy: @pagy %>
   </div>
+  </turbo-frame>
 </section>

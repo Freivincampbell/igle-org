@@ -5,7 +5,22 @@ module ChurchAdmin
     def index
       authorize Skill
 
-      @skills = policy_scope(Skill).where(church: @church).ordered
+      base = policy_scope(Skill).where(church: @church)
+      base = base.where("LOWER(name) LIKE ?", "%#{params[:q].downcase.strip}%") if params[:q].present?
+      base = base.where(status: params[:status]) if params[:status].present?
+
+      @pagy, @skills = pagy(base.ordered, limit: 25)
+    end
+
+    def search
+      authorize Skill, :index?
+      skip_policy_scope
+      q = params[:q].to_s.strip
+      @results      = q.length >= 1 ? @church.skills.active.where("LOWER(name) LIKE ?", "%#{q.downcase}%").ordered.limit(8) : []
+      @exact_match  = @church.skills.exists?(name: q)
+      @query        = q
+      @frame_id     = "skill-results-#{params[:frame_suffix].to_s.gsub(/[^a-z0-9-]/, '')}"
+      render layout: false
     end
 
     def new

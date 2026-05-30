@@ -5,9 +5,11 @@ module ChurchAdmin
     def index
       authorize ChurchServiceTime
 
-      @service_times = policy_scope(ChurchServiceTime)
-        .where(church: @church)
-        .ordered
+      base = policy_scope(ChurchServiceTime).where(church: @church)
+      base = base.search_by_name(params[:q]) if params[:q].present?
+      base = base.where(status: params[:status]) if params[:status].present?
+
+      @pagy, @service_times = pagy(base.ordered, limit: 25)
     end
 
     def new

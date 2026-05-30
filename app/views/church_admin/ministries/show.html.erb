@@ -5,7 +5,7 @@
     <div>
       <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
       <h1 class="mt-1 text-2xl font-bold text-slate-900"><%= @ministry.name %></h1>
-      <p class="mt-1 text-xs text-slate-400"><%= @ministry.public_id %></p>
+      <p class="mt-1 text-xs text-slate-400 font-mono"><%= @ministry.public_id %></p>
     </div>
 
     <div class="flex flex-wrap gap-3">
@@ -21,7 +21,7 @@
   </div>
 
   <% if @ministry.errors.any? %>
-    <div class="mt-8 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+    <div class="mt-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
       <p class="font-medium">No se pudo actualizar el ministerio.</p>
       <ul class="mt-2 list-disc pl-5">
         <% @ministry.errors.full_messages.each do |message| %>
@@ -31,124 +31,125 @@
     </div>
   <% end %>
 
-  <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_20rem]">
-    <div class="space-y-6">
-      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-        <h2 class="text-base font-semibold text-slate-900">Detalle</h2>
-        <dl class="mt-5 grid gap-4 sm:grid-cols-2">
-          <div>
-            <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Estado</dt>
-            <dd class="mt-1 text-sm text-slate-900">
-              <% if @ministry.active? %>
-                <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200"><%= ministry_status_label(@ministry.status) %></span>
-              <% else %>
-                <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 ring-1 ring-slate-200"><%= ministry_status_label(@ministry.status) %></span>
-              <% end %>
-            </dd>
-          </div>
-          <div>
-            <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Miembros activos</dt>
-            <dd class="mt-1 text-sm text-slate-900"><%= @ministry.ministry_memberships.active.count %></dd>
-          </div>
-          <div class="sm:col-span-2">
-            <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Descripcion</dt>
-            <dd class="mt-1 text-sm text-slate-900"><%= @ministry.description.presence || "No definida" %></dd>
-          </div>
-        </dl>
-      </section>
+  <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_22rem]">
 
-      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-        <div class="flex items-center justify-between gap-4">
-          <h2 class="text-base font-semibold text-slate-900">Miembros asignados</h2>
+    <%# ── Columna principal: solo detalle ── %>
+    <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card self-start">
+      <h2 class="text-base font-semibold text-slate-900">Detalle</h2>
+      <dl class="mt-5 grid gap-4 sm:grid-cols-2">
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Estado</dt>
+          <dd class="mt-1">
+            <% if @ministry.active? %>
+              <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200"><%= ministry_status_label(@ministry.status) %></span>
+            <% else %>
+              <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600 ring-1 ring-slate-200"><%= ministry_status_label(@ministry.status) %></span>
+            <% end %>
+          </dd>
         </div>
-
-        <div class="mt-5 overflow-hidden rounded-xl border border-slate-200">
-          <table class="min-w-full divide-y divide-slate-200 text-sm">
-            <thead>
-              <tr>
-                <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nombre</th>
-                <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Rol</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200">
-              <% active_memberships = @ministry.active_ministry_memberships.ordered %>
-              <% if active_memberships.any? %>
-                <% active_memberships.each do |membership| %>
-                  <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-5 py-4">
-                      <div class="flex items-center gap-3">
-                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-100 text-xs font-semibold text-violet-700">
-                          <%= member_initials(membership.member) %>
-                        </div>
-                        <span class="font-medium text-slate-900"><%= membership.member.full_name %></span>
-                      </div>
-                    </td>
-                    <td class="px-5 py-4 text-slate-600"><%= ministry_role_label(membership.ministry_role) %></td>
-                  </tr>
-                <% end %>
-              <% else %>
-                <tr>
-                  <td colspan="2" class="px-5 py-8 text-center text-slate-500">No hay miembros asignados.</td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
+        <div>
+          <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Miembros activos</dt>
+          <dd class="mt-1 text-sm font-semibold text-slate-900"><%= @ministry.ministry_memberships.active.count %></dd>
         </div>
-      </section>
-    </div>
+        <div class="sm:col-span-2">
+          <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Descripcion</dt>
+          <dd class="mt-1 text-sm text-slate-700"><%= @ministry.description.presence || "No definida" %></dd>
+        </div>
+      </dl>
+    </section>
 
+    <%# ── Sidebar: panel unificado de gestión ── %>
     <aside>
-      <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
-        <h2 class="text-base font-semibold text-slate-900">Asignacion</h2>
+      <div class="rounded-xl border border-slate-200 bg-white shadow-card sticky top-6">
 
-        <%= form_with url: members_church_admin_ministry_path(@church, @ministry), method: :patch, class: "mt-5" do |form| %>
+        <%# Header %>
+        <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+          <h2 class="text-sm font-semibold text-slate-900">Gestión de miembros</h2>
+          <span class="text-xs font-medium text-slate-400"
+                data-member-count>
+            <%= @active_ministry_memberships.size %> asignado<%= "s" if @active_ministry_memberships.size != 1 %>
+          </span>
+        </div>
+
+        <%= form_with url: members_church_admin_ministry_path(@church, @ministry), method: :patch do |form| %>
           <% role_options = MinistryMembership.ministry_roles.keys.map { |r| [ ministry_role_label(r), r ] } %>
+
           <div data-controller="member-search"
                data-member-search-url-value="<%= search_church_admin_members_path(@church) %>">
 
-            <div data-member-search-target="tagsZone" class="flex flex-wrap gap-2">
-              <% @active_ministry_memberships.each do |public_id, mm| %>
-                <%= render "shared/member_tag",
-                      public_id: public_id,
-                      name: mm.member.full_name,
-                      initials: member_initials(mm.member),
-                      avatar_color: member_avatar_color(public_id),
-                      ids_field: "ministry[member_public_ids][]",
-                      meta_field: "ministry[member_roles][#{public_id}]",
-                      meta_options: role_options,
-                      meta_selected: mm.ministry_role,
-                      primary_field: nil,
-                      primary_checked: false %>
-              <% end %>
+            <%# ── Sección 1: Agregar miembro ── %>
+            <div class="border-b border-slate-100 px-5 py-4" data-member-search-target="searchArea">
+              <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Agregar miembro</p>
+              <div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 focus-within:border-violet-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-violet-200 transition-colors">
+                <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+                <input type="text" placeholder="Buscar por nombre..."
+                       autocomplete="off"
+                       data-member-search-target="input"
+                       data-action="input->member-search#search keydown->member-search#keydown"
+                       class="w-full bg-transparent py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none">
+              </div>
+              <div class="relative">
+                <turbo-frame id="member-results-ministry"
+                             data-member-search-target="results"
+                             class="absolute left-0 right-0 z-20 mt-1 block max-h-60 overflow-auto rounded-xl border border-slate-200 bg-white shadow-card empty:hidden">
+                </turbo-frame>
+              </div>
             </div>
 
+            <%# ── Sección 2: Miembros asignados (con remove) ── %>
+            <div class="px-5 py-4">
+              <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Miembros asignados</p>
+
+              <%# Empty state %>
+              <div data-member-search-target="emptyState"
+                   class="<%= @active_ministry_memberships.any? ? 'hidden' : '' %> rounded-lg border border-dashed border-slate-200 py-6 text-center">
+                <p class="text-xs text-slate-400">Aún no hay miembros asignados.</p>
+                <p class="mt-0.5 text-xs text-slate-400">Busca un miembro arriba para añadirlo.</p>
+              </div>
+
+              <%# Lista con rol + quitar %>
+              <div data-member-search-target="tagsZone" class="divide-y divide-slate-50">
+                <% @active_ministry_memberships.each do |public_id, mm| %>
+                  <%= render "church_admin/ministries/member_row",
+                        public_id: public_id,
+                        name: mm.member.full_name,
+                        initials: member_initials(mm.member),
+                        avatar_color: member_avatar_color(public_id),
+                        ids_field: "ministry[member_public_ids][]",
+                        meta_field: "ministry[member_roles][#{public_id}]",
+                        meta_options: role_options,
+                        meta_selected: mm.ministry_role %>
+                <% end %>
+              </div>
+            </div>
+
+            <%# Template para clonado JS %>
             <template data-member-search-target="template">
-              <%= render "shared/member_tag",
-                    public_id: "__ID__", name: "", initials: "", avatar_color: "bg-slate-400",
+              <%= render "church_admin/ministries/member_row",
+                    public_id: "__ID__",
+                    name: "",
+                    initials: "",
+                    avatar_color: "bg-violet-100 text-violet-700",
                     ids_field: "ministry[member_public_ids][]",
                     meta_field: "ministry[member_roles][__ID__]",
-                    meta_options: role_options, meta_selected: "member",
-                    primary_field: nil, primary_checked: false %>
+                    meta_options: role_options,
+                    meta_selected: "member" %>
             </template>
 
-            <div data-member-search-target="searchArea" class="relative mt-4">
-              <input type="text" placeholder="Buscar miembro por nombre..."
-                     autocomplete="off"
-                     data-member-search-target="input"
-                     data-action="input->member-search#search keydown->member-search#keydown"
-                     class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
-              <turbo-frame id="member-results-ministry" data-member-search-target="results"
-                           class="absolute z-10 mt-1 block w-full rounded-md border border-slate-200 bg-white shadow-lg empty:hidden"></turbo-frame>
-            </div>
           </div>
 
           <% if policy(@ministry).edit? %>
-            <div class="mt-5 flex justify-end border-t border-slate-200 pt-4">
-              <%= form.submit "Guardar asignacion", class: "rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
+            <div class="border-t border-slate-100 px-5 py-4">
+              <%= form.submit "Guardar asignación",
+                    class: "w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
             </div>
           <% end %>
         <% end %>
-      </section>
+
+      </div>
     </aside>
+
   </div>
 </section>

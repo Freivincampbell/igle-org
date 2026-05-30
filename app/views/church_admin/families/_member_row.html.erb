@@ -1,0 +1,64 @@
+<%#
+  Locals:
+    public_id       String  — real o "__ID__" (template)
+    name            String
+    initials        String
+    avatar_color    String  — clase tailwind bg-* text-*  (e.g. "bg-violet-100 text-violet-700")
+    ids_field       String  — name del hidden input
+    meta_field      String  — name del select de relación
+    meta_options    Array   — [[label, value], ...]
+    meta_selected   String  — valor seleccionado
+    primary_field   String  — name del radio de contacto
+    primary_checked Boolean
+%>
+<div data-member-tag
+     class="group/row flex items-center gap-3 py-3 first:pt-0 last:pb-0 animate-fade-in-up">
+
+  <%# Avatar %>
+  <div data-tag-avatar
+       class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold <%= avatar_color %>">
+    <span data-tag-initials><%= initials %></span>
+  </div>
+
+  <%# Nombre %>
+  <div class="min-w-0 flex-1">
+    <span data-tag-name class="block truncate text-sm font-semibold text-slate-900"><%= name %></span>
+  </div>
+
+  <%# Hidden ID %>
+  <input type="hidden" data-tag-id-input name="<%= ids_field %>"
+         value="<%= public_id == "__ID__" ? "" : public_id %>">
+
+  <%# Selector de relación %>
+  <% if meta_field.present? %>
+    <select data-tag-meta name="<%= meta_field %>"
+            class="w-32 shrink-0 rounded-lg border border-slate-200 bg-slate-50 py-1.5 pl-2.5 pr-7 text-xs font-medium text-slate-700 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-200 transition-colors">
+      <% Array(meta_options).each do |label, value| %>
+        <option value="<%= value %>" <%= "selected" if value == meta_selected %>><%= label %></option>
+      <% end %>
+    </select>
+  <% end %>
+
+  <%# Contacto principal — radio con estilo pill %>
+  <% if primary_field.present? %>
+    <label class="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500 transition-colors hover:border-violet-300 hover:text-violet-600 has-[:checked]:border-violet-400 has-[:checked]:bg-violet-50 has-[:checked]:text-violet-700">
+      <input type="radio" data-tag-primary name="<%= primary_field %>"
+             value="<%= public_id == "__ID__" ? "" : public_id %>"
+             <%= "checked" if primary_checked %>
+             class="sr-only">
+      <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 0 0 .95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 0 0-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 0 0-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 0 0-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 0 0 .951-.69l1.07-3.292Z" />
+      </svg>
+      Contacto
+    </label>
+  <% end %>
+
+  <%# Botón quitar %>
+  <button type="button" data-action="member-search#removeTag"
+          class="shrink-0 rounded-md p-1 text-slate-300 opacity-0 transition-all group-hover/row:opacity-100 hover:bg-rose-50 hover:text-rose-500"
+          aria-label="Quitar miembro">
+    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+  </button>
+</div>

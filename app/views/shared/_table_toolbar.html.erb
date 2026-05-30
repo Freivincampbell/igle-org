@@ -1,0 +1,41 @@
+<%# locals: (url:, frame_id:, label: nil, q: nil, filters: []) %>
+<div class="mt-6">
+  <%= form_with url: url, method: :get,
+        data: { controller: "table-search", turbo_frame: frame_id },
+        class: "flex flex-wrap items-center gap-2" do |f| %>
+
+    <%# Search — flex wrapper handles icon + input alignment without absolute positioning %>
+    <div class="flex min-w-[200px] flex-1 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 shadow-sm focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-200">
+      <svg class="h-4 w-4 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+      </svg>
+      <%= f.search_field :q, value: q,
+            placeholder: "Buscar#{label ? " #{label}" : ""}…",
+            autocomplete: "off",
+            class: "w-full bg-transparent py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none",
+            data: { action: "input->table-search#search" } %>
+    </div>
+
+    <%# Filter selects %>
+    <% filters.each do |filter| %>
+      <%= f.select filter[:param],
+            filter[:options],
+            { include_blank: filter.fetch(:blank_label, "Todos"), selected: filter[:value] },
+            class: "rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-sm text-slate-700 shadow-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-200",
+            data: { action: "change->table-search#filter" } %>
+    <% end %>
+
+    <%# Clear — only when filters are active %>
+    <% if q.present? || filters.any? { |flt| flt[:value].present? } %>
+      <%= link_to url,
+            class: "inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-500 shadow-sm hover:bg-slate-50 hover:text-slate-700 transition-colors",
+            data: { turbo_frame: frame_id } do %>
+        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+        Limpiar
+      <% end %>
+    <% end %>
+
+  <% end %>
+</div>

@@ -1,8 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="member-search"
 export default class extends Controller {
-  static targets = ["input", "results", "tagsZone", "template", "searchArea"]
+  static targets = ["input", "results", "tagsZone", "template", "searchArea", "emptyState"]
   static values = {
     url: String,
     maxSelections: { type: Number, default: 0 }
@@ -13,6 +12,7 @@ export default class extends Controller {
     this.tagsZoneTarget.querySelectorAll("[data-tag-id-input]").forEach((input) => {
       if (input.value) this.selected.add(input.value)
     })
+    this.updateEmptyState()
     this.updateSearchAreaVisibility()
     this.boundClickOutside = this.clickOutside.bind(this)
     document.addEventListener("click", this.boundClickOutside)
@@ -30,10 +30,7 @@ export default class extends Controller {
 
   performSearch() {
     const q = this.inputTarget.value.trim()
-    if (q.length < 2) {
-      this.clearResults()
-      return
-    }
+    if (q.length < 2) { this.clearResults(); return }
     const params = new URLSearchParams()
     params.set("q", q)
     params.set("frame_id", this.resultsTarget.id)
@@ -58,10 +55,16 @@ export default class extends Controller {
     if (initialsEl) initialsEl.textContent = initials
 
     const avatarEl = root.querySelector("[data-tag-avatar]")
-    if (avatarEl && color) avatarEl.className = avatarEl.className.replace(/bg-\S+/, color)
+    if (avatarEl && color) {
+      // Replace bg-* and text-* color classes with the member's color
+      avatarEl.className = avatarEl.className
+        .replace(/bg-\w+-\d+/g, "")
+        .replace(/text-\w+-\d+/g, "")
+        .trim() + " " + color
+    }
 
     root.querySelectorAll("[data-tag-meta]").forEach((el) => {
-      if (el.name) el.name = el.name.replace("__ID__", publicId)
+      if (el.name) el.name = el.name.replace(/__ID__/g, publicId)
     })
 
     const primaryEl = root.querySelector("[data-tag-primary]")
@@ -72,6 +75,7 @@ export default class extends Controller {
 
     this.inputTarget.value = ""
     this.clearResults()
+    this.updateEmptyState()
     this.updateSearchAreaVisibility()
     if (this.hasSearchAreaTarget && !this.searchAreaTarget.hidden) this.inputTarget.focus()
   }
@@ -82,6 +86,7 @@ export default class extends Controller {
     const idInput = root.querySelector("[data-tag-id-input]")
     if (idInput && idInput.value) this.selected.delete(idInput.value)
     root.remove()
+    this.updateEmptyState()
     this.updateSearchAreaVisibility()
   }
 
@@ -103,6 +108,11 @@ export default class extends Controller {
 
   clickOutside(event) {
     if (!this.element.contains(event.target)) this.clearResults()
+  }
+
+  updateEmptyState() {
+    if (!this.hasEmptyStateTarget) return
+    this.emptyStateTarget.classList.toggle("hidden", this.selected.size > 0)
   }
 
   updateSearchAreaVisibility() {

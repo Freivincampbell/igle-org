@@ -1,0 +1,47 @@
+<%#
+  Locals:
+    public_id     String
+    name          String
+    initials      String
+    avatar_color  String  — clases Tailwind bg-* text-*
+    ids_field     String
+    meta_field    String  — name del select de rol
+    meta_options  Array   — [[label, value], ...]
+    meta_selected String
+%>
+<div data-member-tag
+     class="group/row flex items-center gap-2 py-2.5 first:pt-0 last:pb-0 animate-fade-in-up">
+
+  <%# Avatar %>
+  <div data-tag-avatar
+       class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold <%= avatar_color %>">
+    <span data-tag-initials><%= initials %></span>
+  </div>
+
+  <%# Nombre %>
+  <div class="min-w-0 flex-1">
+    <span data-tag-name class="block truncate text-sm font-medium text-slate-900"><%= name %></span>
+  </div>
+
+  <input type="hidden" data-tag-id-input name="<%= ids_field %>"
+         value="<%= public_id == "__ID__" ? "" : public_id %>">
+
+  <%# Selector de rol %>
+  <% if meta_field.present? %>
+    <select data-tag-meta name="<%= meta_field %>"
+            class="w-24 shrink-0 rounded-lg border border-slate-200 bg-slate-50 py-1 pl-2 pr-6 text-xs font-medium text-slate-600 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-200 transition-colors">
+      <% Array(meta_options).each do |label, value| %>
+        <option value="<%= value %>" <%= "selected" if value == meta_selected %>><%= label %></option>
+      <% end %>
+    </select>
+  <% end %>
+
+  <%# Quitar %>
+  <button type="button" data-action="member-search#removeTag"
+          class="shrink-0 rounded-md p-1 text-slate-300 opacity-0 transition-all group-hover/row:opacity-100 hover:bg-rose-50 hover:text-rose-500"
+          aria-label="Quitar">
+    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+  </button>
+</div>

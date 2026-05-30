@@ -1,5 +1,6 @@
 module Platform
   class BaseController < ApplicationController
+    include Pagy::Method
     before_action :authenticate_user!
     before_action :require_super_admin!
 

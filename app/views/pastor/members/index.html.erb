@@ -1,4 +1,5 @@
 <section class="mx-auto w-full max-w-7xl px-6 py-8">
+  <%# Header (unchanged) %>
   <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div>
       <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
@@ -7,44 +8,53 @@
     <%= link_to "Notas pastorales", church_pastor_pastoral_notes_path(@church), class: "inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors" %>
   </div>
 
-  <div class="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
-    <table class="min-w-full divide-y divide-slate-200 text-sm">
-      <thead>
-        <tr>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nombre</th>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ministerios</th>
-          <th class="bg-slate-50 px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-slate-200">
-        <% @members.each do |member| %>
-          <tr class="group hover:bg-slate-50/80 transition-colors">
-            <td class="px-5 py-4">
-              <div class="flex items-center gap-3">
-                <% if member.photo.attached? %>
-                  <%= image_tag member.photo.variant(resize_to_fill: [36, 36]).processed,
-                        class: "h-9 w-9 rounded-full object-cover" %>
-                <% else %>
-                  <div class="flex h-9 w-9 items-center justify-center rounded-full bg-violet-100 text-sm font-semibold text-violet-700">
-                    <%= member.first_name&.first&.upcase %>
-                  </div>
-                <% end %>
-                <div>
-                  <div class="font-medium text-slate-900"><%= member.full_name %></div>
-                  <div class="text-xs text-slate-500"><%= member.email.presence || member.phone %></div>
-                </div>
-              </div>
-            </td>
-            <td class="px-5 py-4 text-slate-600">
-              <%= member.ministries.map(&:name).join(", ").presence || "Sin ministerio" %>
-            </td>
-            <td class="px-5 py-4 text-right">
-              <%= link_to "Ver", church_pastor_member_path(@church, member), class: "rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
-            </td>
+  <%= render "shared/table_toolbar",
+        url: church_pastor_members_path(@church),
+        frame_id: "table-pastor-members",
+        label: "miembros",
+        q: params[:q],
+        filters: [] %>
+
+  <turbo-frame id="table-pastor-members" data-turbo-action="advance" target="_top" class="mt-3 block">
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead>
+          <tr>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nombre</th>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Ministerios</th>
+            <th class="bg-slate-50 px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Acciones</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-  <%== @pagy.series_nav if @pagy.pages > 1 %>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% @members.each do |member| %>
+            <tr class="group hover:bg-slate-50/80 transition-colors">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-3">
+                  <% if member.photo.attached? %>
+                    <%= image_tag member.photo.variant(resize_to_fill: [36, 36]).processed,
+                          class: "h-9 w-9 rounded-full object-cover" %>
+                  <% else %>
+                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-violet-100 text-sm font-semibold text-violet-700">
+                      <%= member.first_name&.first&.upcase %>
+                    </div>
+                  <% end %>
+                  <div>
+                    <div class="font-medium text-slate-900"><%= member.full_name %></div>
+                    <div class="text-xs text-slate-500"><%= member.email.presence || member.phone %></div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-5 py-4 text-slate-600">
+                <%= member.ministries.map(&:name).join(", ").presence || "Sin ministerio" %>
+              </td>
+              <td class="px-5 py-4 text-right">
+                <%= link_to "Ver", church_pastor_member_path(@church, member), class: "rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <%= render "shared/table_pagination", pagy: @pagy %>
+    </div>
+  </turbo-frame>
 </section>

@@ -1,5 +1,6 @@
 module MinistryLeader
   class BaseController < ApplicationController
+    include Pagy::Method
     before_action :authenticate_user!
     before_action :set_church_context
     before_action :authorize_leader_access

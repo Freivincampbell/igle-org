@@ -6,14 +6,17 @@ module ChurchAdmin
     def index
       authorize Event
 
-      scope = policy_scope(Event).where(church: @church)
+      base = policy_scope(Event).where(church: @church)
+      base = base.search_by_name(params[:q]) if params[:q].present?
 
       @filter = params[:filter].presence || "upcoming"
-      @events = case @filter
-      when "past" then scope.past
-      when "all" then scope.ordered
-      else scope.upcoming
+      filtered = case @filter
+      when "past" then base.past
+      when "all"  then base.ordered
+      else             base.upcoming
       end
+
+      @pagy, @events = pagy(filtered, limit: 25)
     end
 
     def show

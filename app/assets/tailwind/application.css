@@ -19,6 +19,39 @@
   box-shadow: 0 4px 16px 0 rgb(124 58 237 / 0.12), 0 1px 4px 0 rgb(0 0 0 / 0.06);
 }
 
+/* ── Rails field_with_errors — red border on invalid fields ── */
+.field_with_errors {
+  display: contents; /* transparent wrapper — doesn't break flex/grid layout */
+}
+.field_with_errors input,
+.field_with_errors select,
+.field_with_errors textarea {
+  border-color: rgb(239 68 68) !important;
+}
+.field_with_errors input:focus,
+.field_with_errors select:focus,
+.field_with_errors textarea:focus {
+  border-color: rgb(239 68 68) !important;
+  box-shadow: 0 0 0 2px rgb(239 68 68 / 0.2) !important;
+  outline: none;
+}
+
+/* ── Dashboard entrance animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out both;
+}
+.animate-fade-in {
+  animation: fadeIn 0.35s ease-out both;
+}
+
 /* ── Respect reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

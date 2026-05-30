@@ -6,10 +6,11 @@ module ChurchAdmin
     def index
       authorize Family
 
-      @families = policy_scope(Family)
-        .where(church: @church)
-        .includes(:members)
-        .ordered
+      base = policy_scope(Family).where(church: @church).includes(:members)
+      base = base.search_by_name(params[:q]) if params[:q].present?
+      base = base.where(status: params[:status]) if params[:status].present?
+
+      @pagy, @families = pagy(base.ordered, limit: 25)
     end
 
     def show

@@ -10,43 +10,57 @@
     <% end %>
   </div>
 
-  <div class="mt-8 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
-    <table class="min-w-full divide-y divide-slate-200 text-sm">
-      <thead>
-        <tr>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nombre</th>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Periodo</th>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Cargos llenos</th>
-          <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Estado</th>
-          <th class="bg-slate-50 px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Acciones</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-slate-200">
-        <% if @boards.any? %>
-          <% @boards.each do |board| %>
-            <tr class="group hover:bg-slate-50/80 transition-colors">
-              <td class="px-5 py-4 font-medium text-slate-900"><%= board.name %></td>
-              <td class="px-5 py-4 text-slate-600"><%= l(board.starts_on) %><% if board.ends_on %> — <%= l(board.ends_on) %><% end %></td>
-              <td class="px-5 py-4 text-slate-600"><%= board.board_members.size %> / <%= BoardMember::POSITIONS.size %></td>
-              <td class="px-5 py-4 text-slate-600"><%= board_status_label(board.status) %></td>
-              <td class="px-5 py-4 text-right">
-                <div class="flex justify-end gap-2">
-                  <% if policy(board).show? %>
-                    <%= link_to "Ver", church_admin_board_path(@church, board), class: "rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
-                  <% end %>
-                  <% if policy(board).edit? %>
-                    <%= link_to "Editar", edit_church_admin_board_path(@church, board), class: "rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
-                  <% end %>
-                </div>
-              </td>
+  <%= render "shared/table_toolbar",
+        url: church_admin_boards_path(@church),
+        frame_id: "table-boards",
+        label: "juntas",
+        q: params[:q],
+        filters: [
+          { param: :status, label: "Estado",
+            options: [["Activa", "active"], ["Inactiva", "inactive"]],
+            value: params[:status] }
+        ] %>
+
+  <turbo-frame id="table-boards" data-turbo-action="advance" target="_top" class="mt-3 block">
+    <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead>
+          <tr>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Nombre</th>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Periodo</th>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Cargos llenos</th>
+            <th class="bg-slate-50 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Estado</th>
+            <th class="bg-slate-50 px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <% if @boards.any? %>
+            <% @boards.each do |board| %>
+              <tr class="group hover:bg-slate-50/80 transition-colors">
+                <td class="px-5 py-4 font-medium text-slate-900"><%= board.name %></td>
+                <td class="px-5 py-4 text-slate-600"><%= l(board.starts_on) %><% if board.ends_on %> — <%= l(board.ends_on) %><% end %></td>
+                <td class="px-5 py-4 text-slate-600"><%= board.board_members.size %> / <%= BoardMember::POSITIONS.size %></td>
+                <td class="px-5 py-4 text-slate-600"><%= board_status_label(board.status) %></td>
+                <td class="px-5 py-4 text-right">
+                  <div class="flex justify-end gap-2">
+                    <% if policy(board).show? %>
+                      <%= link_to "Ver", church_admin_board_path(@church, board), class: "rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
+                    <% end %>
+                    <% if policy(board).edit? %>
+                      <%= link_to "Editar", edit_church_admin_board_path(@church, board), class: "rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700 hover:bg-violet-50 hover:text-violet-700 transition-colors" %>
+                    <% end %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="5" class="px-5 py-10 text-center text-sm text-slate-500">No hay juntas registradas.</td>
             </tr>
           <% end %>
-        <% else %>
-          <tr>
-            <td colspan="5" class="px-5 py-10 text-center text-sm text-slate-500">No hay juntas registradas.</td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+        </tbody>
+      </table>
+      <%= render "shared/table_pagination", pagy: @pagy %>
+    </div>
+  </turbo-frame>
 </section>

@@ -1,7 +1,12 @@
 class Role < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  include PgSearch::Model
   has_paper_trail skip: %i[updated_at]
+
+  pg_search_scope :search_by_name,
+    against: :name,
+    using: { tsearch: { prefix: true } }
 
   has_many :role_permissions, dependent: :destroy
   has_many :permissions, through: :role_permissions

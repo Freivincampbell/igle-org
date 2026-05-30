@@ -1,6 +1,11 @@
 class Board < ApplicationRecord
   include ChurchScoped
   include PublicIdentifiable
+  include PgSearch::Model
+
+  pg_search_scope :search_by_name,
+    against: :name,
+    using: { tsearch: { prefix: true } }
 
   has_many :board_members, dependent: :destroy
   has_many :members, through: :board_members
