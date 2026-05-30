@@ -9,7 +9,7 @@ RSpec.describe "ChurchAdmin::Ministries#search", type: :request do
   let!(:alabanza)  { create(:ministry, church:, name: "Alabanza",          status: "active") }
   let!(:jovenes)   { create(:ministry, church:, name: "Jóvenes",           status: "active") }
   let!(:inactivo)  { create(:ministry, church:, name: "Alabanza Inactiva", status: "inactive") }
-  let!(:otra_igles){ create(:ministry,           name: "Otro",              status: "active") }
+  let!(:otra_igles) { create(:ministry,           name: "Otro",              status: "active") }
 
   def search(q: "ala", frame_id: "test-frame", exclude: [])
     params = { q:, frame_id: }
@@ -27,7 +27,7 @@ RSpec.describe "ChurchAdmin::Ministries#search", type: :request do
   end
 
   it "excluye los ministerios cuyos public_ids están en exclude[]" do
-    search(q: "ala", exclude: [alabanza.public_id])
+    search(q: "ala", exclude: [ alabanza.public_id ])
     expect(response.body).not_to include(alabanza.name)
   end
 

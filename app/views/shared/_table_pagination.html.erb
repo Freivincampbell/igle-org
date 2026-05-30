@@ -20,7 +20,7 @@
 
     <%# ← Anterior %>
     <% if pagy.previous %>
-      <%= link_to url_for(params.permit!.merge(page: pagy.previous)),
+      <%= link_to url_for(request.query_parameters.merge(page: pagy.previous)),
             class: "flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 transition-colors" do %>
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
       <% end %>
@@ -32,7 +32,7 @@
 
     <%# Primera página + gap si la ventana no empieza en 1 %>
     <% if window_start > 1 %>
-      <%= link_to 1, url_for(params.permit!.merge(page: 1)),
+      <%= link_to 1, url_for(request.query_parameters.merge(page: 1)),
             class: "flex h-8 min-w-8 items-center justify-center rounded-lg border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 transition-colors" %>
       <% if window_start > 2 %>
         <span class="flex h-8 w-6 items-center justify-center text-xs text-slate-400">…</span>
@@ -44,7 +44,7 @@
       <% if p == current %>
         <span class="flex h-8 min-w-8 items-center justify-center rounded-lg border border-violet-500 bg-violet-600 px-2 text-sm font-semibold text-white"><%= p %></span>
       <% else %>
-        <%= link_to p, url_for(params.permit!.merge(page: p)),
+        <%= link_to p, url_for(request.query_parameters.merge(page: p)),
               class: "flex h-8 min-w-8 items-center justify-center rounded-lg border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 transition-colors" %>
       <% end %>
     <% end %>
@@ -54,13 +54,13 @@
       <% if window_end < total - 1 %>
         <span class="flex h-8 w-6 items-center justify-center text-xs text-slate-400">…</span>
       <% end %>
-      <%= link_to total, url_for(params.permit!.merge(page: total)),
+      <%= link_to total, url_for(request.query_parameters.merge(page: total)),
             class: "flex h-8 min-w-8 items-center justify-center rounded-lg border border-slate-200 bg-white px-2 text-sm font-medium text-slate-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 transition-colors" %>
     <% end %>
 
     <%# Siguiente → %>
     <% if pagy.next %>
-      <%= link_to url_for(params.permit!.merge(page: pagy.next)),
+      <%= link_to url_for(request.query_parameters.merge(page: pagy.next)),
             class: "flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-violet-50 hover:text-violet-700 hover:border-violet-200 transition-colors" do %>
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
       <% end %>

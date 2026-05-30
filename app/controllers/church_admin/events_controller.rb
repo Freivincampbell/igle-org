@@ -11,10 +11,10 @@ module ChurchAdmin
 
       @filter = params[:filter].presence || "upcoming"
       filtered = case @filter
-                 when "past" then base.past
-                 when "all"  then base.ordered
-                 else             base.upcoming
-                 end
+      when "past" then base.past
+      when "all"  then base.ordered
+      else             base.upcoming
+      end
 
       @pagy, @events = pagy(filtered, limit: 25)
     end
