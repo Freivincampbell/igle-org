@@ -21,5 +21,7 @@
         </li>
       <% end %>
     </ul>
+  <% elsif @results.empty? && @frame_id.present? %>
+    <p class="px-4 py-3 text-xs text-slate-400">No se encontraron ministerios.</p>
   <% end %>
 <% end %>

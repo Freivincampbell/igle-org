@@ -41,4 +41,15 @@ RSpec.describe "ChurchAdmin::Ministries#search", type: :request do
     search(q: "ala", frame_id: "ministry-results-abc123")
     expect(response.body).to include('id="ministry-results-abc123"')
   end
+
+  context "aislamiento multi-tenant" do
+    let(:church2)      { create(:church) }
+    let!(:ministry_c2) { create(:ministry, church: church2, name: "Alabanza C2", status: "active") }
+
+    it "no devuelve ministerios de otra iglesia aunque coincidan con la búsqueda" do
+      search(q: "ala")
+      expect(response.body).to include("Alabanza")
+      expect(response.body).not_to include("Alabanza C2")
+    end
+  end
 end
