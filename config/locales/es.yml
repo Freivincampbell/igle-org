@@ -258,6 +258,9 @@ es:
       created: "Habilidad registrada."
       removed: "Habilidad eliminada."
       updated: "Habilidad actualizada."
+    member_ministries:
+      updated: "Ministerios actualizados correctamente."
+      invalid_ministry: "Uno o más ministerios no son válidos para esta iglesia."
     profile_change_requests:
       approved: "Solicitud aprobada y cambios aplicados al perfil."
       not_pending: "Esta solicitud ya fue revisada."

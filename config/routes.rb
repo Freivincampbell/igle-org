@@ -46,6 +46,7 @@ Rails.application.routes.draw do
       end
 
       resources :ministries, param: :public_id, only: %i[index show new create edit update] do
+        collection { get :search }
         member do
           patch :activate
           patch :deactivate
@@ -88,6 +89,7 @@ Rails.application.routes.draw do
       end
 
       resources :occupations, param: :public_id, only: %i[index new create edit update] do
+        collection { get :search }
         member do
           patch :activate
           patch :deactivate
@@ -95,6 +97,7 @@ Rails.application.routes.draw do
       end
 
       resources :skills, param: :public_id, only: %i[index new create edit update] do
+        collection { get :search }
         member do
           patch :activate
           patch :deactivate
@@ -102,6 +105,11 @@ Rails.application.routes.draw do
       end
 
       resources :members, param: :public_id, only: [] do
+        member do
+          patch :assign_occupations, controller: "member_occupations", action: :assign
+          patch :assign_skills,      controller: "member_skills",      action: :assign
+          patch :assign_ministries,  controller: "member_ministries",  action: :assign
+        end
         resources :occupations, param: :public_id, only: %i[new create edit update destroy], controller: "member_occupations"
         resources :skills, param: :public_id, only: %i[new create edit update destroy], controller: "member_skills"
       end
