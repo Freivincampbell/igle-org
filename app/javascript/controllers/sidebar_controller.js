@@ -4,18 +4,21 @@ export default class extends Controller {
   static targets = ["nav", "backdrop"]
 
   open() {
+    if (!this.hasNavTarget) return
     this.navTarget.classList.remove("-translate-x-full")
     this.backdropTarget.classList.remove("hidden")
     document.body.classList.add("overflow-hidden")
   }
 
   close() {
+    if (!this.hasNavTarget) return
     this.navTarget.classList.add("-translate-x-full")
     this.backdropTarget.classList.add("hidden")
     document.body.classList.remove("overflow-hidden")
   }
 
   toggle() {
+    if (!this.hasNavTarget) return
     const isOpen = !this.navTarget.classList.contains("-translate-x-full")
     isOpen ? this.close() : this.open()
   }

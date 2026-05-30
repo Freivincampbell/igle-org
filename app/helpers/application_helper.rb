@@ -125,7 +125,7 @@ module ApplicationHelper
   end
 
   def sidebar_item_class(active)
-    base = "flex items-center gap-2.5 px-4 py-[7px] text-sm border-r-2 transition-colors w-full"
+    base = "flex items-center gap-2.5 px-4 py-2 text-sm border-r-2 transition-colors w-full"
     if active
       "#{base} font-semibold text-violet-700 bg-violet-50 border-violet-600"
     else
