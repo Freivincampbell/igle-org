@@ -16,6 +16,10 @@ const BADGE_STATES = {
   invalid: {
     text: "✗ Formato inválido",
     classes: "text-red-700 bg-red-50 border border-red-200"
+  },
+  error: {
+    text: "⚠ No se pudo verificar",
+    classes: "text-yellow-700 bg-yellow-50 border border-yellow-200"
   }
 }
 
@@ -25,6 +29,7 @@ export default class extends Controller {
 
   connect() {
     this.debounceTimer = null
+    this.currentFetchController = null
     // Mostrar el URL hint si ya hay un slug guardado al cargar la página
     const current = this.inputTarget.value.trim()
     if (current) this.#updateUrlHint(current)
@@ -32,6 +37,7 @@ export default class extends Controller {
 
   disconnect() {
     if (this.debounceTimer) clearTimeout(this.debounceTimer)
+    if (this.currentFetchController) this.currentFetchController.abort()
   }
 
   sanitize() {
@@ -83,21 +89,25 @@ export default class extends Controller {
   }
 
   async #checkAvailability(slug) {
+    if (this.currentFetchController) this.currentFetchController.abort()
+    this.currentFetchController = new AbortController()
     try {
       const url = new URL(this.checkUrlValue, window.location.origin)
       url.searchParams.set("slug", slug)
       const response = await fetch(url.toString(), {
+        signal: this.currentFetchController.signal,
         headers: { Accept: "application/json" }
       })
-      if (!response.ok) { this.#hideBadge(); return }
+      if (!response.ok) { this.#showBadge("error"); return }
       const data = await response.json()
       if (data.available) {
         this.#showBadge("available")
       } else {
         this.#showBadge(data.reason === "invalid_format" ? "invalid" : "taken")
       }
-    } catch {
-      this.#hideBadge()
+    } catch (err) {
+      if (err.name === "AbortError") return
+      this.#showBadge("error")
     }
   }
 }
