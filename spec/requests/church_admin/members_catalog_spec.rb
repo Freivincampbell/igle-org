@@ -104,4 +104,22 @@ RSpec.describe "ChurchAdmin::Members catalog assignment", type: :request do
       expect(member.member_skills.reload).to be_empty
     end
   end
+
+  describe "aislamiento multi-tenant — ministerios" do
+    let(:member)       { create(:member, church:) }
+    let(:church2)      { create(:church) }
+    let(:ministry_c2)  { create(:ministry, church: church2, status: "active") }
+
+    it "redirige con alerta al intentar asignar ministerio de otra iglesia" do
+      patch church_admin_member_path(church, member), params: {
+        member: base_member_params,
+        ministry_memberships_submitted: "1",
+        ministry_memberships: { ministry_c2.public_id => { role: "member" } }
+      }
+      expect(response).to redirect_to(church_admin_member_path(church, member))
+      follow_redirect!
+      expect(response.body).to include(I18n.t("church_admin.member_ministries.invalid_ministry"))
+      expect(member.ministry_memberships.active).to be_empty
+    end
+  end
 end
