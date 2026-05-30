@@ -37,8 +37,10 @@ class Church < ApplicationRecord
 
   validates :name, presence: true
   validates :status, :locale, :time_zone, presence: true
+  SLUG_FORMAT = /\A[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z/.freeze
+
   validates :slug, uniqueness: { case_sensitive: false }, allow_nil: true,
-                   format: { with: /\A[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\z/, message: :invalid_format }
+                   format: { with: SLUG_FORMAT, message: :invalid_format }
   validates :primary_color, :secondary_color,
             format: { with: /\A#?[0-9A-Fa-f]{6}\z/, message: :invalid_color },
             allow_nil: true

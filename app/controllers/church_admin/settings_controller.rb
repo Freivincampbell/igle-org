@@ -19,7 +19,7 @@ module ChurchAdmin
 
       slug = params[:slug].to_s.strip.downcase.presence
 
-      unless slug&.match?(/\A[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?\z/)
+      unless slug&.match?(Church::SLUG_FORMAT)
         render json: { available: false, reason: "invalid_format" }
         return
       end

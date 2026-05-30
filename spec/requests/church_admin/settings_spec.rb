@@ -147,5 +147,17 @@ RSpec.describe "Church admin settings" do
 
       expect(response).to redirect_to(new_user_session_path)
     end
+
+    it "bloquea miembros sin permiso de configuración" do
+      other_membership = create(:church_membership, church:)
+      sign_out membership.user
+      sign_in other_membership.user
+
+      get check_slug_church_admin_settings_path(church),
+          params: { slug: "cualquier-slug" },
+          as: :json
+
+      expect(response).to redirect_to(root_path)
+    end
   end
 end
