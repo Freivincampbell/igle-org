@@ -1,7 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 
-const SLUG_REGEX = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/
-
 const BADGE_STATES = {
   checking: {
     text: "⟳ Verificando...",
