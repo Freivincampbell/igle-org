@@ -61,6 +61,24 @@ module ChurchAdmin
       redirect_to church_admin_ministry_path(@church, @ministry), notice: t("church_admin.ministries.deactivated")
     end
 
+    def search
+      authorize Ministry, :index?
+      skip_policy_scope
+      q = params[:q].to_s.strip
+      excluded = Array(params[:exclude]).compact_blank
+      @results = if q.length >= 2
+        @church.ministries.active
+          .search_by_name(q)
+          .where.not(public_id: excluded)
+          .ordered
+          .limit(8)
+      else
+        []
+      end
+      @frame_id = params[:frame_id].to_s.gsub(/[^a-z0-9-]/, "")
+      render layout: false
+    end
+
     def update_members
       authorize @ministry, :update?
 
