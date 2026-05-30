@@ -83,4 +83,69 @@ RSpec.describe "Church admin settings" do
       expect(church.reload.description).to be_nil
     end
   end
+
+  describe "GET check_slug" do
+    let(:church) { create(:church) }
+    let(:membership) { create(:church_membership, :owner, church:) }
+
+    before { sign_in membership.user }
+
+    it "retorna disponible para un slug libre" do
+      get check_slug_church_admin_settings_path(church),
+          params: { slug: "iglesia-libre" },
+          as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq("available" => true)
+    end
+
+    it "retorna disponible cuando el slug pertenece a la misma iglesia" do
+      church.update!(slug: "mi-slug-actual")
+
+      get check_slug_church_admin_settings_path(church),
+          params: { slug: "mi-slug-actual" },
+          as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq("available" => true)
+    end
+
+    it "retorna no disponible cuando el slug pertenece a otra iglesia" do
+      create(:church, slug: "slug-tomado")
+
+      get check_slug_church_admin_settings_path(church),
+          params: { slug: "slug-tomado" },
+          as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq("available" => false, "reason" => "taken")
+    end
+
+    it "retorna formato inválido para slug con espacios y mayúsculas" do
+      get check_slug_church_admin_settings_path(church),
+          params: { slug: "SLUG INVALIDO!" },
+          as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq("available" => false, "reason" => "invalid_format")
+    end
+
+    it "retorna formato inválido para slug vacío" do
+      get check_slug_church_admin_settings_path(church),
+          params: { slug: "" },
+          as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(response.parsed_body).to eq("available" => false, "reason" => "invalid_format")
+    end
+
+    it "requiere autenticación" do
+      sign_out membership.user
+
+      get check_slug_church_admin_settings_path(church),
+          params: { slug: "cualquier-slug" }
+
+      expect(response).to redirect_to(new_user_session_path)
+    end
+  end
 end
