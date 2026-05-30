@@ -12,6 +12,17 @@ module ChurchAdmin
       @pagy, @occupations = pagy(base.ordered, limit: 25)
     end
 
+    def search
+      authorize Occupation, :index?
+      skip_policy_scope
+      q = params[:q].to_s.strip
+      @results      = q.length >= 1 ? @church.occupations.active.where("LOWER(name) LIKE ?", "%#{q.downcase}%").ordered.limit(8) : []
+      @exact_match  = @church.occupations.exists?(name: q)
+      @query        = q
+      @frame_id     = "occupation-results-#{params[:frame_suffix].to_s.gsub(/[^a-z0-9-]/, '')}"
+      render layout: false
+    end
+
     def new
       @occupation = @church.occupations.new(status: "active")
       authorize @occupation

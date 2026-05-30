@@ -9,6 +9,8 @@ class MemberSkill < ApplicationRecord
 
   enum :level, LEVELS.index_with(&:itself), validate: true
 
+  scope :offering_service, -> { where(offers_service: true) }
+
   validate :member_in_same_church
   validate :skill_in_same_church
 

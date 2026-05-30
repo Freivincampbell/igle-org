@@ -3,6 +3,30 @@ module ChurchAdmin
     before_action :set_member
     before_action :set_member_occupation, only: %i[edit update destroy]
 
+    def assign
+      authorize_member_update
+
+      names         = Array(params[:occupation_names]).map(&:strip).reject(&:blank?).uniq
+      offers_names  = Array(params[:offers_services])
+      looking_names = Array(params[:looking_for_work])
+
+      ActiveRecord::Base.transaction do
+        kept_ids = names.map { |n| @church.occupations.find_or_create_by!(name: n) { |o| o.status = "active" }.id }
+        @member.member_occupations.where.not(occupation_id: kept_ids).destroy_all
+
+        names.each do |name|
+          occupation = @church.occupations.find_or_create_by!(name: name) { |o| o.status = "active" }
+          mo = @member.member_occupations.find_or_initialize_by(occupation: occupation, church: @church)
+          mo.employment_status = "employed" if mo.new_record?
+          mo.offers_services   = offers_names.include?(name)
+          mo.looking_for_work  = looking_names.include?(name)
+          mo.save!
+        end
+      end
+
+      redirect_to church_admin_member_path(@church, @member), notice: t("church_admin.member_occupations.updated")
+    end
+
     def new
       @member_occupation = @member.member_occupations.new(church: @church, employment_status: "employed", current: true)
       authorize_member_update
@@ -43,7 +67,8 @@ module ChurchAdmin
     private
 
     def set_member
-      @member = @church.members.find_by_public_id!(params[:member_public_id])
+      # assign action uses :public_id (member route); nested resources use :member_public_id
+      @member = @church.members.find_by_public_id!(params[:public_id].presence || params[:member_public_id])
     end
 
     def set_member_occupation

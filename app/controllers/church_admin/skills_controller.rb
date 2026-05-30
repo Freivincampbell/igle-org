@@ -12,6 +12,17 @@ module ChurchAdmin
       @pagy, @skills = pagy(base.ordered, limit: 25)
     end
 
+    def search
+      authorize Skill, :index?
+      skip_policy_scope
+      q = params[:q].to_s.strip
+      @results      = q.length >= 1 ? @church.skills.active.where("LOWER(name) LIKE ?", "%#{q.downcase}%").ordered.limit(8) : []
+      @exact_match  = @church.skills.exists?(name: q)
+      @query        = q
+      @frame_id     = "skill-results-#{params[:frame_suffix].to_s.gsub(/[^a-z0-9-]/, '')}"
+      render layout: false
+    end
+
     def new
       @skill = @church.skills.new(status: "active")
       authorize @skill

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_30_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -303,6 +303,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
     t.string "level", default: "basic", null: false
     t.bigint "member_id", null: false
     t.text "notes"
+    t.boolean "offers_service", default: false, null: false
     t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "skill_id", null: false
     t.datetime "updated_at", null: false
@@ -392,6 +393,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
     t.index ["public_id"], name: "index_ministry_memberships_on_public_id", unique: true
   end
 
+  create_table "occupations", force: :cascade do |t|
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "active", null: false
+    t.datetime "updated_at", null: false
+    t.index ["church_id", "name"], name: "index_occupations_on_church_id_and_name", unique: true
+    t.index ["church_id"], name: "index_occupations_on_church_id"
+    t.index ["public_id"], name: "index_occupations_on_public_id", unique: true
+  end
+
   create_table "pastoral_notes", force: :cascade do |t|
     t.text "body", null: false
     t.bigint "church_id", null: false
@@ -408,19 +422,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
     t.index ["member_id"], name: "index_pastoral_notes_on_member_id"
     t.index ["pastor_id"], name: "index_pastoral_notes_on_pastor_id"
     t.index ["public_id"], name: "index_pastoral_notes_on_public_id", unique: true
-  end
-
-  create_table "occupations", force: :cascade do |t|
-    t.bigint "church_id", null: false
-    t.datetime "created_at", null: false
-    t.text "description"
-    t.string "name", null: false
-    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
-    t.string "status", default: "active", null: false
-    t.datetime "updated_at", null: false
-    t.index ["church_id", "name"], name: "index_occupations_on_church_id_and_name", unique: true
-    t.index ["church_id"], name: "index_occupations_on_church_id"
-    t.index ["public_id"], name: "index_occupations_on_public_id", unique: true
   end
 
   create_table "permissions", force: :cascade do |t|
@@ -569,6 +570,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
   add_foreign_key "ministries", "churches"
   add_foreign_key "ministry_memberships", "members"
   add_foreign_key "ministry_memberships", "ministries"
+  add_foreign_key "occupations", "churches"
   add_foreign_key "pastoral_notes", "churches"
   add_foreign_key "pastoral_notes", "members"
   add_foreign_key "pastoral_notes", "users", column: "pastor_id"
@@ -576,7 +578,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_28_160000) do
   add_foreign_key "profile_change_requests", "members"
   add_foreign_key "profile_change_requests", "users", column: "requested_by_id"
   add_foreign_key "profile_change_requests", "users", column: "reviewed_by_id"
-  add_foreign_key "occupations", "churches"
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"
   add_foreign_key "roles", "churches"
