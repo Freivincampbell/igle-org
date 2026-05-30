@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["input", "results", "tagsZone", "template", "emptyState"]
-  static values  = { url: String }
+  static values  = { url: String, autoSave: { type: Boolean, default: true } }
 
   connect() {
     this.selected = new Set()
@@ -100,6 +100,7 @@ export default class extends Controller {
   }
 
   _autoSubmit() {
+    if (!this.autoSaveValue) return
     clearTimeout(this._submitTimer)
     this._submitTimer = setTimeout(() => {
       this.element.closest("form")?.requestSubmit()
