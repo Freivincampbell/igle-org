@@ -1,8 +1,28 @@
 <section class="mx-auto w-full max-w-4xl px-6 py-8">
-  <div>
-    <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
-    <h1 class="mt-1 text-2xl font-bold text-slate-900">Configuracion de iglesia</h1>
-    <p class="mt-1 text-sm text-slate-600">Define la informacion publica, marca y opciones visibles de tu iglesia.</p>
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-widest text-violet-500"><%= @church.name %></p>
+      <h1 class="mt-1 text-2xl font-bold text-slate-900">Configuracion de iglesia</h1>
+      <p class="mt-1 text-sm text-slate-600">Define la informacion publica, marca y opciones visibles de tu iglesia.</p>
+    </div>
+    <% if @church.slug.present? && @church.public_page_enabled? %>
+      <%= link_to public_church_path(@church.slug),
+            target: "_blank", rel: "noopener noreferrer",
+            class: "mt-1 shrink-0 inline-flex items-center gap-2 rounded-lg border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-700 hover:bg-violet-100 transition-colors" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+        Ver perfil publico
+      <% end %>
+    <% else %>
+      <span class="mt-1 shrink-0 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-400 cursor-not-allowed"
+            title="<%= @church.slug.blank? ? 'Configura un slug para habilitar el perfil publico' : 'Habilita la pagina publica en Opciones para acceder' %>">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+        Ver perfil publico
+      </span>
+    <% end %>
   </div>
 
   <% if @church.errors.any? %>
@@ -27,9 +47,24 @@
           <%= form.label :legal_name, "Nombre legal", class: "block text-sm font-medium text-slate-700" %>
           <%= form.text_field :legal_name, class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
         </div>
-        <div>
-          <%= form.label :slug, "Slug publico", class: "block text-sm font-medium text-slate-700" %>
-          <%= form.text_field :slug, placeholder: "mi-iglesia", class: "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
+        <div data-controller="slug-validator"
+             data-slug-validator-check-url-value="<%= check_slug_church_admin_settings_path(@church) %>"
+             data-slug-validator-base-url-value="<%= request.base_url %>">
+          <div class="flex items-center justify-between mb-1">
+            <%= form.label :slug, "Slug publico", class: "block text-sm font-medium text-slate-700" %>
+            <span data-slug-validator-target="badge" class="hidden text-xs font-medium rounded-full px-2 py-0.5"></span>
+          </div>
+          <%= form.text_field :slug,
+                placeholder: "mi-iglesia",
+                data: {
+                  slug_validator_target: "input",
+                  action: "input->slug-validator#sanitize"
+                },
+                class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20" %>
+          <p data-slug-validator-target="urlHint"
+             class="mt-1 text-xs text-slate-500 <%= 'hidden' unless @church.slug.present? %>">
+            🔗 <%= request.base_url %>/c/<%= @church.slug %>
+          </p>
         </div>
         <div class="md:col-span-2">
           <%= form.label :description, "Descripcion", class: "block text-sm font-medium text-slate-700" %>

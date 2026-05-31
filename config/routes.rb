@@ -54,7 +54,9 @@ Rails.application.routes.draw do
         end
       end
 
-      resource :settings, only: %i[show update], controller: :settings
+      resource :settings, only: %i[show update], controller: :settings do
+        get :check_slug
+      end
 
       resources :service_times, param: :public_id, only: %i[index new create edit update] do
         member do

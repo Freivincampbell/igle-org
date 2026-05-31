@@ -14,6 +14,25 @@ module ChurchAdmin
       end
     end
 
+    def check_slug
+      authorize @church, :update?, policy_class: ChurchSettingPolicy
+
+      slug = params[:slug].to_s.strip.downcase.presence
+
+      unless slug&.match?(Church::SLUG_FORMAT)
+        render json: { available: false, reason: "invalid_format" }
+        return
+      end
+
+      taken = Church.where(slug:).where.not(id: @church.id).exists?
+
+      if taken
+        render json: { available: false, reason: "taken" }
+      else
+        render json: { available: true }
+      end
+    end
+
     private
 
     def church_settings_params

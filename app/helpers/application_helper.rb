@@ -52,6 +52,24 @@ module ApplicationHelper
     false
   end
 
+  # True para vistas con scope de iglesia donde el sidebar tiene sentido:
+  # dashboard (churches#show), ChurchAdmin::*, Pastor::*, MinistryLeader::*, MemberPortal::*.
+  # Falso para landing pública, login, índice de iglesias, plataforma super admin.
+  def show_church_sidebar?
+    return false unless user_signed_in?
+    return false unless current_church.present? && current_church_membership&.active?
+
+    controller_class = controller.class.name.to_s
+
+    return true if controller_class.start_with?("ChurchAdmin::")
+    return true if controller_class.start_with?("Pastor::")
+    return true if controller_class.start_with?("MinistryLeader::")
+    return true if controller_class.start_with?("MemberPortal::")
+    return true if controller_name == "churches" && action_name == "show"
+
+    false
+  end
+
   def day_of_week_label(day_of_week)
     return "" if day_of_week.blank?
 
@@ -122,5 +140,14 @@ module ApplicationHelper
 
   def pastoral_note_type_label(type)
     t("pastoral_notes.note_types.#{type}", default: type.to_s.humanize)
+  end
+
+  def sidebar_item_class(active)
+    base = "flex items-center gap-2.5 px-4 py-2 text-sm border-r-2 transition-colors w-full"
+    if active
+      "#{base} font-semibold text-violet-700 bg-violet-50 border-violet-600"
+    else
+      "#{base} font-medium text-slate-600 border-transparent hover:bg-slate-50 hover:text-slate-900"
+    end
   end
 end

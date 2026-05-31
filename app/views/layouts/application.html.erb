@@ -23,7 +23,8 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-slate-50 font-sans text-slate-950 antialiased">
+  <body class="min-h-screen bg-slate-50 font-sans text-slate-950 antialiased"
+        data-controller="sidebar">
     <%= render "shared/app_navigation" %>
 
     <%# Flash messages %>
@@ -68,8 +69,17 @@
       </div>
     <% end %>
 
-    <main>
-      <%= yield %>
-    </main>
+    <% if show_church_sidebar? %>
+      <div class="flex items-stretch min-h-[calc(100dvh-56px)]">
+        <%= render "shared/app_sidebar" %>
+        <main class="flex-1 min-w-0">
+          <%= yield %>
+        </main>
+      </div>
+    <% else %>
+      <main>
+        <%= yield %>
+      </main>
+    <% end %>
   </body>
 </html>
