@@ -40,12 +40,14 @@
     <%# Derecha: usuario + salir + hamburger %>
     <div class="ml-auto flex items-center gap-2">
 
-      <%# Hamburger — solo mobile, solo con sidebar activo %>
+      <%# Hamburger — visible solo mobile/tablet, solo con sidebar activo %>
       <% if current_church.present? && current_church_membership&.active? %>
-        <button class="md:hidden flex items-center justify-center h-8 w-8 rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
-                aria-label="Abrir menú"
+        <button type="button"
+                class="lg:hidden inline-flex items-center justify-center h-9 w-9 rounded-md text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 transition-colors cursor-pointer"
+                aria-label="Abrir menú de navegación"
+                aria-controls="app-sidebar"
                 data-action="click->sidebar#toggle">
-          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
           </svg>
         </button>

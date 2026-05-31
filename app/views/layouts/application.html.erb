@@ -69,10 +69,10 @@
       </div>
     <% end %>
 
-    <% if user_signed_in? && current_church.present? && current_church_membership&.active? %>
-      <div class="flex h-[calc(100vh-56px)]">
+    <% if show_church_sidebar? %>
+      <div class="flex items-stretch min-h-[calc(100dvh-56px)]">
         <%= render "shared/app_sidebar" %>
-        <main class="flex-1 overflow-y-auto">
+        <main class="flex-1 min-w-0">
           <%= yield %>
         </main>
       </div>
