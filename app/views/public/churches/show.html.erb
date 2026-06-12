@@ -37,4 +37,26 @@
       </div>
     </section>
   <% end %>
+
+  <% if @upcoming_events.any? %>
+    <section class="mt-12">
+      <h2 class="mb-4 text-xs font-semibold uppercase tracking-widest" style="color: <%= accent %>;">Próximos eventos</h2>
+      <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
+        <ul class="divide-y divide-slate-200">
+          <% @upcoming_events.each do |event| %>
+            <li>
+              <%= link_to public_church_event_path(@church.slug, event),
+                    class: "flex flex-wrap items-baseline justify-between gap-2 px-5 py-4 hover:bg-slate-50 transition-colors" do %>
+                <span class="font-medium text-slate-900"><%= event.title %></span>
+                <span class="text-sm text-slate-500">
+                  <%= l(event.starts_at, format: :default) %>
+                  <% if event.location.present? %>· <%= event.location %><% end %>
+                </span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </section>
+  <% end %>
 </section>

@@ -47,6 +47,28 @@ RSpec.describe "Public church page" do
     expect(response.body).not_to include("Iglesia B")
   end
 
+  it "lista solo eventos públicos, programados y futuros de la propia iglesia" do
+    church = create(:church, slug: "central", public_page_enabled: true, status: "active")
+    other_church = create(:church, slug: "otra", public_page_enabled: true, status: "active")
+
+    visible   = create(:event, church:, visibility: "public", title: "Campaña evangelística")
+    _members  = create(:event, church:, visibility: "members_only", title: "Retiro interno")
+    _past     = create(:event, church:, visibility: "public", title: "Evento pasado",
+                       starts_at: 2.days.ago, ends_at: 2.days.ago + 1.hour)
+    _cancelled = create(:event, church:, visibility: "public", title: "Evento cancelado",
+                        status: "cancelled")
+    _foreign  = create(:event, church: other_church, visibility: "public", title: "Evento ajeno")
+
+    get "/c/central"
+
+    expect(response.body).to include("Campaña evangelística")
+    expect(response.body).to include("/c/central/eventos/#{visible.public_id}")
+    expect(response.body).not_to include("Retiro interno")
+    expect(response.body).not_to include("Evento pasado")
+    expect(response.body).not_to include("Evento cancelado")
+    expect(response.body).not_to include("Evento ajeno")
+  end
+
   describe "contenido" do
     it "muestra descripción y horarios de culto activos, pero no los inactivos" do
       church = create(:church, name: "Iglesia Central", slug: "central",
