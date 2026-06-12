@@ -329,7 +329,7 @@ es:
     event_types:
       baptism: "Bautismo"
       class: "Clase"
-      ministry_meeting: "Reunion de ministerio"
+      ministry_meeting: "Reunión de ministerio"
       other: "Otro"
       retreat: "Retiro"
       service: "Culto"
@@ -347,7 +347,7 @@ es:
     visibilities:
       members_only: "Solo miembros"
       private: "Privado"
-      public: "Publico"
+      public: "Público"
   member_occupations:
     employment_statuses:
       employed: "Empleado"
