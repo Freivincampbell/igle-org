@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_11_170000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_11_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -177,14 +177,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_170000) do
     t.bigint "church_id", null: false
     t.datetime "created_at", null: false
     t.bigint "event_id", null: false
-    t.bigint "member_id", null: false
+    t.string "guest_name"
+    t.bigint "member_id"
     t.text "notes"
+    t.date "occurrence_date", null: false
     t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.datetime "updated_at", null: false
     t.index ["checked_in_by_id"], name: "index_event_attendances_on_checked_in_by_id"
     t.index ["church_id", "event_id"], name: "index_event_attendances_on_church_id_and_event_id"
     t.index ["church_id"], name: "index_event_attendances_on_church_id"
-    t.index ["event_id", "member_id"], name: "index_event_attendances_on_event_id_and_member_id", unique: true
+    t.index ["event_id", "member_id", "occurrence_date"], name: "index_event_attendances_on_event_member_occurrence", unique: true, where: "(member_id IS NOT NULL)"
     t.index ["event_id"], name: "index_event_attendances_on_event_id"
     t.index ["member_id"], name: "index_event_attendances_on_member_id"
     t.index ["public_id"], name: "index_event_attendances_on_public_id", unique: true
