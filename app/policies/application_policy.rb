@@ -197,5 +197,12 @@ class ApplicationPolicy
                 }
               )
     end
+
+    def permission_filter(module_key, action_key, relation)
+      Permissions::PermissionChecker.filter(
+        user_context: Permissions::UserContext.new(user:, current_church:, church_membership: current_membership),
+        module_key:, action: action_key, relation:
+      )
+    end
   end
 end

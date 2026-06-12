@@ -33,7 +33,7 @@ class MemberPolicy < ApplicationPolicy
       return scope.none if current_church.blank?
       return scope.none unless current_membership&.active?
 
-      scope.where(church: current_church)
+      permission_filter("members", "read", scope.where(church: current_church))
     end
   end
 end
