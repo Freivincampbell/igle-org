@@ -5,7 +5,10 @@ Rails.application.routes.draw do
   get "/c/:slug", to: "public/churches#show", as: :public_church
 
   scope "/c/:slug", module: :public, as: :public_church do
-    resources :events, path: "eventos", param: :public_id, only: :show
+    resources :events, path: "eventos", param: :public_id, only: :show do
+      resource :guest_rsvp, path: "rsvp", only: :create
+    end
+    resources :guest_rsvps, path: "rsvp", param: :access_token, only: %i[show update]
   end
 
   namespace :platform do

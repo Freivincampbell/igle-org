@@ -189,6 +189,29 @@ RSpec.describe "Church admin events" do
     end
   end
 
+  describe "GET show — panel de conteo" do
+    it "muestra el desglose de confirmados, tal vez, no asisten y la lista de invitados" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      event = create(:event, church:, visibility: "public", capacity: 20)
+      create(:event_rsvp, church:, event:, status: "attending", guests_count: 2)
+      create(:event_rsvp, church:, event:, status: "maybe")
+      create(:event_rsvp, church:, event:, status: "not_attending")
+      create(:event_guest_rsvp, church:, event:, name: "Ana Invitada", guests_count: 1)
+      create(:event_guest_rsvp, :cancelled, church:, event:, name: "Pedro Cancelado")
+
+      sign_in membership.user
+
+      get church_admin_event_path(church, event)
+
+      expect(response.body).to match(%r{Confirmados</p>\s*<p[^>]*>\s*5\s*</p>}m)
+      expect(response.body).to include("Ana Invitada")
+      expect(response.body).not_to include("Pedro Cancelado")
+      expect(response.body).to include("Tal vez")
+      expect(response.body).to include("No asisten")
+    end
+  end
+
   describe "public id routing" do
     it "does not resolve event database ids" do
       church = create(:church)

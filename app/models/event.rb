@@ -16,6 +16,7 @@ class Event < ApplicationRecord
   belongs_to :created_by, class_name: "User", optional: true
 
   has_many :event_rsvps, dependent: :destroy
+  has_many :event_guest_rsvps, dependent: :destroy
   has_many :event_attendances, dependent: :destroy
 
   enum :status, { scheduled: "scheduled", cancelled: "cancelled", completed: "completed" }, validate: true
@@ -46,7 +47,27 @@ class Event < ApplicationRecord
   end
 
   def confirmed_attendees_count
-    event_rsvps.where(status: "attending").sum("guests_count + 1")
+    @confirmed_attendees_count ||= member_attending_count + member_guests_count + guest_attendees_count
+  end
+
+  def member_attending_count
+    event_rsvps.where(status: "attending").count
+  end
+
+  def member_guests_count
+    event_rsvps.where(status: "attending").sum(:guests_count)
+  end
+
+  def guest_attendees_count
+    event_guest_rsvps.where(status: "attending").sum("guests_count + 1")
+  end
+
+  def maybe_count
+    event_rsvps.where(status: "maybe").count
+  end
+
+  def not_attending_count
+    event_rsvps.where(status: "not_attending").count
   end
 
   def attended_count

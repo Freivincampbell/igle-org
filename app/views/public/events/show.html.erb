@@ -47,4 +47,56 @@
       </div>
     <% end %>
   </div>
+
+  <% if @event.scheduled? %>
+    <div class="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-card" id="rsvp">
+      <h2 class="text-base font-semibold text-slate-900">Confirma tu asistencia</h2>
+      <p class="mt-1 text-sm text-slate-500">No necesitas cuenta. Te daremos un enlace para editar o cancelar tu confirmación.</p>
+
+      <% if defined?(@guest_rsvp_errors) && @guest_rsvp_errors.present? %>
+        <div class="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          <ul class="list-disc pl-5">
+            <% @guest_rsvp_errors.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%= form_with url: public_church_event_guest_rsvp_path(@church.slug, @event), method: :post, class: "mt-4 grid gap-4 sm:grid-cols-2" do %>
+        <div class="hidden" aria-hidden="true">
+          <label for="website">No llenar este campo</label>
+          <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div>
+          <label for="guest_rsvp_name" class="text-xs font-medium uppercase tracking-wide text-slate-500">Nombre *</label>
+          <input type="text" name="guest_rsvp[name]" id="guest_rsvp_name" required
+                 value="<%= params.dig(:guest_rsvp, :name) %>"
+                 class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200">
+        </div>
+        <div>
+          <label for="guest_rsvp_guests_count" class="text-xs font-medium uppercase tracking-wide text-slate-500">Acompañantes</label>
+          <input type="number" name="guest_rsvp[guests_count]" id="guest_rsvp_guests_count" min="0" value="<%= params.dig(:guest_rsvp, :guests_count) || 0 %>"
+                 class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200">
+        </div>
+        <div>
+          <label for="guest_rsvp_email" class="text-xs font-medium uppercase tracking-wide text-slate-500">Email</label>
+          <input type="email" name="guest_rsvp[email]" id="guest_rsvp_email" value="<%= params.dig(:guest_rsvp, :email) %>"
+                 class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200">
+        </div>
+        <div>
+          <label for="guest_rsvp_phone" class="text-xs font-medium uppercase tracking-wide text-slate-500">Teléfono</label>
+          <input type="tel" name="guest_rsvp[phone]" id="guest_rsvp_phone" value="<%= params.dig(:guest_rsvp, :phone) %>"
+                 class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200">
+        </div>
+        <p class="text-xs text-slate-400 sm:col-span-2">* Indica al menos un email o un teléfono.</p>
+        <div class="sm:col-span-2">
+          <button type="submit" class="rounded-lg bg-violet-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer">
+            Confirmar asistencia
+          </button>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </section>

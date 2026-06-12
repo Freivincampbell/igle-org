@@ -8,6 +8,13 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   </head>
   <body class="min-h-screen bg-slate-50 text-slate-950 antialiased">
+    <% flash.each do |type, message| %>
+      <div class="mx-auto mt-4 w-full max-w-3xl px-6">
+        <div class="rounded-lg border <%= type.to_s == "alert" ? "border-amber-200 bg-amber-50 text-amber-800" : "border-emerald-200 bg-emerald-50 text-emerald-800" %> p-3 text-sm">
+          <%= message %>
+        </div>
+      </div>
+    <% end %>
     <main><%= yield %></main>
   </body>
 </html>

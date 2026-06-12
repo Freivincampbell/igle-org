@@ -37,8 +37,33 @@
 
     <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
       <h2 class="text-base font-semibold text-slate-900">Confirmaciones</h2>
-      <p class="mt-2 text-3xl font-bold text-slate-900"><%= @event.confirmed_attendees_count %></p>
-      <p class="text-xs text-slate-500">Asistentes esperados</p>
+
+      <p class="mt-2 text-xs font-medium uppercase tracking-wide text-slate-500">Confirmados</p>
+      <p class="text-3xl font-bold text-slate-900"><%= @event.confirmed_attendees_count %></p>
+      <p class="text-xs text-slate-500">
+        <%= @event.member_attending_count %> miembro<%= "s" if @event.member_attending_count != 1 %>
+        · <%= @event.member_guests_count %> acompañante<%= "s" if @event.member_guests_count != 1 %>
+        · <%= @event.guest_attendees_count %> invitado<%= "s" if @event.guest_attendees_count != 1 %>
+      </p>
+
+      <div class="mt-3 flex gap-4 text-sm">
+        <span class="text-slate-600">Tal vez: <span class="font-semibold"><%= @event.maybe_count %></span></span>
+        <span class="text-slate-600">No asisten: <span class="font-semibold"><%= @event.not_attending_count %></span></span>
+      </div>
+
+      <% if @event.capacity.present? %>
+        <% occupancy = [ @event.confirmed_attendees_count * 100 / @event.capacity, 100 ].min %>
+        <div class="mt-4">
+          <div class="flex justify-between text-xs text-slate-500">
+            <span>Ocupación</span>
+            <span><%= @event.confirmed_attendees_count %> / <%= @event.capacity %></span>
+          </div>
+          <div class="mt-1 h-2 w-full rounded-full bg-slate-100">
+            <div class="h-2 rounded-full <%= occupancy >= 100 ? "bg-red-500" : "bg-violet-600" %>" style="width: <%= occupancy %>%"></div>
+          </div>
+        </div>
+      <% end %>
+
       <ul class="mt-4 space-y-1 text-sm text-slate-600">
         <% @rsvps.each do |rsvp| %>
           <li class="flex items-center gap-2">
@@ -47,6 +72,18 @@
           </li>
         <% end %>
       </ul>
+
+      <% if @guest_rsvps.any? %>
+        <h3 class="mt-5 text-xs font-medium uppercase tracking-wide text-slate-500">Invitados confirmados</h3>
+        <ul class="mt-2 space-y-1 text-sm text-slate-600">
+          <% @guest_rsvps.each do |guest| %>
+            <li class="flex flex-wrap items-baseline justify-between gap-2">
+              <span class="font-medium text-slate-900"><%= guest.name %><% if guest.guests_count.positive? %> <span class="font-normal text-slate-500">+<%= guest.guests_count %></span><% end %></span>
+              <span class="text-xs text-slate-500"><%= [ guest.email, guest.phone ].compact_blank.join(" · ") %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
     </div>
 
     <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">

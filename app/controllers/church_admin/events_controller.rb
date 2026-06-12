@@ -23,6 +23,7 @@ module ChurchAdmin
       authorize @event
       @rsvps = @event.event_rsvps.includes(:member)
       @attendances = @event.event_attendances.includes(:member)
+      @guest_rsvps = @event.event_guest_rsvps.where(status: "attending").order(:name)
     end
 
     def new
