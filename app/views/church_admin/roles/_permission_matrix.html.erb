@@ -17,6 +17,19 @@
         </div>
       </div>
 
+      <% if Permissions::RoleMatrixAssignment::SCOPE_CONFIGURABLE_MODULES.include?(module_key) %>
+        <% current_scope = role.role_permissions.joins(:permission).where(permissions: { module_key: }).first&.scope || "church" %>
+        <div class="mt-4">
+          <label class="text-xs font-medium uppercase tracking-wide text-slate-500">Alcance</label>
+          <select name="role[module_scopes][<%= module_key %>]"
+                  class="mt-1 block rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
+            <% { "church" => "Toda la iglesia", "assigned_ministry" => "Ministerio asignado", "own" => "Propio" }.each do |value, label| %>
+              <option value="<%= value %>" <%= "selected" if current_scope == value %>><%= label %></option>
+            <% end %>
+          </select>
+        </div>
+      <% end %>
+
       <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <% module_permissions.sort_by { |permission| Permission::ACTION_KEYS.index(permission.action_key) || 99 }.each do |permission| %>
           <% disabled = module_key == "pastoral_notes" && !role.pastoral? %>

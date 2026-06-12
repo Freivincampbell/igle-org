@@ -108,6 +108,24 @@ RSpec.describe "Church admin roles" do
       expect(role.permissions.reload).to contain_exactly(read_permission, create_permission)
     end
 
+    it "guarda un permiso con alcance assigned_ministry desde la matriz" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      role = create(:role, church:)
+      perm = permission_for("members", "read")
+
+      sign_in membership.user
+
+      patch permissions_church_admin_role_path(church, role), params: {
+        role: {
+          permission_public_ids: [ perm.public_id ],
+          module_scopes: { "members" => "assigned_ministry" }
+        }
+      }
+
+      expect(role.role_permissions.find_by(permission: perm).scope).to eq("assigned_ministry")
+    end
+
     it "rejects permissions outside the active church admin matrix" do
       church = create(:church)
       membership = create(:church_membership, :owner, church:)
