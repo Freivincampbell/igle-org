@@ -150,26 +150,56 @@ RSpec.describe "Church admin events" do
   end
 
   describe "PATCH update_attendance" do
-    it "records and removes attendance for active members by public_id" do
+    it "marca presentes por public_id y desmarca con soft-delete (sin destroy)" do
       church = create(:church)
       membership = create(:church_membership, :owner, church:)
       event = create(:event, church:)
       member_a = create(:member, church:)
       member_b = create(:member, church:)
-
       sign_in membership.user
 
       patch attendance_church_admin_event_path(church, event), params: {
         attendance: { member_ids: [ member_a.public_id ] }
       }
-
-      expect(event.event_attendances.pluck(:member_id)).to contain_exactly(member_a.id)
+      expect(event.event_attendances.present.pluck(:member_id)).to contain_exactly(member_a.id)
 
       patch attendance_church_admin_event_path(church, event), params: {
         attendance: { member_ids: [ member_b.public_id ] }
       }
 
-      expect(event.reload.event_attendances.pluck(:member_id)).to contain_exactly(member_b.id)
+      expect(event.reload.event_attendances.present.pluck(:member_id)).to contain_exactly(member_b.id)
+      expect(event.event_attendances.where(member: member_a).first.attended).to be(false)
+      expect(event.event_attendances.count).to eq(2)
+    end
+
+    it "registra un walk-in con nombre" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      event = create(:event, church:)
+      sign_in membership.user
+
+      patch attendance_church_admin_event_path(church, event), params: {
+        attendance: { member_ids: [], walk_in_name: "Ana Visitante" }
+      }
+
+      walk_in = event.event_attendances.where(member_id: nil).first
+      expect(walk_in.guest_name).to eq("Ana Visitante")
+      expect(walk_in.attended).to be(true)
+      expect(walk_in.checked_in_by).to eq(membership.user)
+    end
+
+    it "usa la fecha de ocurrencia indicada" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      event = create(:event, church:, recurring: true, recurrence_frequency: "weekly")
+      member = create(:member, church:)
+      sign_in membership.user
+
+      patch attendance_church_admin_event_path(church, event), params: {
+        attendance: { member_ids: [ member.public_id ], occurrence_date: "2026-07-12" }
+      }
+
+      expect(event.event_attendances.first.occurrence_date).to eq(Date.new(2026, 7, 12))
     end
   end
 

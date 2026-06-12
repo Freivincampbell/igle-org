@@ -75,34 +75,52 @@ module ChurchAdmin
 
     def attendance
       authorize @event, :update?
+      @occurrence_date = parse_occurrence_date
       @members = @church.members.active.ordered
-      @attendances_by_member = @event.event_attendances.includes(:member).index_by(&:member_id)
+      @attendances_by_member = @event.event_attendances.where(occurrence_date: @occurrence_date)
+        .includes(:member).index_by(&:member_id)
       @confirmed_member_ids = @event.event_rsvps.where(status: "attending").pluck(:member_id).to_set
     end
 
     def update_attendance
       authorize @event, :update?
 
+      occurrence_date = parse_occurrence_date
       attended_public_ids = Array(params.dig(:attendance, :member_ids)).map(&:to_s)
 
       Event.transaction do
         @church.members.active.find_each do |member|
-          attendance = @event.event_attendances.find_or_initialize_by(member:, church: @church)
+          attendance = @event.event_attendances.find_or_initialize_by(member:, church: @church, occurrence_date:)
           if attended_public_ids.include?(member.public_id)
             attendance.attended = true
             attendance.checked_in_at ||= Time.current
             attendance.checked_in_by ||= current_user
-            attendance.save!
-          elsif attendance.persisted?
-            attendance.destroy!
+          else
+            next unless attendance.persisted?
+
+            attendance.attended = false
           end
+          attendance.save!
+        end
+
+        walk_in_name = params.dig(:attendance, :walk_in_name).to_s.strip
+        if walk_in_name.present?
+          @event.event_attendances.create!(church: @church, occurrence_date:, guest_name: walk_in_name,
+            attended: true, checked_in_at: Time.current, checked_in_by: current_user)
         end
       end
 
-      redirect_to attendance_church_admin_event_path(@church, @event), notice: t("church_admin.events.attendance_updated")
+      redirect_to attendance_church_admin_event_path(@church, @event, occurrence_date:),
+        notice: t("church_admin.events.attendance_updated")
     end
 
     private
+
+    def parse_occurrence_date
+      Date.parse(params.dig(:attendance, :occurrence_date).to_s)
+    rescue ArgumentError, TypeError
+      @event.starts_at.to_date
+    end
 
     def set_event
       @event = @church.events.find_by_public_id!(params[:public_id])
