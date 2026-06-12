@@ -393,6 +393,13 @@ es:
     statuses:
       active: "Activa"
       inactive: "Inactiva"
+  public:
+    guest_rsvps:
+      created: "¡Asistencia confirmada! Guarda esta página para editar o cancelar."
+      received: "Recibido."
+      throttled: "Demasiados intentos. Probá de nuevo en unos minutos."
+      updated: "Tu confirmación fue actualizada."
+      cancelled: "Tu confirmación fue cancelada."
   skills:
     levels:
       advanced: "Avanzado"
