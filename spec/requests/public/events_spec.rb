@@ -60,4 +60,28 @@ RSpec.describe "Public event page" do
 
     expect(response).to have_http_status(:not_found)
   end
+
+  it "muestra confirmados, cupos restantes y datos del evento sin datos de miembros" do
+    church = public_church
+    event = create(:event, church:, visibility: "public", capacity: 50, location: "Salón principal")
+    member = create(:member, church:, first_name: "Wilson", last_name: "Segura")
+    create(:event_rsvp, church:, event:, member:, status: "attending", guests_count: 2)
+
+    get "/c/#{church.slug}/eventos/#{event.public_id}"
+
+    expect(response.body).to include("3")                  # 1 miembro + 2 acompañantes
+    expect(response.body).to include("47")                 # 50 - 3 cupos restantes
+    expect(response.body).to include("Salón principal")
+    expect(response.body).not_to include("Wilson")         # nunca nombres de miembros
+  end
+
+  it "muestra el badge de cancelado en un evento cancelado" do
+    church = public_church
+    event = create(:event, church:, visibility: "public", status: "cancelled")
+
+    get "/c/#{church.slug}/eventos/#{event.public_id}"
+
+    expect(response).to have_http_status(:ok)
+    expect(response.body).to include("Cancelado")
+  end
 end
