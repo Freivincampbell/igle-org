@@ -412,6 +412,14 @@ es:
       inactive: "Inactiva"
   member_portal:
     no_profile: "Aun no tienes un perfil de miembro asociado en esta iglesia."
+    occupations:
+      added: "Ocupación agregada."
+      removed: "Ocupación eliminada."
+      name_required: "Indica el nombre de la ocupación."
+    skills:
+      added: "Habilidad agregada."
+      removed: "Habilidad eliminada."
+      name_required: "Indica el nombre de la habilidad."
     profile_change_requests:
       created: "Solicitud de cambio enviada. Sera revisada por la administracion de la iglesia."
   profile_change_requests:
