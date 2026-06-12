@@ -66,7 +66,8 @@ module ChurchAdmin
 
       assignment = Permissions::RoleMatrixAssignment.new(
         role: @role,
-        permission_public_ids: role_permission_params
+        permission_public_ids: role_permission_params,
+        module_scopes: params.dig(:role, :module_scopes)
       )
 
       if assignment.save

@@ -14,12 +14,15 @@ Cualquier policy, controlador o servicio que necesite autorización **debe** pas
 
 ## Contrato de `PermissionChecker`
 
-Métodos públicos esperados:
+Métodos públicos (firmas implementadas):
 
-- `allow?(user_context:, module_key:, action:, scope_hint: :church, record: nil)` → `Boolean`.
-- `scope_for(user_context:, record:)` → `:own | :assigned_ministry | :church | nil`.
-- `filter(user_context:, module_key:, relation:)` → `ActiveRecord::Relation` (aplica alcance).
-- `effective_permissions(user_context:, module_key:)` → estructura con acciones permitidas + alcance.
+- `allow?(user_context:, module_key:, action:, record: nil)` → `Boolean`. Sin `record` devuelve `true` si hay algún alcance que conceda; con `record` valida que el record cae dentro del alcance efectivo.
+- `scope_for(user_context:, module_key:, action:)` → `:own | :assigned_ministry | :church | nil` (alcance efectivo, el más amplio entre los roles).
+- `filter(user_context:, module_key:, action:, relation:)` → `ActiveRecord::Relation` con el alcance aplicado.
+- `supported_scopes(module_key)` → `Array<String>` con los alcances que el módulo realmente soporta (la UI solo debe ofrecer estos).
+- `effective_permissions(user_context:, module_key:)` → (futuro, fuera de alcance del MVP actual).
+
+La lógica de "qué significa cada alcance" vive en `SCOPE_FILTERS` (una sola fuente de verdad para `filter` y la validación por record). Módulos con alcance sub-iglesia: `members` (own + assigned_ministry), `events` y `ministries` (assigned_ministry). El resto es solo `church`.
 
 `user_context` es un objeto que conoce: `user`, `current_church`, `church_membership`, `membership_roles`, `assigned_ministry_ids`.
 

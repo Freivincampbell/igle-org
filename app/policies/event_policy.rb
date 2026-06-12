@@ -33,12 +33,9 @@ class EventPolicy < ApplicationPolicy
       return scope.none if current_church.blank?
       return scope.none unless current_membership&.active?
 
-      return scope.where(church: current_church) if owner? || permission?("events", "read")
-
+      configured = permission_filter("events", "read", scope.where(church: current_church))
       led_ids = user_led_ministries.ids
-      return scope.none if led_ids.empty?
-
-      scope.where(church: current_church, ministry_id: led_ids)
+      scope.where(id: configured.select(:id)).or(scope.where(church: current_church, ministry_id: led_ids))
     end
   end
 

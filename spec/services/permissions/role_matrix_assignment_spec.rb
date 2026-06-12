@@ -40,5 +40,27 @@ RSpec.describe Permissions::RoleMatrixAssignment do
       expect(assignment.save).to be(false)
       expect(role.permissions.reload).to be_empty
     end
+
+    it "guarda el scope indicado por módulo" do
+      role = create(:role)
+      perm = Permission.find_by(module_key: "members", action_key: "read") ||
+             create(:permission, module_key: "members", action_key: "read", name: "Miembros leer")
+
+      assignment = described_class.new(role:, permission_public_ids: [ perm.public_id ],
+                                       module_scopes: { "members" => "assigned_ministry" })
+      expect(assignment.save).to be(true)
+      expect(role.role_permissions.find_by(permission: perm).scope).to eq("assigned_ministry")
+    end
+
+    it "fuerza church en módulos no configurables" do
+      role = create(:role)
+      perm = Permission.find_by(module_key: "roles", action_key: "read") ||
+             create(:permission, module_key: "roles", action_key: "read", name: "Roles leer")
+
+      assignment = described_class.new(role:, permission_public_ids: [ perm.public_id ],
+                                       module_scopes: { "roles" => "own" })
+      assignment.save
+      expect(role.role_permissions.find_by(permission: perm).scope).to eq("church")
+    end
   end
 end

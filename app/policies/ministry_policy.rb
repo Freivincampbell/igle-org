@@ -29,10 +29,9 @@ class MinistryPolicy < ApplicationPolicy
       return scope.none if current_church.blank?
       return scope.none unless current_membership&.active?
 
-      return scope.where(church: current_church) if owner? || permission?("ministries", "read")
-
+      configured = permission_filter("ministries", "read", scope.where(church: current_church))
       led = user_led_ministries
-      led.any? ? led : scope.none
+      scope.where(id: configured.select(:id)).or(scope.where(id: led.select(:id)))
     end
   end
 end
