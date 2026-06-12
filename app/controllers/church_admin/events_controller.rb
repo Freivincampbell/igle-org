@@ -24,6 +24,7 @@ module ChurchAdmin
       @rsvps = @event.event_rsvps.includes(:member)
       @attendances = @event.event_attendances.includes(:member)
       @guest_rsvps = @event.event_guest_rsvps.where(status: "attending").order(:name)
+      @no_show_members = @church.members.where(id: @event.no_show_member_ids).ordered
     end
 
     def new

@@ -74,6 +74,31 @@ class Event < ApplicationRecord
     event_attendances.where(attended: true).count
   end
 
+  def present_member_ids
+    @present_member_ids ||= event_attendances.where(attended: true).where.not(member_id: nil)
+      .distinct.pluck(:member_id).to_set
+  end
+
+  def confirmed_member_ids
+    @confirmed_member_ids ||= event_rsvps.where(status: "attending").pluck(:member_id).to_set
+  end
+
+  def no_show_member_ids
+    confirmed_member_ids - present_member_ids
+  end
+
+  def spontaneous_count
+    member_spontaneous = (present_member_ids - confirmed_member_ids).size
+    walk_in_count = event_attendances.where(attended: true, member_id: nil).count
+    member_spontaneous + walk_in_count
+  end
+
+  def no_show_rate
+    return 0 if confirmed_member_ids.empty?
+
+    (no_show_member_ids.size * 100.0 / confirmed_member_ids.size).round
+  end
+
   private
 
   def ends_at_after_starts_at
