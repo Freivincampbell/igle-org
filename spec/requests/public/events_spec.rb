@@ -69,8 +69,8 @@ RSpec.describe "Public event page" do
 
     get "/c/#{church.slug}/eventos/#{event.public_id}"
 
-    expect(response.body).to include("3")                  # 1 miembro + 2 acompañantes
-    expect(response.body).to include("47")                 # 50 - 3 cupos restantes
+    expect(response.body).to match(%r{Confirmados</dt>\s*<dd[^>]*>\s*3\s*</dd>}m)
+    expect(response.body).to match(%r{Cupos disponibles</dt>\s*<dd[^>]*>\s*47\s*</dd>}m)
     expect(response.body).to include("Salón principal")
     expect(response.body).not_to include("Wilson")         # nunca nombres de miembros
   end
