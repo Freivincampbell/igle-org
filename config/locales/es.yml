@@ -10,6 +10,7 @@ es:
         must_be_after_starts_at: "debe ser posterior a la hora de inicio"
         must_belong_to_church: "debe pertenecer a la misma iglesia"
         contains_disallowed_keys: "contiene campos no permitidos"
+        contact_required: "Debes indicar un email o un teléfono"
     attributes:
       member:
         church: "Iglesia"

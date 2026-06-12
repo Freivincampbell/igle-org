@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_30_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_11_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -188,6 +188,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_30_100000) do
     t.index ["event_id"], name: "index_event_attendances_on_event_id"
     t.index ["member_id"], name: "index_event_attendances_on_member_id"
     t.index ["public_id"], name: "index_event_attendances_on_public_id", unique: true
+  end
+
+  create_table "event_guest_rsvps", force: :cascade do |t|
+    t.string "access_token", null: false
+    t.bigint "church_id", null: false
+    t.datetime "created_at", null: false
+    t.string "email"
+    t.bigint "event_id", null: false
+    t.integer "guests_count", default: 0, null: false
+    t.string "name", null: false
+    t.string "phone"
+    t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
+    t.string "status", default: "attending", null: false
+    t.datetime "updated_at", null: false
+    t.index "event_id, lower((email)::text)", name: "index_event_guest_rsvps_on_event_and_lower_email", unique: true, where: "(email IS NOT NULL)"
+    t.index ["access_token"], name: "index_event_guest_rsvps_on_access_token", unique: true
+    t.index ["church_id", "status"], name: "index_event_guest_rsvps_on_church_id_and_status"
+    t.index ["church_id"], name: "index_event_guest_rsvps_on_church_id"
+    t.index ["event_id"], name: "index_event_guest_rsvps_on_event_id"
+    t.index ["public_id"], name: "index_event_guest_rsvps_on_public_id", unique: true
   end
 
   create_table "event_rsvps", force: :cascade do |t|
@@ -546,6 +566,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_30_100000) do
   add_foreign_key "event_attendances", "events"
   add_foreign_key "event_attendances", "members"
   add_foreign_key "event_attendances", "users", column: "checked_in_by_id"
+  add_foreign_key "event_guest_rsvps", "churches"
+  add_foreign_key "event_guest_rsvps", "events"
   add_foreign_key "event_rsvps", "churches"
   add_foreign_key "event_rsvps", "events"
   add_foreign_key "event_rsvps", "members"
