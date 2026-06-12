@@ -81,6 +81,43 @@ RSpec.describe "Church admin ministries" do
     end
   end
 
+  describe "GET /churches/:church_public_id/admin/ministries/:public_id" do
+    it "renders assigned members grouped by ministry role" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      ministry = create(:ministry, church:)
+      leader = create(:ministry_membership, :leader, ministry:).member
+      co_leader = create(:ministry_membership, :co_leader, ministry:).member
+      regular = create(:ministry_membership, ministry:).member
+
+      sign_in membership.user
+
+      get church_admin_ministry_path(church, ministry)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Co-líderes")
+      expect(response.body).to include(%(data-role-group="leader"))
+      expect(response.body).to include(%(data-role-group="co_leader"))
+      expect(response.body).to include(%(data-role-group="member"))
+      expect(response.body).to include("Rol de #{leader.full_name}")
+      expect(response.body).to include("Quitar a #{co_leader.full_name}")
+      expect(response.body).to include(regular.full_name)
+    end
+
+    it "shows the missing leader hint when no leader is assigned" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+      ministry = create(:ministry, church:)
+      create(:ministry_membership, ministry:)
+
+      sign_in membership.user
+
+      get church_admin_ministry_path(church, ministry)
+
+      expect(response.body).to include("Sin líder asignado")
+    end
+  end
+
   describe "PATCH /churches/:church_public_id/admin/ministries/:public_id/members" do
     it "assigns active church members to a ministry" do
       church = create(:church)
