@@ -97,6 +97,34 @@ module ApplicationHelper
     "##{color}"
   end
 
+  def church_accent_secondary_color(church)
+    color = church.secondary_color.to_s.strip.delete_prefix("#")
+    return "#a855f7" unless color.match?(/\A\h{6}\z/)
+
+    "##{color}"
+  end
+
+  def church_address_line(church)
+    [
+      [ church.address_line_1, church.address_line_2 ].compact_blank.join(" "),
+      church.city, church.state, church.country
+    ].compact_blank.join(", ").presence
+  end
+
+  def church_maps_url(church)
+    address = church_address_line(church)
+    return if address.blank?
+
+    "https://www.google.com/maps/search/?api=1&query=#{CGI.escape(address)}"
+  end
+
+  def church_whatsapp_url(church)
+    digits = church.whatsapp.to_s.gsub(/\D/, "")
+    return if digits.blank?
+
+    "https://wa.me/#{digits}"
+  end
+
   def event_type_label(event_type)
     t("events.event_types.#{event_type}", default: event_type.to_s.humanize)
   end
