@@ -67,6 +67,26 @@ RSpec.describe Event do
     end
   end
 
+  describe "validación de asistencia" do
+    it "calcula presentes, no-shows y espontáneos" do
+      church = create(:church)
+      event = create(:event, church:)
+      confirmed_present = create(:member, church:)
+      confirmed_absent = create(:member, church:)
+      spontaneous = create(:member, church:)
+
+      create(:event_rsvp, church:, event:, member: confirmed_present, status: "attending")
+      create(:event_rsvp, church:, event:, member: confirmed_absent, status: "attending")
+      create(:event_attendance, church:, event:, member: confirmed_present)
+      create(:event_attendance, church:, event:, member: spontaneous)
+      create(:event_attendance, :walk_in, church:, event:)
+
+      expect(event.attended_count).to eq(3)            # 2 miembros presentes + 1 walk-in
+      expect(event.no_show_member_ids).to contain_exactly(confirmed_absent.id)
+      expect(event.spontaneous_count).to eq(2)         # 1 miembro sin RSVP + 1 walk-in
+    end
+  end
+
   describe "conteo de confirmados" do
     it "suma miembros, acompañantes e invitados confirmados" do
       church = create(:church)

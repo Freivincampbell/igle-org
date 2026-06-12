@@ -8,6 +8,17 @@
   <%= form_with url: attendance_church_admin_event_path(@church, @event), method: :patch, class: "mt-6",
         data: { controller: "attendance-filter" } do %>
 
+    <% if @event.recurring? %>
+      <div class="mb-4">
+        <label for="attendance_occurrence_date" class="text-xs font-medium uppercase tracking-wide text-slate-500">Fecha de la reunión</label>
+        <input type="date" name="attendance[occurrence_date]" id="attendance_occurrence_date"
+               value="<%= @occurrence_date.iso8601 %>"
+               class="mt-1 block rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
+      </div>
+    <% else %>
+      <input type="hidden" name="attendance[occurrence_date]" value="<%= @occurrence_date.iso8601 %>">
+    <% end %>
+
     <div class="mb-4 flex items-center gap-3">
       <div class="relative flex-1">
         <input type="text" placeholder="Filtrar por nombre..."
@@ -47,6 +58,15 @@
       <% else %>
         <p class="px-5 py-8 text-center text-slate-500">No hay miembros activos.</p>
       <% end %>
+    </div>
+
+    <div class="mt-6 rounded-xl border border-dashed border-slate-300 p-4">
+      <label for="attendance_walk_in_name" class="text-xs font-medium uppercase tracking-wide text-slate-500">Agregar visitante (sin cuenta)</label>
+      <div class="mt-1 flex gap-2">
+        <input type="text" name="attendance[walk_in_name]" id="attendance_walk_in_name" placeholder="Nombre del visitante"
+               class="w-full max-w-sm rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
+      </div>
+      <p class="mt-1 text-xs text-slate-400">Se contará como presente al guardar. Para varios, guarda y repite.</p>
     </div>
 
     <div class="mt-6 flex justify-end gap-3">

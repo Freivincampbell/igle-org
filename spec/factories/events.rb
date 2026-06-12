@@ -31,11 +31,17 @@ FactoryBot.define do
     association :member
     attended { true }
     checked_in_at { Time.current }
+    occurrence_date { nil }
 
     after(:build) do |att|
       att.church ||= att.event&.church
       att.event&.update_columns(church_id: att.church_id) if att.event && att.event.church_id != att.church_id
       att.member&.update_columns(church_id: att.church_id) if att.member && att.member.church_id != att.church_id
+    end
+
+    trait :walk_in do
+      member { nil }
+      guest_name { "Visitante" }
     end
   end
 end
