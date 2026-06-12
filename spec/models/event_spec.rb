@@ -66,4 +66,22 @@ RSpec.describe Event do
       expect(church_a.events).not_to include(event_b)
     end
   end
+
+  describe "conteo de confirmados" do
+    it "suma miembros, acompañantes e invitados confirmados" do
+      church = create(:church)
+      event = create(:event, church:, visibility: "public")
+      create(:event_rsvp, church:, event:, status: "attending", guests_count: 2)   # 3
+      create(:event_rsvp, church:, event:, status: "maybe", guests_count: 5)       # 0
+      create(:event_guest_rsvp, church:, event:, guests_count: 1)                  # 2
+      create(:event_guest_rsvp, :cancelled, church:, event:)                       # 0
+
+      expect(event.confirmed_attendees_count).to eq(5)
+      expect(event.member_attending_count).to eq(1)
+      expect(event.member_guests_count).to eq(2)
+      expect(event.guest_attendees_count).to eq(2)
+      expect(event.maybe_count).to eq(1)
+      expect(event.not_attending_count).to eq(0)
+    end
+  end
 end
