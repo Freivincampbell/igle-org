@@ -88,6 +88,15 @@ module ApplicationHelper
     t("families.statuses.#{status}", default: status.to_s.humanize)
   end
 
+  # Color de acento de la página pública. Re-valida el formato como defensa
+  # en profundidad: el valor termina en un atributo style.
+  def church_accent_color(church)
+    color = church.primary_color.to_s.strip.delete_prefix("#")
+    return "#7c3aed" unless color.match?(/\A\h{6}\z/)
+
+    "##{color}"
+  end
+
   def event_type_label(event_type)
     t("events.event_types.#{event_type}", default: event_type.to_s.humanize)
   end

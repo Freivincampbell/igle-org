@@ -1,12 +1,7 @@
 <% content_for :title, "#{@event.title} — #{@church.name}" %>
-<%
-  primary = @church.primary_color.presence
-  primary = "##{primary}" if primary && !primary.start_with?("#")
-  accent = primary || "#7c3aed"
-%>
 
 <section class="mx-auto w-full max-w-3xl px-6 py-12">
-  <p class="text-xs font-semibold uppercase tracking-widest" style="color: <%= accent %>;">
+  <p class="text-xs font-semibold uppercase tracking-widest" style="color: <%= church_accent_color(@church) %>;">
     <%= link_to @church.name, public_church_path(@church.slug), class: "hover:underline" %>
   </p>
   <h1 class="mt-2 text-3xl font-bold text-slate-900"><%= @event.title %></h1>

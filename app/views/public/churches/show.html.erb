@@ -1,9 +1,4 @@
 <% content_for :title, @church.name %>
-<%
-  primary = @church.primary_color.presence
-  primary = "##{primary}" if primary && !primary.start_with?("#")
-  accent = primary || "#7c3aed"
-%>
 
 <section class="mx-auto w-full max-w-3xl px-6 py-12">
   <header class="flex flex-col items-center text-center">
@@ -11,7 +6,7 @@
       <%= image_tag @church.logo.variant(resize_to_limit: [ 200, 200 ]).processed,
             alt: @church.name, class: "mb-6 h-28 w-28 rounded-full object-cover shadow-card" %>
     <% end %>
-    <h1 class="text-4xl font-bold text-slate-900" style="color: <%= accent %>;"><%= @church.name %></h1>
+    <h1 class="text-4xl font-bold text-slate-900" style="color: <%= church_accent_color(@church) %>;"><%= @church.name %></h1>
     <% if @church.description.present? %>
       <p class="mt-4 max-w-2xl text-base leading-relaxed text-slate-600"><%= @church.description %></p>
     <% end %>
@@ -19,7 +14,7 @@
 
   <% if @service_times.any? %>
     <section class="mt-12">
-      <h2 class="mb-4 text-xs font-semibold uppercase tracking-widest" style="color: <%= accent %>;">Horarios de culto</h2>
+      <h2 class="mb-4 text-xs font-semibold uppercase tracking-widest" style="color: <%= church_accent_color(@church) %>;">Horarios de culto</h2>
       <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
         <ul class="divide-y divide-slate-200">
           <% @service_times.each do |service_time| %>
@@ -40,7 +35,7 @@
 
   <% if @upcoming_events.any? %>
     <section class="mt-12">
-      <h2 class="mb-4 text-xs font-semibold uppercase tracking-widest" style="color: <%= accent %>;">Próximos eventos</h2>
+      <h2 class="mb-4 text-xs font-semibold uppercase tracking-widest" style="color: <%= church_accent_color(@church) %>;">Próximos eventos</h2>
       <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card">
         <ul class="divide-y divide-slate-200">
           <% @upcoming_events.each do |event| %>
