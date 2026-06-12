@@ -4,6 +4,10 @@ Rails.application.routes.draw do
   root "home#index"
   get "/c/:slug", to: "public/churches#show", as: :public_church
 
+  scope "/c/:slug", module: :public, as: :public_church do
+    resources :events, path: "eventos", param: :public_id, only: :show
+  end
+
   namespace :platform do
     root "churches#index"
 
