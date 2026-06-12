@@ -92,4 +92,69 @@ RSpec.describe "Public guest RSVPs" do
       expect(response.body).to include("Demasiados intentos")
     end
   end
+
+  describe "GET /c/:slug/rsvp/:access_token" do
+    it "muestra la confirmación del invitado" do
+      church = public_church
+      rsvp = create(:event_guest_rsvp, church:, event: create(:event, church:, visibility: "public"))
+
+      get "/c/#{church.slug}/rsvp/#{rsvp.access_token}"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(rsvp.name)
+      expect(response.body).to include(rsvp.event.title)
+    end
+
+    it "404 con token inexistente" do
+      church = public_church
+
+      get "/c/#{church.slug}/rsvp/no-existe"
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "404 con token de otra iglesia (aislamiento)" do
+      church_a = public_church(slug: "iglesia-a")
+      church_b = public_church(slug: "iglesia-b")
+      rsvp_b = create(:event_guest_rsvp, church: church_b,
+                      event: create(:event, church: church_b, visibility: "public"))
+
+      get "/c/#{church_a.slug}/rsvp/#{rsvp_b.access_token}"
+
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "PATCH /c/:slug/rsvp/:access_token" do
+    it "actualiza los acompañantes" do
+      church = public_church
+      rsvp = create(:event_guest_rsvp, church:, event: create(:event, church:, visibility: "public"), guests_count: 0)
+
+      patch "/c/#{church.slug}/rsvp/#{rsvp.access_token}", params: valid_params(name: rsvp.name, email: rsvp.email, guests_count: 4)
+
+      expect(response).to redirect_to("/c/#{church.slug}/rsvp/#{rsvp.access_token}")
+      expect(rsvp.reload.guests_count).to eq(4)
+    end
+
+    it "cancela la confirmación (soft-cancel, sin destroy)" do
+      church = public_church
+      rsvp = create(:event_guest_rsvp, church:, event: create(:event, church:, visibility: "public"))
+
+      patch "/c/#{church.slug}/rsvp/#{rsvp.access_token}", params: { cancel: "1" }
+
+      expect(rsvp.reload).to be_cancelled
+      expect(EventGuestRsvp.count).to eq(1)
+    end
+
+    it "rechaza la edición que excede el cupo" do
+      church = public_church
+      event = create(:event, church:, visibility: "public", capacity: 2)
+      rsvp = create(:event_guest_rsvp, church:, event:, guests_count: 1)
+
+      patch "/c/#{church.slug}/rsvp/#{rsvp.access_token}", params: valid_params(name: rsvp.name, email: rsvp.email, guests_count: 5)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(rsvp.reload.guests_count).to eq(1)
+    end
+  end
 end
