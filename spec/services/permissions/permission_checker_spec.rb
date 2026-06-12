@@ -57,4 +57,99 @@ RSpec.describe Permissions::PermissionChecker do
       expect(described_class.allow?(user_context: context, module_key: "members", action: "deactivate")).to be(false)
     end
   end
+
+  describe "alcances" do
+    def context_for(membership)
+      Permissions::UserContext.new(user: membership.user, current_church: membership.church, church_membership: membership)
+    end
+
+    def grant(role:, module_key:, action:, scope:)
+      perm = Permission.find_by(module_key:, action_key: action) ||
+             create(:permission, module_key:, action_key: action, name: "#{module_key} #{action}")
+      create(:role_permission, role:, permission: perm, scope:)
+    end
+
+    it "scope_for devuelve el alcance configurado" do
+      church = create(:church)
+      membership = create(:church_membership, church:)
+      role = create(:role, church:)
+      create(:membership_role, church_membership: membership, role:)
+      grant(role:, module_key: "members", action: "read", scope: "assigned_ministry")
+
+      result = described_class.scope_for(user_context: context_for(membership), module_key: "members", action: "read")
+
+      expect(result).to eq(:assigned_ministry)
+    end
+
+    it "devuelve el alcance más amplio entre roles (church gana)" do
+      church = create(:church)
+      membership = create(:church_membership, church:)
+      role_a = create(:role, church:)
+      role_b = create(:role, church:)
+      create(:membership_role, church_membership: membership, role: role_a)
+      create(:membership_role, church_membership: membership, role: role_b)
+      grant(role: role_a, module_key: "members", action: "read", scope: "own")
+      grant(role: role_b, module_key: "members", action: "read", scope: "church")
+
+      result = described_class.scope_for(user_context: context_for(membership), module_key: "members", action: "read")
+
+      expect(result).to eq(:church)
+    end
+
+    it "filter por own devuelve solo el member del usuario" do
+      church = create(:church)
+      membership = create(:church_membership, church:)
+      own_member = create(:member, church:, user: membership.user)
+      _other = create(:member, church:)
+      role = create(:role, church:)
+      create(:membership_role, church_membership: membership, role:)
+      grant(role:, module_key: "members", action: "read", scope: "own")
+
+      relation = described_class.filter(user_context: context_for(membership), module_key: "members", action: "read", relation: church.members)
+
+      expect(relation).to contain_exactly(own_member)
+    end
+
+    it "filter por assigned_ministry devuelve solo miembros de ministerios liderados" do
+      church = create(:church)
+      membership = create(:church_membership, church:)
+      leader_member = create(:member, church:, user: membership.user)
+      led = create(:ministry, church:)
+      create(:ministry_membership, ministry: led, member: leader_member, ministry_role: "leader", status: "active")
+      teammate = create(:member, church:)
+      create(:ministry_membership, ministry: led, member: teammate, ministry_role: "member", status: "active")
+      outsider = create(:member, church:)
+      role = create(:role, church:)
+      create(:membership_role, church_membership: membership, role:)
+      grant(role:, module_key: "members", action: "read", scope: "assigned_ministry")
+
+      relation = described_class.filter(user_context: context_for(membership), module_key: "members", action: "read", relation: church.members)
+
+      expect(relation).to include(teammate)
+      expect(relation).not_to include(outsider)
+    end
+
+    it "allow? con record fuera del alcance own devuelve false" do
+      church = create(:church)
+      membership = create(:church_membership, church:)
+      create(:member, church:, user: membership.user)
+      other = create(:member, church:)
+      role = create(:role, church:)
+      create(:membership_role, church_membership: membership, role:)
+      grant(role:, module_key: "members", action: "read", scope: "own")
+
+      allowed = described_class.allow?(user_context: context_for(membership), module_key: "members", action: "read", record: other)
+
+      expect(allowed).to be(false)
+    end
+
+    it "owner siempre tiene alcance church" do
+      church = create(:church)
+      membership = create(:church_membership, :owner, church:)
+
+      result = described_class.scope_for(user_context: context_for(membership), module_key: "members", action: "read")
+
+      expect(result).to eq(:church)
+    end
+  end
 end
