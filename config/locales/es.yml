@@ -380,8 +380,8 @@ es:
       inactive: "Inactivo"
   ministries:
     roles:
-      co_leader: "Co-lider"
-      leader: "Lider"
+      co_leader: "Co-líder"
+      leader: "Líder"
       member: "Miembro"
     statuses:
       active: "Activo"

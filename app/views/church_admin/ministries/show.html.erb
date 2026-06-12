@@ -98,31 +98,50 @@
               </div>
             </div>
 
-            <%# ── Sección 2: Miembros asignados (con remove) ── %>
-            <div class="px-5 py-4">
-              <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Miembros asignados</p>
+            <%# ── Sección 2: Asignados agrupados por rol ── %>
+            <%
+              grouped_memberships = @active_ministry_memberships.group_by { |_, mm| mm.ministry_role }
+              role_groups = [
+                { role: "leader",    title: "Líder",      empty: "Sin líder asignado",
+                  empty_classes: "rounded-lg border border-dashed border-amber-200 bg-amber-50/50 py-3 text-center text-xs text-amber-600" },
+                { role: "co_leader", title: "Co-líderes", empty: "Sin co-líderes",
+                  empty_classes: "rounded-lg border border-dashed border-slate-200 py-3 text-center text-xs text-slate-400" },
+                { role: "member",    title: "Miembros",   empty: "Aún no hay miembros. Busca uno arriba para añadirlo.",
+                  empty_classes: "rounded-lg border border-dashed border-slate-200 py-3 text-center text-xs text-slate-400" }
+              ]
+            %>
+            <div data-member-search-target="tagsZone" class="px-5 py-4">
+              <% role_groups.each_with_index do |group, index| %>
+                <% rows = grouped_memberships.fetch(group[:role], []) %>
+                <div class="<%= 'mt-5' if index.positive? %>">
+                  <div class="mb-2 flex items-center justify-between">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= group[:title] %></p>
+                    <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500"
+                          data-count-for="<%= group[:role] %>"><%= rows.size %></span>
+                  </div>
 
-              <%# Empty state %>
-              <div data-member-search-target="emptyState"
-                   class="<%= @active_ministry_memberships.any? ? 'hidden' : '' %> rounded-lg border border-dashed border-slate-200 py-6 text-center">
-                <p class="text-xs text-slate-400">Aún no hay miembros asignados.</p>
-                <p class="mt-0.5 text-xs text-slate-400">Busca un miembro arriba para añadirlo.</p>
-              </div>
+                  <div data-member-search-target="group"
+                       data-role-group="<%= group[:role] %>"
+                       class="divide-y divide-slate-50">
+                    <% rows.each do |public_id, mm| %>
+                      <%= render "church_admin/ministries/member_row",
+                            public_id: public_id,
+                            name: mm.member.full_name,
+                            initials: member_initials(mm.member),
+                            avatar_color: member_avatar_color(public_id),
+                            ids_field: "ministry[member_public_ids][]",
+                            meta_field: "ministry[member_roles][#{public_id}]",
+                            meta_options: role_options,
+                            meta_selected: mm.ministry_role %>
+                    <% end %>
+                  </div>
 
-              <%# Lista con rol + quitar %>
-              <div data-member-search-target="tagsZone" class="divide-y divide-slate-50">
-                <% @active_ministry_memberships.each do |public_id, mm| %>
-                  <%= render "church_admin/ministries/member_row",
-                        public_id: public_id,
-                        name: mm.member.full_name,
-                        initials: member_initials(mm.member),
-                        avatar_color: member_avatar_color(public_id),
-                        ids_field: "ministry[member_public_ids][]",
-                        meta_field: "ministry[member_roles][#{public_id}]",
-                        meta_options: role_options,
-                        meta_selected: mm.ministry_role %>
-                <% end %>
-              </div>
+                  <div data-empty-for="<%= group[:role] %>"
+                       class="<%= 'hidden' if rows.any? %> <%= group[:empty_classes] %>">
+                    <%= group[:empty] %>
+                  </div>
+                </div>
+              <% end %>
             </div>
 
             <%# Template para clonado JS %>

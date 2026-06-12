@@ -1,7 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Mismas clases por rol que en church_admin/ministries/_member_row.html.erb
+const ROLE_SELECT_CLASSES = {
+  leader: ["border-violet-200", "bg-violet-50", "text-violet-700"],
+  co_leader: ["border-sky-200", "bg-sky-50", "text-sky-700"],
+  member: ["border-slate-200", "bg-slate-50", "text-slate-600"]
+}
+
 export default class extends Controller {
-  static targets = ["input", "results", "tagsZone", "template", "searchArea", "emptyState"]
+  static targets = ["input", "results", "tagsZone", "template", "searchArea", "emptyState", "group"]
   static values = {
     url: String,
     maxSelections: { type: Number, default: 0 }
@@ -14,6 +21,7 @@ export default class extends Controller {
     })
     this.updateEmptyState()
     this.updateSearchAreaVisibility()
+    this.updateGroups()
     this.boundClickOutside = this.clickOutside.bind(this)
     document.addEventListener("click", this.boundClickOutside)
   }
@@ -65,18 +73,23 @@ export default class extends Controller {
 
     root.querySelectorAll("[data-tag-meta]").forEach((el) => {
       if (el.name) el.name = el.name.replace(/__ID__/g, publicId)
+      if (name) el.setAttribute("aria-label", `Rol de ${name}`)
     })
+
+    const removeButton = root.querySelector("[data-action~='member-search#removeTag']")
+    if (removeButton && name) removeButton.setAttribute("aria-label", `Quitar a ${name}`)
 
     const primaryEl = root.querySelector("[data-tag-primary]")
     if (primaryEl) primaryEl.value = publicId
 
-    this.tagsZoneTarget.appendChild(fragment)
+    this.zoneForRow(root).appendChild(fragment)
     this.selected.add(publicId)
 
     this.inputTarget.value = ""
     this.clearResults()
     this.updateEmptyState()
     this.updateSearchAreaVisibility()
+    this.updateGroups()
     if (this.hasSearchAreaTarget && !this.searchAreaTarget.hidden) this.inputTarget.focus()
   }
 
@@ -88,6 +101,23 @@ export default class extends Controller {
     root.remove()
     this.updateEmptyState()
     this.updateSearchAreaVisibility()
+    this.updateGroups()
+  }
+
+  roleChanged(event) {
+    const select = event.target
+    this.applyRoleStyle(select)
+    if (!this.hasGroupTarget) return
+
+    const row = select.closest("[data-member-tag]")
+    const zone = this.groupTargets.find((z) => z.dataset.roleGroup === select.value)
+    if (!row || !zone || zone.contains(row)) return
+
+    zone.appendChild(row)
+    row.classList.remove("animate-fade-in-up")
+    void row.offsetWidth // reinicia la animación
+    row.classList.add("animate-fade-in-up")
+    this.updateGroups()
   }
 
   keydown(event) {
@@ -119,5 +149,34 @@ export default class extends Controller {
     if (!this.hasSearchAreaTarget) return
     const atMax = this.maxSelectionsValue > 0 && this.selected.size >= this.maxSelectionsValue
     this.searchAreaTarget.hidden = atMax
+  }
+
+  // ── Zonas agrupadas por rol (opcionales; solo la vista de ministerios las define) ──
+
+  zoneForRow(row) {
+    if (!this.hasGroupTarget) return this.tagsZoneTarget
+    const role = row.querySelector("[data-tag-meta]")?.value
+    return this.groupTargets.find((z) => z.dataset.roleGroup === role) || this.tagsZoneTarget
+  }
+
+  updateGroups() {
+    if (!this.hasGroupTarget) return
+    this.groupTargets.forEach((zone) => {
+      const role = zone.dataset.roleGroup
+      const count = zone.querySelectorAll("[data-member-tag]").length
+
+      const countEl = this.element.querySelector(`[data-count-for="${role}"]`)
+      if (countEl) countEl.textContent = count
+
+      const emptyEl = this.element.querySelector(`[data-empty-for="${role}"]`)
+      if (emptyEl) emptyEl.classList.toggle("hidden", count > 0)
+    })
+  }
+
+  applyRoleStyle(select) {
+    const classes = ROLE_SELECT_CLASSES[select.value]
+    if (!classes) return
+    Object.values(ROLE_SELECT_CLASSES).flat().forEach((c) => select.classList.remove(c))
+    select.classList.add(...classes)
   }
 }

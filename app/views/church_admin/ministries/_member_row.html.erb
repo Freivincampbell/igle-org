@@ -26,10 +26,18 @@
   <input type="hidden" data-tag-id-input name="<%= ids_field %>"
          value="<%= public_id == "__ID__" ? "" : public_id %>">
 
-  <%# Selector de rol %>
+  <%# Selector de rol — mismas clases por rol que ROLE_SELECT_CLASSES en member_search_controller.js %>
   <% if meta_field.present? %>
+    <%
+      role_select_classes = {
+        "leader"    => "border-violet-200 bg-violet-50 text-violet-700",
+        "co_leader" => "border-sky-200 bg-sky-50 text-sky-700"
+      }.fetch(meta_selected.to_s, "border-slate-200 bg-slate-50 text-slate-600")
+    %>
     <select data-tag-meta name="<%= meta_field %>"
-            class="w-24 shrink-0 rounded-lg border border-slate-200 bg-slate-50 py-1 pl-2 pr-6 text-xs font-medium text-slate-600 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-200 transition-colors">
+            data-action="change->member-search#roleChanged"
+            aria-label="Rol de <%= name %>"
+            class="w-28 shrink-0 rounded-lg border py-1 pl-2 pr-6 text-xs font-medium focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-200 transition-colors <%= role_select_classes %>">
       <% Array(meta_options).each do |label, value| %>
         <option value="<%= value %>" <%= "selected" if value == meta_selected %>><%= label %></option>
       <% end %>
@@ -39,7 +47,7 @@
   <%# Quitar %>
   <button type="button" data-action="member-search#removeTag"
           class="shrink-0 rounded-md p-1 text-slate-400 transition-all hover:bg-rose-50 hover:text-rose-500"
-          aria-label="Quitar">
+          aria-label="Quitar a <%= name %>">
     <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
     </svg>
