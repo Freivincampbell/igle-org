@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_11_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_12_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -486,6 +486,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_180000) do
     t.bigint "permission_id", null: false
     t.uuid "public_id", default: -> { "gen_random_uuid()" }, null: false
     t.bigint "role_id", null: false
+    t.string "scope", default: "church", null: false
     t.datetime "updated_at", null: false
     t.index ["permission_id"], name: "index_role_permissions_on_permission_id"
     t.index ["public_id"], name: "index_role_permissions_on_public_id", unique: true

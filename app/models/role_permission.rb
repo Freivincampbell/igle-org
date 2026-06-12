@@ -5,6 +5,9 @@ class RolePermission < ApplicationRecord
   belongs_to :role
   belongs_to :permission
 
+  SCOPES = %w[own assigned_ministry church].freeze
+  enum :scope, SCOPES.index_with(&:itself), default: "church", validate: true
+
   validates :permission_id, uniqueness: { scope: :role_id }
   validate :pastoral_permission_requires_pastoral_role
 
