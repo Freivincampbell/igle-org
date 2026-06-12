@@ -31,12 +31,12 @@
     </div>
   <% end %>
 
-  <div class="mt-8 grid gap-6 lg:grid-cols-[1fr_22rem]">
+  <div class="mt-8 space-y-6">
 
-    <%# ── Columna principal: solo detalle ── %>
-    <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card self-start">
+    <%# ── Detalle ── %>
+    <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
       <h2 class="text-base font-semibold text-slate-900">Detalle</h2>
-      <dl class="mt-5 grid gap-4 sm:grid-cols-2">
+      <dl class="mt-5 grid gap-4 sm:grid-cols-3">
         <div>
           <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Estado</dt>
           <dd class="mt-1">
@@ -51,35 +51,35 @@
           <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Miembros activos</dt>
           <dd class="mt-1 text-sm font-semibold text-slate-900"><%= @ministry.ministry_memberships.active.count %></dd>
         </div>
-        <div class="sm:col-span-2">
+        <div class="sm:col-span-3">
           <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Descripcion</dt>
           <dd class="mt-1 text-sm text-slate-700"><%= @ministry.description.presence || "No definida" %></dd>
         </div>
       </dl>
     </section>
 
-    <%# ── Sidebar: panel unificado de gestión ── %>
-    <aside>
-      <div class="rounded-xl border border-slate-200 bg-white shadow-card sticky top-6">
+    <%# ── Gestión de miembros: ancho completo bajo el detalle ── %>
+    <section class="rounded-xl border border-slate-200 bg-white shadow-card">
 
-        <%# Header %>
-        <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-          <h2 class="text-sm font-semibold text-slate-900">Gestión de miembros</h2>
-          <span class="text-xs font-medium text-slate-400"
-                data-member-count>
-            <%= @active_ministry_memberships.size %> asignado<%= "s" if @active_ministry_memberships.size != 1 %>
-          </span>
-        </div>
+      <%# Header %>
+      <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+        <h2 class="text-base font-semibold text-slate-900">Gestión de miembros</h2>
+        <span class="text-xs font-medium text-slate-400"
+              data-member-count>
+          <%= @active_ministry_memberships.size %> asignado<%= "s" if @active_ministry_memberships.size != 1 %>
+        </span>
+      </div>
 
-        <%= form_with url: members_church_admin_ministry_path(@church, @ministry), method: :patch do |form| %>
-          <% role_options = MinistryMembership.ministry_roles.keys.map { |r| [ ministry_role_label(r), r ] } %>
+      <%= form_with url: members_church_admin_ministry_path(@church, @ministry), method: :patch do |form| %>
+        <% role_options = MinistryMembership.ministry_roles.keys.map { |r| [ ministry_role_label(r), r ] } %>
 
-          <div data-controller="member-search"
-               data-member-search-url-value="<%= search_church_admin_members_path(@church) %>">
+        <div data-controller="member-search"
+             data-member-search-url-value="<%= search_church_admin_members_path(@church) %>">
 
-            <%# ── Sección 1: Agregar miembro ── %>
-            <div class="border-b border-slate-100 px-5 py-4" data-member-search-target="searchArea">
-              <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Agregar miembro</p>
+          <%# ── Agregar miembro ── %>
+          <div class="border-b border-slate-100 px-6 py-4" data-member-search-target="searchArea">
+            <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Agregar miembro</p>
+            <div class="relative max-w-md">
               <div class="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 focus-within:border-violet-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-violet-200 transition-colors">
                 <svg class="h-3.5 w-3.5 shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -90,30 +90,41 @@
                        data-action="input->member-search#search keydown->member-search#keydown"
                        class="w-full bg-transparent py-1.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none">
               </div>
-              <div class="relative">
-                <turbo-frame id="member-results-ministry"
-                             data-member-search-target="results"
-                             class="absolute left-0 right-0 z-20 mt-1 block max-h-60 overflow-auto rounded-xl border border-slate-200 bg-white shadow-card empty:hidden">
-                </turbo-frame>
-              </div>
+              <turbo-frame id="member-results-ministry"
+                           data-member-search-target="results"
+                           class="absolute left-0 right-0 z-20 mt-1 block max-h-60 overflow-auto rounded-xl border border-slate-200 bg-white shadow-card empty:hidden">
+              </turbo-frame>
             </div>
+          </div>
 
-            <%# ── Sección 2: Asignados agrupados por rol ── %>
-            <%
-              grouped_memberships = @active_ministry_memberships.group_by { |_, mm| mm.ministry_role }
-              role_groups = [
-                { role: "leader",    title: "Líder",      empty: "Sin líder asignado",
-                  empty_classes: "rounded-lg border border-dashed border-amber-200 bg-amber-50/50 py-3 text-center text-xs text-amber-600" },
-                { role: "co_leader", title: "Co-líderes", empty: "Sin co-líderes",
-                  empty_classes: "rounded-lg border border-dashed border-slate-200 py-3 text-center text-xs text-slate-400" },
-                { role: "member",    title: "Miembros",   empty: "Aún no hay miembros. Busca uno arriba para añadirlo.",
-                  empty_classes: "rounded-lg border border-dashed border-slate-200 py-3 text-center text-xs text-slate-400" }
-              ]
-            %>
-            <div data-member-search-target="tagsZone" class="px-5 py-4">
-              <% role_groups.each_with_index do |group, index| %>
+          <%# ── Asignados agrupados por rol ── %>
+          <%
+            grouped_memberships = @active_ministry_memberships.group_by { |_, mm| mm.ministry_role }
+            leadership_groups = [
+              { role: "leader",    title: "Líder",      empty: "Sin líder asignado",
+                empty_classes: "rounded-lg border border-dashed border-amber-200 bg-amber-50/50 py-3 text-center text-xs text-amber-600" },
+              { role: "co_leader", title: "Co-líderes", empty: "Sin co-líderes",
+                empty_classes: "rounded-lg border border-dashed border-slate-200 py-3 text-center text-xs text-slate-400" }
+            ]
+            member_rows = grouped_memberships.fetch("member", [])
+            row_locals = ->(public_id, mm) {
+              { public_id: public_id,
+                name: mm.member.full_name,
+                initials: member_initials(mm.member),
+                avatar_color: member_avatar_color(public_id),
+                ids_field: "ministry[member_public_ids][]",
+                meta_field: "ministry[member_roles][#{public_id}]",
+                meta_options: role_options,
+                meta_selected: mm.ministry_role }
+            }
+          %>
+          <div data-member-search-target="tagsZone" class="px-6 py-5">
+
+            <%# Liderazgo: dos columnas %>
+            <div class="grid gap-6 md:grid-cols-2">
+              <% leadership_groups.each do |group| %>
                 <% rows = grouped_memberships.fetch(group[:role], []) %>
-                <div class="<%= 'mt-5' if index.positive? %>">
+                <div class="rounded-lg border border-slate-100 p-4">
                   <div class="mb-2 flex items-center justify-between">
                     <p class="text-xs font-semibold uppercase tracking-wide text-slate-400"><%= group[:title] %></p>
                     <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500"
@@ -124,15 +135,7 @@
                        data-role-group="<%= group[:role] %>"
                        class="divide-y divide-slate-50">
                     <% rows.each do |public_id, mm| %>
-                      <%= render "church_admin/ministries/member_row",
-                            public_id: public_id,
-                            name: mm.member.full_name,
-                            initials: member_initials(mm.member),
-                            avatar_color: member_avatar_color(public_id),
-                            ids_field: "ministry[member_public_ids][]",
-                            meta_field: "ministry[member_roles][#{public_id}]",
-                            meta_options: role_options,
-                            meta_selected: mm.ministry_role %>
+                      <%= render "church_admin/ministries/member_row", **row_locals.call(public_id, mm) %>
                     <% end %>
                   </div>
 
@@ -144,31 +147,56 @@
               <% end %>
             </div>
 
-            <%# Template para clonado JS %>
-            <template data-member-search-target="template">
-              <%= render "church_admin/ministries/member_row",
-                    public_id: "__ID__",
-                    name: "",
-                    initials: "",
-                    avatar_color: "bg-violet-100 text-violet-700",
-                    ids_field: "ministry[member_public_ids][]",
-                    meta_field: "ministry[member_roles][__ID__]",
-                    meta_options: role_options,
-                    meta_selected: "member" %>
-            </template>
+            <%# Miembros: grilla a lo ancho %>
+            <div class="mt-6">
+              <div class="mb-2 flex items-center justify-between">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Miembros</p>
+                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500"
+                      data-count-for="member"><%= member_rows.size %></span>
+              </div>
 
+              <div data-member-search-target="group"
+                   data-role-group="member"
+                   class="grid gap-x-8 sm:grid-cols-2 xl:grid-cols-3">
+                <% member_rows.each do |public_id, mm| %>
+                  <%= render "church_admin/ministries/member_row", **row_locals.call(public_id, mm) %>
+                <% end %>
+              </div>
+
+              <div data-empty-for="member"
+                   class="<%= 'hidden' if member_rows.any? %> rounded-lg border border-dashed border-slate-200 py-3 text-center text-xs text-slate-400">
+                Aún no hay miembros. Busca uno arriba para añadirlo.
+              </div>
+            </div>
           </div>
 
-          <% if policy(@ministry).edit? %>
-            <div class="border-t border-slate-100 px-5 py-4">
-              <%= form.submit "Guardar asignación",
-                    class: "w-full rounded-lg bg-violet-600 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
-            </div>
-          <% end %>
-        <% end %>
+          <%# Template para clonado JS %>
+          <template data-member-search-target="template">
+            <%= render "church_admin/ministries/member_row",
+                  public_id: "__ID__",
+                  name: "",
+                  initials: "",
+                  avatar_color: "bg-violet-100 text-violet-700",
+                  ids_field: "ministry[member_public_ids][]",
+                  meta_field: "ministry[member_roles][__ID__]",
+                  meta_options: role_options,
+                  meta_selected: "member" %>
+          </template>
 
-      </div>
-    </aside>
+        </div>
+
+        <% if policy(@ministry).edit? %>
+          <%# Barra de guardado sticky: siempre visible aunque la lista sea larga %>
+          <div class="sticky bottom-0 z-10 rounded-b-xl border-t border-slate-100 bg-white/95 px-6 py-4 backdrop-blur">
+            <div class="flex justify-end">
+              <%= form.submit "Guardar asignación",
+                    class: "rounded-lg bg-violet-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 transition-colors cursor-pointer" %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+
+    </section>
 
   </div>
 </section>

@@ -107,6 +107,31 @@ que usan `member-search`.
   Stimulus se verifica manualmente (no se introduce Selenium en este cambio).
 - Verificación: `bundle exec rspec` + `bundle exec rubocop`.
 
+## Iteración 2 (2026-06-11): layout a lo ancho + guardado sticky
+
+Feedback del usuario: con listas largas, el panel lateral angosto obligaba a
+hacer scroll para llegar al botón "Guardar asignación", y el espacio bajo
+"Detalle" quedaba desaprovechado.
+
+Cambios sobre el diseño original (solo `show.html.erb`; sin cambios de JS ni
+backend):
+
+- El panel "Gestión de miembros" deja el sidebar de 22rem y pasa a **ancho
+  completo debajo de la tarjeta "Detalle"** (`space-y-6` en una sola columna).
+- **Liderazgo en dos columnas** (`md:grid-cols-2`): tarjetas Líder y
+  Co-líderes lado a lado, cada una con borde sutil (`border-slate-100`).
+- **Miembros en grilla** (`sm:grid-cols-2 xl:grid-cols-3`): una lista de 30
+  miembros ocupa ~10 filas de alto en desktop en lugar de 30.
+- **Barra de guardado sticky** (`sticky bottom-0` + `bg-white/95 backdrop-blur`):
+  el botón "Guardar asignación" queda siempre visible sin importar el largo de
+  la lista — elimina el scroll para guardar.
+- La búsqueda se acota a `max-w-md` para que el dropdown de resultados no se
+  estire a todo el ancho.
+- "Detalle" pasa a `sm:grid-cols-3` para aprovechar el ancho completo.
+
+El controller Stimulus no necesitó cambios: las zonas de grupo son targets y
+funcionan igual en cualquier posición del DOM.
+
 ## Fuera de alcance
 
 - Forzar un único líder por ministerio (regla de dominio nueva; requeriría
