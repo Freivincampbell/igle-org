@@ -88,10 +88,8 @@ RSpec.describe "Public church page" do
       expect(response.body).not_to include("Reunion interna oculta")
     end
 
-    it "no expone datos sensibles ni notas de horarios" do
+    it "no expone datos de personas ni notas internas de horarios" do
       church = create(:church, name: "Iglesia Central", slug: "central",
-                      phone: "555-1234", email: "secreto@iglesia.test",
-                      address_line_1: "Calle Privada 123",
                       public_page_enabled: true, status: "active")
       create(:church_service_time, church:, name: "Culto", day_of_week: 0,
              starts_at: "10:00", ends_at: "12:00", notes: "Nota interna confidencial",
@@ -100,11 +98,70 @@ RSpec.describe "Public church page" do
 
       get "/c/central"
 
-      expect(response.body).not_to include("555-1234")
-      expect(response.body).not_to include("secreto@iglesia.test")
-      expect(response.body).not_to include("Calle Privada 123")
       expect(response.body).not_to include("Nota interna confidencial")
       expect(response.body).not_to include(member.full_name)
+    end
+  end
+
+  describe "rediseño: secciones e información de contacto de la iglesia" do
+    def enabled_church(**attrs)
+      create(:church, { slug: "central", public_page_enabled: true, status: "active" }.merge(attrs))
+    end
+
+    it "muestra el contacto y la ubicación propios de la iglesia" do
+      enabled_church(name: "Iglesia Central", email: "hola@central.test", phone: "2222-3333",
+                     address_line_1: "Av. Central 120", city: "San José", country: "Costa Rica")
+
+      get "/c/central"
+
+      expect(response.body).to include("hola@central.test")
+      expect(response.body).to include("Av. Central 120")
+      expect(response.body).to include("google.com/maps")
+    end
+
+    it "muestra el botón flotante de WhatsApp solo con dígitos cuando hay número" do
+      enabled_church(whatsapp: "+506 2222 3333")
+
+      get "/c/central"
+
+      expect(response.body).to include("https://wa.me/50622223333")
+    end
+
+    it "no muestra WhatsApp flotante sin número" do
+      enabled_church(whatsapp: nil)
+
+      get "/c/central"
+
+      expect(response.body).not_to include("wa.me/")
+    end
+
+    it "solo renderiza los íconos de redes cuyas URLs existen" do
+      enabled_church(instagram_url: "https://instagram.com/central", facebook_url: nil, youtube_url: nil)
+
+      get "/c/central"
+
+      expect(response.body).to include("instagram.com/central")
+      expect(response.body).not_to include("youtube.com")
+    end
+
+    it "no muestra la sección de cultos cuando no hay horarios" do
+      enabled_church
+
+      get "/c/central"
+
+      expect(response.body).not_to include("Horarios de culto")
+    end
+
+    it "muestra el teaser de directorio solo si está habilitado" do
+      enabled_church(service_directory_enabled: true)
+      get "/c/central"
+      expect(response.body).to include("Directorio de servicios")
+    end
+
+    it "no muestra el teaser de directorio si está deshabilitado" do
+      enabled_church(service_directory_enabled: false)
+      get "/c/central"
+      expect(response.body).not_to include("Directorio de servicios")
     end
   end
 end
