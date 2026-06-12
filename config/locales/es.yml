@@ -288,6 +288,8 @@ es:
       signed_out: "Cerraste sesion correctamente."
   errors:
     messages:
+      event_not_open: "Este evento no acepta confirmaciones."
+      no_capacity: "No hay cupos suficientes para esa cantidad de personas."
       already_confirmed: "ya fue confirmado, intenta iniciar sesion"
       blank: "no puede estar en blanco"
       required: "es obligatorio"
