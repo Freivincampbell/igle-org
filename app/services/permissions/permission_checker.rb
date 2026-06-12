@@ -48,6 +48,12 @@ module Permissions
       ACTION_PERMISSION_KEYS.fetch(action.to_s, [ action.to_s ])
     end
 
+    # Alcances que un módulo realmente soporta (church + los que tienen filtro).
+    # La UI solo debe ofrecer estos para no producir lockouts silenciosos.
+    def self.supported_scopes(module_key)
+      ([ "church" ] + SCOPE_FILTERS.fetch(module_key.to_s, {}).keys.map(&:to_s)).uniq
+    end
+
     def allow?(user_context:, module_key:, action:, record: nil)
       scope = scope_for(user_context:, module_key:, action:)
       return false if scope.nil?
@@ -95,7 +101,9 @@ module Permissions
       fn = SCOPE_FILTERS.fetch(module_key.to_s, {})[scope]
       return false if fn.nil?
 
-      fn.call(record.class.where(id: record.id), user_context).exists?
+      base = record.class.where(id: record.id)
+      base = base.where(church: user_context.current_church) if record.class.column_names.include?("church_id")
+      fn.call(base, user_context).exists?
     end
 
     def owner_allowed?(module_key)

@@ -21,9 +21,11 @@
         <% current_scope = role.role_permissions.joins(:permission).where(permissions: { module_key: }).first&.scope || "church" %>
         <div class="mt-4">
           <label class="text-xs font-medium uppercase tracking-wide text-slate-500">Alcance</label>
+          <% supported = Permissions::PermissionChecker.supported_scopes(module_key) %>
           <select name="role[module_scopes][<%= module_key %>]"
                   class="mt-1 block rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
             <% { "church" => "Toda la iglesia", "assigned_ministry" => "Ministerio asignado", "own" => "Propio" }.each do |value, label| %>
+              <% next unless supported.include?(value) %>
               <option value="<%= value %>" <%= "selected" if current_scope == value %>><%= label %></option>
             <% end %>
           </select>
